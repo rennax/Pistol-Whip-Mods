@@ -1,0 +1,35 @@
+`LevelManager.LoadLevel` is where the level geoset is loaded
+Specifically, a call to `SpawnLevelGeo`
+ 
+Here's what that call does, to the best of my knowledge (many things omitted):
+ 
+Creates a new `GameObject` with the name: `LevelRoot`
+Calls `get_transform` of that `GameObject`, sets it to the `levelRoot` field in `LevelManager`
+Gets the `geoSet` field off of the `GameMap` parameter
+Calls `LevelManager.SpawnChunks` on the `GameMap`, `geoSet`, `LevelAssetDatabase` (parameter)
+Iterates over each of the `WorldObject`s from the `GeoSet`'s `staticProps` field
+- Calls `LevelManager.SpawnWorldObject` on the current `WorldObject` and the `get_transform` of the instantiated `GameObject` as the parent transform
+Then it destroys that list
+Iterates over each of the `WorldObject`s from the `GeoSet`'s `dynamicProps` field
+- Calls `LevelManager.SpawnWorldObject` identically
+Then it destroys that list
+Clears the `LevelManager.cullingEntries` field
+Clears the `LevelManager.cullingLookup` field
+Gets the `GameMap`'s `data` field, and the `staticCullingRanges`, iterates over each of them:
+- Calls `LevelManager.SpawnWorldObjects` on the current culling range
+Then it destroys that list
+Next, it calls `LODSwitcher.PrepForBatching`
+Calls `StaticBatchingUtility.Combine(levelRoot.get_gameObject())`
+Iterates over each of the `WorldObject`s from the `GeoSet`'s `dynamicProps` field:
+- Calls `LevelManager.SpawnWorldObject` the same way as before
+Gets the `gameMap`'s `data` field's `simpleDynamicWorldObjects`, iterates over these:
+- Calls `LevelManager.SpawnWorldObject` the same way as before
+Iterates over `gameMap`'s `data` field's `dynamicCullingRanges`:
+- Calls `LevelManager.SpawnWorldObjects` on the culling range
+Clears the `obstacles` list
+Gets the `gamemap`'s `trackData` field's `beats` field, iterates over them:
+- Gets the beat's `obstacles` field, iterates over those, and calls `LevelManager.SpawnObstacle` on the `gameMap`, the current `BeatData`, the current `ObstacleData`, and the `db` parameter
+Yeets both lists after
+Requests a `Message` pertaining to `PlayerHeightEvent`
+Waits for an unknown quantity of seconds
+Attempts to send a `Message` pertaining to `PlayerHeightEvent` (these last 3 are related to a synchronization procedure not done often in Unity)
