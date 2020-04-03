@@ -20,6 +20,64 @@ namespace il2cpp_utils {
 		return GetMethod(GetClassFromName(nameSpace.data(), className.data()), methodName, argsCount);
 	}
 
+	const PropertyInfo* GetProperty(Il2CppClass* klass, std::string_view propertyName) {
+		if (!klass) {
+			LOG("ERROR: GetProperty: parameter klass is nullptr");
+			return nullptr;
+		}
+		const PropertyInfo* prop = il2cpp_functions::class_get_property_from_name(klass, propertyName.data());
+		if (!prop)
+		{
+			LOG("WARNING: GetProperty: class %s does not contain property %s", 
+				il2cpp_functions::class_get_name(klass),
+				propertyName.data());
+			return nullptr;
+		}
+		return prop;
+	}
+
+	const MethodInfo* GetPropertyGetMethod(Il2CppClass* klass, std::string_view propertyName) {
+		if (!klass) {
+			LOG("ERROR: GetPropertyGetMethod: parameter klass is nullptr");
+			return nullptr;
+		}
+		const PropertyInfo* prop = GetProperty(klass, propertyName);
+		if (!prop)
+		{
+			return nullptr;
+		}
+		const MethodInfo* method = il2cpp_functions::property_get_get_method(prop);
+		if (!method)
+		{
+			LOG("WARNING: GetPropertyGetMethod: class %s does not contain property %s with get field",
+				il2cpp_functions::class_get_name(klass),
+				propertyName.data());
+			return nullptr;
+		}
+		return method;
+	}
+
+	const MethodInfo* GetPropertySetMethod(Il2CppClass* klass, std::string_view propertyName) {
+		if (!klass) {
+			LOG("ERROR: GetPropertySetMethod: parameter klass is nullptr");
+			return nullptr;
+		}
+		const PropertyInfo* prop = GetProperty(klass, propertyName);
+		if (!prop)
+		{
+			return nullptr;
+		}
+		const MethodInfo* method = il2cpp_functions::property_get_set_method(prop);
+		if (!method)
+		{
+			LOG("WARNING: GetPropertySetMethod: class %s does not contain property %s with set field",
+				il2cpp_functions::class_get_name(klass),
+				propertyName.data());
+			return nullptr;
+		}
+		return method;
+	}
+
 	// Returns a legible string from an Il2CppException*
 	std::string ExceptionToString(Il2CppException* exp) {
 		char msg[EXCEPTION_MESSAGE_SIZE];
@@ -54,6 +112,19 @@ namespace il2cpp_utils {
 	}
 
 
+	Il2CppArray* CreateIl2CppArray(const char* name_space, const char* type_name, size_t array_size)
+	{
+		Il2CppClass* klass = GetClassFromName(name_space, type_name);
+		if (!klass)
+		{
+			LOG("il2cpp_utils: CreateArray: Couldn't get Il2CppClass from provide namespace and type name");
+			return nullptr;
+		}
+		auto arr = il2cpp_functions::array_new(klass, array_size);
+		return arr;
+	}
+
+
 	bool SetFieldValue(Il2CppClass* klass, std::string_view fieldName, void* value) {
 		if (!klass) {
 			LOG("il2cpp_utils: SetFieldValue: Null klass parameter!");
@@ -77,6 +148,81 @@ namespace il2cpp_utils {
 		auto field = FindField(klass, fieldName);
 		if (!field) return false;
 		return SetFieldValue(instance, field, value);
+	}
+
+	Il2CppReflectionType* MakeGenericType(Il2CppReflectionType* gt, Il2CppArray* types) {
+
+		auto runtimeType = GetClassFromName("System", "RuntimeType");
+		if (!runtimeType) {
+			LOG("ERROR: il2cpp_utils: MakeGenericType: Failed to get System.RuntimeType!");
+			return nullptr;
+		}
+		auto makeGenericMethod = il2cpp_functions::class_get_method_from_name(runtimeType, "MakeGenericType", 2);
+		if (!makeGenericMethod) {
+			LOG("ERROR: il2cpp_utils: MakeGenericType: Failed to get RuntimeType.MakeGenericType(param1, param2) method!");
+			return nullptr;
+		}
+
+		Il2CppException* exp = nullptr;
+		void* params[] = { reinterpret_cast<void*>(gt), reinterpret_cast<void*>(types) };
+		auto genericType = il2cpp_functions::runtime_invoke(makeGenericMethod, nullptr, params, &exp);
+		if (exp) {
+			LOG("ERROR: il2cpp_utils: MakeGenericType: Failed with exception: %s", ExceptionToString(exp).c_str());
+			return nullptr;
+		}
+		return reinterpret_cast<Il2CppReflectionType*>(genericType);
+	}
+
+	Il2CppClass* MakeGeneric(const Il2CppClass* klass, std::initializer_list<const Il2CppClass*> args) {
+
+		auto typ = GetClassFromName("System", "Type");
+		if (!typ) {
+			return nullptr;
+		}
+		auto getType = il2cpp_functions::class_get_method_from_name(typ, "GetType", 1);
+		if (!getType) {
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get System.Type.GetType(param1) method!");
+			return nullptr;
+		}
+
+		auto klassType = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
+		if (!klassType) {
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get class type object!");
+			return nullptr;
+		}
+
+		// Call Type.MakeGenericType on it
+		auto a = il2cpp_functions::array_new_specific(typ, args.size());
+		if (!a) {
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to make new array with length: %zu", args.size());
+			return nullptr;
+		}
+
+		int i = 0;
+		for (auto arg : args) {
+			auto t = il2cpp_functions::class_get_type_const(arg);
+			auto o = il2cpp_functions::type_get_object(t);
+			if (!o) {
+				LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get type for %s", il2cpp_functions::class_get_name_const(arg));
+				return nullptr;
+			}
+			il2cpp_array_set(a, void*, i, reinterpret_cast<void*>(o));
+			i++;
+		}
+
+		auto reflection_type = MakeGenericType(reinterpret_cast<Il2CppReflectionType*>(klassType), a);
+		if (!reflection_type) {
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to MakeGenericType from Il2CppReflectionType and Il2CppArray!");
+			return nullptr;
+		}
+
+		auto ret = il2cpp_functions::class_from_system_type(reinterpret_cast<Il2CppReflectionType*>(reflection_type));
+		if (!ret) {
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get class from Il2CppReflectionType!");
+			return nullptr;
+		}
+		LOG("DEBUG: il2cpp_utils: MakeGeneric: returning %s", il2cpp_functions::class_get_name(ret));
+		return ret;
 	}
 
 	Il2CppClass* GetClassFromName(const char* name_space, const char* type_name) {
@@ -103,6 +249,19 @@ namespace il2cpp_utils {
 		}
 		LOG("ERROR: il2cpp_utils: GetClassFromName: Could not find class with namepace: %s and name: %s", name_space, type_name);
 		return nullptr;
+	}
+
+	bool ParameterMatch(const MethodInfo* method, Il2CppType** type_arr, int count) {
+
+		if (method->parameters_count != count) {
+			return false;
+		}
+		for (int i = 0; i < method->parameters_count; i++) {
+			if (!il2cpp_functions::type_equals(method->parameters[i].parameter_type, type_arr[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	

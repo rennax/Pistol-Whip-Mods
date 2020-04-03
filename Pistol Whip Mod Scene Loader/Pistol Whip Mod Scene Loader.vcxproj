@@ -157,6 +157,7 @@
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="LevelSelectTrigger.cpp" />
     <ClCompile Include="logger.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Mod.cpp" />
     <ClCompile Include="SceneManager.cpp" />

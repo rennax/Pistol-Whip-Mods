@@ -5,7 +5,7 @@
 
 namespace CSharp {
 
-
+	template<typename T>
 	class List {
 	private:
 		Il2CppObject* instance;
@@ -17,29 +17,34 @@ namespace CSharp {
 		void init()
 		{
 			//Init properties
-			const PropertyInfo* itemProp = il2cpp_functions::class_get_property_from_name(instance->klass, "Item");
-			itemGetMethod = il2cpp_functions::property_get_get_method(itemProp);
-			const PropertyInfo* countProp = il2cpp_functions::class_get_property_from_name(instance->klass, "Count");
-			countGetMethod = il2cpp_functions::property_get_get_method(countProp);
+			itemGetMethod = il2cpp_utils::GetPropertyGetMethod(instance->klass, "Item");
+			countGetMethod = il2cpp_utils::GetPropertyGetMethod(instance->klass, "Count");
 			
 			addMethod = il2cpp_utils::GetMethod(instance->klass, "Add", 1);
 		}
 	public:
-		List() {}
+		//TODO: Create a new list
+		//Doesn't work, as it needs to create a generic type and is currently not setup for this
+		List() 
+		{
+			const Il2CppClass* klass = il2cpp_utils::GetClassFromName("System.Collections.Generic", "List`1");
+			instance = il2cpp_functions::object_new(klass);
+			LOG("Created instance of List<T> object");
+			init();
+		}
+		//Create list from existing instance
 		List(Il2CppObject* instance_) : instance(instance_)
 		{
 			init();
 		}
 
-		void init(Il2CppObject* instance_)
-		{
-			instance = instance_;
-			init();
+		Il2CppObject* getInstance() {
+			return instance;
 		}
-
-		Il2CppObject* operator[](std::size_t idx)
+		
+		T operator[](std::size_t idx)
 		{
-			Il2CppObject* obj = nullptr;
+			T obj;
 			if (!il2cpp_utils::RunMethod(&obj, instance, itemGetMethod, &idx))
 			{
 				LOG("Failed to call to List<>.Item[]\n");
@@ -47,9 +52,10 @@ namespace CSharp {
 			return obj;
 		}
 
-		bool Add(Il2CppObject* obj)
+		template<typename T>
+		bool Add(T obj)
 		{
-			if (!il2cpp_utils::RunMethod(instance, addMethod, obj))
+			if (!il2cpp_utils::RunMethod(instance, addMethod, &obj))
 			{
 				LOG("Failed to call to List<>.Add(...)\n");
 				return false;

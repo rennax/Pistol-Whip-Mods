@@ -1,3 +1,13 @@
+Currently fails inside SpawnSlice called from SpawnChunks
+
+
+
+
+
+
+
+
+
 `LevelManager.LoadLevel` is where the level geoset is loaded
 Specifically, a call to `SpawnLevelGeo`
  

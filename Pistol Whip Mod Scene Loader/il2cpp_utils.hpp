@@ -50,6 +50,9 @@ namespace il2cpp_utils
     }
 
 
+
+
+
     // Init all of the usable il2cpp API, if it has yet to be initialized
     // Maximum length of characters of an exception message - 1
 #define EXCEPTION_MESSAGE_SIZE 4096
@@ -167,27 +170,97 @@ namespace il2cpp_utils
     // Returns if a given MethodInfo's parameters match the Il2CppType array provided as type_arr
     bool ParameterMatch(const MethodInfo* method, Il2CppType** type_arr, int count);
 
+
+    //Array Sc2ad
+    template<class T>
+    struct Array : public Il2CppObject
+    {
+        static_assert(is_value_type<T>::value, "T must be a C# value type! (primitive, pointer or Struct)");
+        /* bounds is NULL for szarrays */
+        ArrayBounds* bounds;
+        /* total number of elements of the array */
+        int32_t max_length;
+        T values[0];
+
+        int32_t Length() {
+            if (bounds) {
+                return bounds->length;
+            }
+            return max_length;
+        }
+    };
+
+    template<class T>
+    Array<T>* CreateArray(const char* name_space, const char* type_name, size_t array_size)
+    {
+        Il2CppClass* klass = GetClassFromName(name_space, type_name);
+        if (!klass)
+        {
+            LOG("il2cpp_utils: CreateArray: Couldn't get Il2CppClass from provide namespace and type name");
+            return nullptr;
+        }
+        auto arr = il2cpp_functions::array_new(klass, array_size);
+        return arr;
+    }
+
+
+    Il2CppArray* CreateIl2CppArray(const char* name_space, const char* type_name, size_t array_size);
+
+
+    //template<typename TObj = Il2CppObject, typename... TArgs>
+    //// Creates a new object of the given class using the given constructor parameters and casts it to TObj*
+    //// Will only run a .ctor whose parameter types match the given arguments.
+    //TObj* New(Il2CppClass* klass, TArgs const& ...args) {
+
+    //    constexpr auto count = sizeof...(TArgs);
+    //    auto ctor = GetMethod("", "", count);
+    //    // object_new call
+    //    auto obj = il2cpp_functions::object_new(klass);
+    //    // runtime_invoke constructor with right type(s) of arguments, return null if constructor errors
+    //    if (!RunMethod(obj, ".ctor", args...)) return nullptr;
+    //    return reinterpret_cast<TObj*>(obj);
+    //}
+
+
+        // Returns the MethodInfo for the method on the given class with the given name and number of arguments
+    // Created by zoller27osu
+    const MethodInfo* GetMethod(Il2CppClass* klass, std::string_view methodName, int argsCount);
+
+    // Returns the MethodInfo for the method on class found via namespace and name with the given name and number of arguments
+    const MethodInfo* GetMethod(std::string_view nameSpace, std::string_view className, std::string_view methodName, int argsCount);
+
+    // Returns MethodInfo for the set method of the given propertyName.
+    const MethodInfo* GetPropertySetMethod(Il2CppClass* klass, std::string_view propertyName);
+
+    // Returns MethodInfo for the get method of the given propertyName.
+    const MethodInfo* GetPropertyGetMethod(Il2CppClass* klass, std::string_view propertyName);
+
+    // Returns PropertyInfo given the name, if it exists
+    const PropertyInfo* GetProperty(Il2CppClass* klass, std::string_view propertyName);
+
+
     template<typename TObj = Il2CppObject, typename... TArgs>
     // Creates a new object of the given class and Il2CppTypes parameters and casts it to TObj*
     TObj* New(Il2CppClass* klass, TArgs const& ...args) {
 
-        constexpr auto count = sizeof...(TArgs);
+        constexpr int count = sizeof...(TArgs);
 
-        void* invokeParams[] = { il2cpp_type_check::il2cpp_arg_ptr<decltype(args)>::get(args)... };
-        Il2CppType const* argarr[] = { il2cpp_type_check::il2cpp_arg_type<decltype(args)>::get(args)... };
+        void** invokeParams = { il2cpp_type_check::il2cpp_arg_ptr<decltype(args)>::get(args)... };
+        Il2CppType** argarr = { il2cpp_type_check::il2cpp_arg_type<decltype(args)>::get(args)... };
         // object_new call
         auto obj = il2cpp_functions::object_new(klass);
         // runtime_invoke constructor with right number of args, return null if multiple matches (or take a vector of type pointers to resolve it), return null if constructor errors
 
         void* myIter = nullptr;
         const MethodInfo* current;
-        const MethodInfo* ctor = nullptr;
+        const MethodInfo* ctor = il2cpp_utils::GetMethod(klass, ".ctor", count);
         // Il2CppType* argarr[] = {reinterpret_cast<Il2CppType*>(args)...};
-        while ((current = il2cpp_functions::class_get_methods(klass, &myIter))) {
-            if (ParameterMatch(current, argarr, count) && strcmp(ctor->name, ".ctor") == 0) {
-                ctor = current;
-            }
-        }
+
+        //while ((current = il2cpp_functions::class_get_methods(klass, &myIter))) {
+        //    if (ParameterMatch(current, argarr, count) && strcmp(ctor->name, ".ctor") == 0) {
+        //        ctor = current;
+        //    }
+        //}
         if (!ctor) {
             LOG("il2cpp_utils: New: Could not find constructor for provided class!");
             return nullptr;
@@ -232,13 +305,6 @@ namespace il2cpp_utils
         return reinterpret_cast<TObj*>(obj);
     }
 
-    // Returns the MethodInfo for the method on the given class with the given name and number of arguments
-    // Created by zoller27osu
-    const MethodInfo* GetMethod(Il2CppClass* klass, std::string_view methodName, int argsCount);
-
-    // Returns the MethodInfo for the method on class found via namespace and name with the given name and number of arguments
-    const MethodInfo* GetMethod(std::string_view nameSpace, std::string_view className, std::string_view methodName, int argsCount);
-
     template<class TOut, class... TArgs>
     // Runs a MethodInfo with the specified parameters and instance, with return type TOut
     // Assumes a static method if instance == nullptr
@@ -260,7 +326,7 @@ namespace il2cpp_utils
         }
 
         if (exp) {
-            LOG("il2cpp_utils: RunMethod: %s: Failed with exception: %s", il2cpp_functions::method_get_name(method),
+            LOG("il2cpp_utils: RunMethod: %s: Failed with exception: %s\n", il2cpp_functions::method_get_name(method),
                 il2cpp_utils::ExceptionToString(exp).c_str());
             return false;
         }
