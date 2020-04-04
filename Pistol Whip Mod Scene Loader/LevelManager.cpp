@@ -180,7 +180,7 @@ namespace LevelManager {
 
 	} Mesh;
 
-	GeoSet::GeoSet test;
+	GeoSet::GeoSet* test;
 	Il2CppObject* newGeoset;
 	MAKE_HOOK(LoadLevel, void, void* self, Il2CppObject* level)
 	{
@@ -198,9 +198,12 @@ namespace LevelManager {
 		CSharp::List chunkData = getListField<ChunkMeshData>(geoset, "chunkData");
 		CSharp::List chunkSlices = getListField<ChunkMeshSlice>(geoset, "chunkSlices");
 		CSharp::List staticProps = getListField<Il2CppObject*>(geoset, "staticProps");
+		float scale = 0;
+		il2cpp_utils::GetFieldValue(&scale, geoset, "scale");
 		CSharp::List dynamicProps = getListField<Il2CppObject*>(geoset, "dynamicProps");
 		CSharp::List decoratorCubes = getListField<Il2CppObject*>(geoset, "decoratorCubes");
 		LOG("Sizes of lists within the geoset object:\n");
+		LOG("\tScale = %f", scale);
 		LOG("\tchunkData = %u\n", chunkData.Count());
 		LOG("\tchunkSlices = %u\n", chunkSlices.Count());
 		LOG("\tstaticProps = %u\n", staticProps.Count());
@@ -221,64 +224,100 @@ namespace LevelManager {
 
 		//ChunkMeshSlice slice = chunkSlices[0];
 
+		/*LOG("Dumping size of all vertices inside chunkData objects\n");
+		for (size_t i = 0; i < chunkData.Count(); i++)
+		{
+			ChunkMeshData chunk = chunkData[i];
+			LOG("\tGot chunk at index %u\n", i);
+			Il2CppArray* verts = chunk.verts;
+			Vector3i id = chunk.id;
+			LOG("\tChunkSlice id: {%d, %d, %d}", id.x, id.y, id.z);
 
-		//LOG("Dumping size of all vertices inside chunkSlices objects\n");
-		//for (size_t i = 0; i < chunkSlices.Count(); i++)
-		//{
-		//	ChunkMeshSlice chunk = chunkSlices[i];
-		//	LOG("\tGot chunk at index %u\n", i);
-		//	Il2CppArray* verts = chunk.verts;
-		//	int z = chunk.z;
-		//	LOG("\tChunkSlice z: %d, ", z);
+			if (verts == nullptr) {
+				LOG("Failed to get verts\n");
+			}
+			else {
+				uint32_t length = il2cpp_functions::array_length(verts);
+				LOG("contains %u vertices\n", length);
+			}
 
-		//	if (verts == nullptr) {
-		//		LOG("Failed to get verts\n");
-		//	}
-		//	else {
-		//		uint32_t length = il2cpp_functions::array_length(verts);
-		//		LOG("contains %u vertices\n", length);
-		//	}
+			Il2CppArray* meshSizes = chunk.meshSizes;
+			if (meshSizes == nullptr) {
+				LOG("Failed to get meshSizes\n");
+			}
+			else {
+				uint32_t length = il2cpp_functions::array_length(meshSizes);
+				LOG("\tContains %u meshSizes\n", length);
+			}
 
-		//	Il2CppArray* meshSizes = chunk.meshSizes;
-		//	if (meshSizes == nullptr) {
-		//		LOG("Failed to get meshSizes\n");
-		//	}
-		//	else {
-		//		uint32_t length = il2cpp_functions::array_length(meshSizes);
-		//		LOG("\tContains %u meshSizes\n", length);
-		//	}
+			Il2CppArray* tris = chunk.tris;
+			if (tris == nullptr)
+			{
+				LOG("Failed to get tris\n");
+			}
+			else {
+				uint32_t length = il2cpp_functions::array_length(tris);
+				LOG("\tContains %u tris\n\n", length);
+			}
 
-		//	Il2CppArray* tris = chunk.tris;
-		//	if (tris == nullptr)
-		//	{
-		//		LOG("Failed to get tris\n");
-		//	}
-		//	else {
-		//		uint32_t length = il2cpp_functions::array_length(tris);
-		//		LOG("\tContains %u tris\n\n", length);
-		//	}
+			if (chunk.m_liveMesh != nullptr)
+			{
+				LOG("\tContains livemesh\n\n");
+			}
+		}*/
 
-		//	if (chunk.m_liveMesh != nullptr)
-		//	{
-		//		LOG("\tContains livemesh\n\n");
-		//	}
-		//}
 
-		test = GeoSet::GeoSet();
-		test.loadVerts(test.getTestFile());
-		newGeoset = test.generateGeoSet();
-		
-		//il2cpp_utils::SetFieldValue(geoset, "chunkData", il2cpp_utils::GetFieldValue(newGeoset, "chunkData"));
-		//il2cpp_utils::SetFieldValue(geoset, "chunkSlices", il2cpp_utils::GetFieldValue(newGeoset, "chunkSlices"));
+		/*LOG("Dumping size of all vertices inside chunkSlices objects\n");
+		for (size_t i = 0; i < chunkSlices.Count(); i++)
+		{
+			ChunkMeshSlice chunk = chunkSlices[i];
+			LOG("\tGot chunk at index %u\n", i);
+			Il2CppArray* verts = chunk.verts;
+			int z = chunk.z;
+			LOG("\tChunkSlice z: %d, ", z);
+
+			if (verts == nullptr) {
+				LOG("Failed to get verts\n");
+			}
+			else {
+				uint32_t length = il2cpp_functions::array_length(verts);
+				LOG("contains %u vertices\n", length);
+			}
+
+			Il2CppArray* meshSizes = chunk.meshSizes;
+			if (meshSizes == nullptr) {
+				LOG("Failed to get meshSizes\n");
+			}
+			else {
+				uint32_t length = il2cpp_functions::array_length(meshSizes);
+				LOG("\tContains %u meshSizes\n", length);
+			}
+
+			Il2CppArray* tris = chunk.tris;
+			if (tris == nullptr)
+			{
+				LOG("Failed to get tris\n");
+			}
+			else {
+				uint32_t length = il2cpp_functions::array_length(tris);
+				LOG("\tContains %u tris\n\n", length);
+			}
+
+			if (chunk.m_liveMesh != nullptr)
+			{
+				LOG("\tContains livemesh\n\n");
+			}
+		}*/
+
+		test = new GeoSet::GeoSet();
+		test->loadVerts(test->getTestFile());
+		newGeoset = test->generateGeoSet();
 
 		////For now just copy values we aren't creating
 		il2cpp_utils::SetFieldValue(newGeoset, "track", il2cpp_utils::GetFieldValue(geoset, "track"));
 		Vector3i chunkSize;
 		il2cpp_utils::GetFieldValue(&chunkSize, geoset, "chunkSize");
 		il2cpp_utils::SetFieldValue(newGeoset, "chunkSize", &chunkSize);
-		//TODO make this object, since it seems to contain level data?
-		//il2cpp_utils::SetFieldValue(newGeoset, "chunkData", il2cpp_utils::GetFieldValue(geoset, "chunkData"));
-		//il2cpp_utils::SetFieldValue(newGeoset, "chunkSlices", il2cpp_utils::GetFieldValue(geoset, "chunkSlices"));
 		il2cpp_utils::SetFieldValue(newGeoset, "staticProps", il2cpp_utils::GetFieldValue(geoset, "staticProps"));
 		il2cpp_utils::SetFieldValue(newGeoset, "dynamicProps", il2cpp_utils::GetFieldValue(geoset, "dynamicProps"));
 		il2cpp_utils::SetFieldValue(newGeoset, "decoratorCubes", il2cpp_utils::GetFieldValue(geoset, "decoratorCubes"));

@@ -16,7 +16,7 @@ bool Mesh::Clear()
 	return il2cpp_utils::RunMethod(mesh, "Clear");
 }
 
-bool Mesh::SetVertices(std::vector<Vector3> vertices)
+bool Mesh::SetVertices(const std::vector<Vector3>& vertices)
 {
 	size_t size = sizeof(Vector3) * vertices.size();
 	verts = il2cpp_utils::CreateIl2CppArray("UnityEngine", "Vector3", size);
@@ -32,7 +32,7 @@ bool Mesh::SetVertices(Il2CppArray* vertices)
 	return il2cpp_utils::RunMethod(mesh, "set_vertices", vertices);
 }
 
-bool Mesh::SetTriangles(std::vector<int> triangles)
+bool Mesh::SetTriangles(const std::vector<int>& triangles)
 {
 	size_t size = sizeof(int) * triangles.size();
 	tris = il2cpp_utils::CreateIl2CppArray("System", "Int32", size);

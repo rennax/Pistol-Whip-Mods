@@ -19,24 +19,24 @@
     <Filter Include="Source Files\hooks">
       <UniqueIdentifier>{6d399134-8c95-4ba1-8c27-6e4f4b28c794}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\CommonTypes">
+    <Filter Include="Source Files\game">
+      <UniqueIdentifier>{c5f5bed3-971d-4b75-8aba-841eaa544495}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game">
       <UniqueIdentifier>{8e2843e5-ffaf-41a8-ad1d-dcb3f0d958e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{799f4aa8-c37b-484b-b983-6ca4ce249878}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{ddbf7c72-d6b0-44e3-92fd-c6b584a23abe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="il2cpp_functions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="il2cpp_utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mod.cpp">
@@ -57,36 +57,30 @@
     <ClCompile Include="LevelSelectTrigger.cpp">
       <Filter>Source Files\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LevelManager.cpp">
       <Filter>Source Files\hooks</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="il2cpp_functions.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="il2cpp_utils.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="logger.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="il2cpp_functions.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="logger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="il2cpp_utils.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils-functions.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="typedefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mod.h">
@@ -94,9 +88,6 @@
     </ClInclude>
     <ClInclude Include="GameManager.hpp">
       <Filter>Header Files\hooks</Filter>
-    </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LevelDatabase.hpp">
       <Filter>Header Files\hooks</Filter>
@@ -113,14 +104,32 @@
     <ClInclude Include="LevelManager.hpp">
       <Filter>Header Files\hooks</Filter>
     </ClInclude>
-    <ClInclude Include="GeoSet.hpp">
-      <Filter>Header Files\hooks</Filter>
-    </ClInclude>
     <ClInclude Include="List.hpp">
-      <Filter>Header Files\CommonTypes</Filter>
+      <Filter>Header Files\game</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.hpp">
-      <Filter>Header Files\CommonTypes</Filter>
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GeoSet.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="typedefs.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="il2cpp_utils.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="il2cpp_functions.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils-functions.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="logger.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

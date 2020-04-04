@@ -13,6 +13,79 @@ static void LOG(const char*, ...) {};
 #endif // !LOGIT
 
 
+//// copies of the highly-inlinable functions
+//const Il2CppTypeDefinition* il2cpp_functions::MetadataCache_GetTypeDefinitionFromIndex(TypeDefinitionIndex index) {
+//    CheckS_GlobalMetadata();
+//    if (index == kTypeDefinitionIndexInvalid) return NULL;
+//
+//    IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) < s_GlobalMetadataHeader->typeDefinitionsCount / sizeof(Il2CppTypeDefinition));
+//    auto typeDefinitions = (const Il2CppTypeDefinition*)((const char*)s_GlobalMetadata + s_GlobalMetadataHeader->typeDefinitionsOffset);
+//    return typeDefinitions + index;
+//}
+//
+//const char* il2cpp_functions::MetadataCache_GetStringFromIndex(StringIndex index) {
+//    CheckS_GlobalMetadata();
+//    IL2CPP_ASSERT(index <= s_GlobalMetadataHeader->stringCount);
+//    const char* strings = ((const char*)s_GlobalMetadata + s_GlobalMetadataHeader->stringOffset) + index;
+//    return strings;
+//}
+//
+//const Il2CppGenericContainer* il2cpp_functions::MetadataCache_GetGenericContainerFromIndex(GenericContainerIndex index) {
+//    CheckS_GlobalMetadata();
+//    if (index == kGenericContainerIndexInvalid) return NULL;
+//
+//    IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) <= s_GlobalMetadataHeader->genericContainersCount / sizeof(Il2CppGenericContainer));
+//    const Il2CppGenericContainer* genericContainers = (const Il2CppGenericContainer*)((const char*)s_GlobalMetadata + s_GlobalMetadataHeader->genericContainersOffset);
+//    return genericContainers + index;
+//}
+//
+//const Il2CppGenericParameter* il2cpp_functions::MetadataCache_GetGenericParameterFromIndex(GenericParameterIndex index) {
+//    CheckS_GlobalMetadata();
+//    if (index == kGenericParameterIndexInvalid) return NULL;
+//
+//    IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) <= s_GlobalMetadataHeader->genericParametersCount / sizeof(Il2CppGenericParameter));
+//    const Il2CppGenericParameter* genericParameters = (const Il2CppGenericParameter*)((const char*)s_GlobalMetadata + s_GlobalMetadataHeader->genericParametersOffset);
+//    return genericParameters + index;
+//}
+//
+//TypeDefinitionIndex il2cpp_functions::MetadataCache_GetExportedTypeFromIndex(TypeDefinitionIndex index) {
+//    CheckS_GlobalMetadata();
+//    if (index == kTypeDefinitionIndexInvalid) return kTypeDefinitionIndexInvalid;
+//
+//    IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) < s_GlobalMetadataHeader->exportedTypeDefinitionsCount / sizeof(TypeDefinitionIndex));
+//    auto exportedTypes = (TypeDefinitionIndex*)((const char*)s_GlobalMetadata + s_GlobalMetadataHeader->exportedTypeDefinitionsOffset);
+//    return *(exportedTypes + index);
+//}
+//
+//Il2CppClass* il2cpp_functions::MetadataCache_GetNestedTypeFromIndex(NestedTypeIndex index) {
+//    CheckS_GlobalMetadata();
+//    IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) <= s_GlobalMetadataHeader->nestedTypesCount / sizeof(TypeDefinitionIndex));
+//    auto nestedTypeIndices = (const TypeDefinitionIndex*)((const char*)s_GlobalMetadata + s_GlobalMetadataHeader->nestedTypesOffset);
+//
+//    return il2cpp_functions::MetadataCache_GetTypeInfoFromTypeDefinitionIndex(nestedTypeIndices[index]);
+//}
+//
+//const TypeDefinitionIndex il2cpp_functions::MetadataCache_GetIndexForTypeDefinition(const Il2CppClass* typeDefinition) {
+//    CheckS_GlobalMetadata();
+//    IL2CPP_ASSERT(typeDefinition->typeDefinition);
+//    const Il2CppTypeDefinition* typeDefinitions = (const Il2CppTypeDefinition*)((const char*)s_GlobalMetadata + s_GlobalMetadataHeader->typeDefinitionsOffset);
+//
+//    IL2CPP_ASSERT(typeDefinition->typeDefinition >= typeDefinitions && typeDefinition->typeDefinition < typeDefinitions + s_GlobalMetadataHeader->typeDefinitionsCount);
+//
+//    ptrdiff_t index = typeDefinition->typeDefinition - typeDefinitions;
+//    IL2CPP_ASSERT(index <= std::numeric_limits<TypeDefinitionIndex>::max());
+//    return static_cast<TypeDefinitionIndex>(index);
+//}
+//
+//const char* il2cpp_functions::Type_GetName(const Il2CppType* type, Il2CppTypeNameFormat format) {
+//    if (!il2cpp_functions::_Type_GetName_) return nullptr;
+//    const auto& strRef = il2cpp_functions::_Type_GetName_(type, format);  // TODO figure out why this ref step is needed for 2019
+//    const auto str = strRef;
+//    return str.c_str();
+//}
+
+
+
 
 void il2cpp_functions::Init(HMODULE module)
 {

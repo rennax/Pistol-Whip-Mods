@@ -23,6 +23,13 @@ namespace GeoSet {
 	using namespace CSharp;
 	namespace fs = std::filesystem;
 
+typedef struct OscillatingObjectData {
+	Vector3 restPoint;
+	float moveScale;
+	float phase;
+} OscillatingObjectData;
+
+
 class GeoSet {
 public:
 	GeoSet()
@@ -31,7 +38,7 @@ public:
 		geoset = il2cpp_functions::object_new(klass);
 		
 		const MethodInfo* m = il2cpp_utils::GetMethod(klass, ".ctor", 0);
-		il2cpp_utils::RunMethod((void*)geoset, m);
+		il2cpp_utils::RunMethod(geoset, m);
 		LOG("Created geoset object\n");
 	}
 	void loadVerts(std::string_view filename) {
@@ -85,30 +92,20 @@ public:
 			{
 				Vector3 v;
 				ss >> v.x >> v.y >> v.z;
-				/*auto it = std::find(vertices.begin(), vertices.end(), v);
-				Vertex already exit, just push the index into indices
-				if ( it!= vertices.end())
-				{
-					indices.push_back(std::distance(vertices.begin(), it));
-				}
-				else
-				{
-					vertices.push_back(v);
-					indices.push_back(vertices.size() - 1);
-				}*/
 				vertices.push_back(v);
 			}
 			else if (start == "f")
 			{
 				int t1, t2, t3;
 				ss >> t1 >> t2 >> t3;
-				tris.push_back(t1);
-				tris.push_back(t2);
-				tris.push_back(t3);
+				tris.push_back(t1-1);
+				tris.push_back(t2-1);
+				tris.push_back(t3-1);
 			}
 		}
-		createChunkMeshData({ -3, -1, -1 }, vertices, tris);
-		createChunkMeshSlice(-1, vertices, tris);
+		Vector3i id{0, 0, 0};
+		createChunkMeshData(id, vertices, tris);
+		//createChunkMeshSlice(-1, vertices, tris);
 	}
 
 	Il2CppObject* generateGeoSet() { 
@@ -120,19 +117,19 @@ public:
 			LOG("ERROR: geoset is not initiated");
 			return nullptr;
 		}
-		List<ChunkMeshData> chunkData(il2cpp_utils::GetFieldValue(geoset, "chunkData"));
-		for (size_t i = 0; i < chunkDataVec.size(); i++)
-		{
-			chunkData.Add(chunkDataVec[i]);
-			//il2cpp_array_set(chunkData, ChunkMeshData, i, chunkDataVec[i]);
-		}
+		//List<ChunkMeshData> chunkData(il2cpp_utils::GetFieldValue(geoset, "chunkData"));
+		//for (size_t i = 0; i < chunkDataVec.size(); i++)
+		//{
+		//	chunkData.Add(chunkDataVec[i]);
+		//	//il2cpp_array_set(chunkData, ChunkMeshData, i, chunkDataVec[i]);
+		//}
 
-		List<ChunkMeshSlice> sliceData(il2cpp_utils::GetFieldValue(geoset, "chunkSlices"));
-		for (size_t i = 0; i < slices.size(); i++)
-		{
-			sliceData.Add(slices[i]);
-			//il2cpp_array_set(chunkData, ChunkMeshData, i, chunkDataVec[i]);
-		}
+		//List<ChunkMeshSlice> sliceData(il2cpp_utils::GetFieldValue(geoset, "chunkSlices"));
+		//for (size_t i = 0; i < slices.size(); i++)
+		//{
+		//	sliceData.Add(slices[i]);
+		//	//il2cpp_array_set(chunkData, ChunkMeshData, i, chunkDataVec[i]);
+		//}
 
 		//Since we are pulling the instance and creating list based on that, 
 		//we shouldn't need to set the field again
@@ -155,71 +152,47 @@ public: //Functions to create geoset
 			const std::vector<Vector3>& vertices, 
 			const std::vector<int>& triangles) 
 	{
-		ChunkMeshData chunk;
-		chunk.id = id;
-
-		//Create verts array and assign it
-		size_t size = sizeof(Vector3) * vertices.size();
-		Il2CppArray* verts = il2cpp_utils::CreateIl2CppArray("UnityEngine", "Vector3", size);
-		for (size_t i = 0; i < vertices.size(); i++)
+		Mesh mesh;
+		if (!mesh.Clear() ||
+			!mesh.SetVertices(vertices) ||
+			!mesh.SetTriangles(triangles))
 		{
-			il2cpp_array_set(verts, Vector3, i, vertices[i]);
+			LOG("GeoSet::createChunkMeshData failed to create mesh");
+			return;
 		}
-		chunk.verts = verts;
 
-		//Create tris array and assign it
-		size = sizeof(int) * vertices.size();
-		Il2CppArray* tris = il2cpp_utils::CreateIl2CppArray("System", "Int32", size);
-		for (size_t i = 0; i < vertices.size(); i++)
-		{
-			il2cpp_array_set(tris, int, i, triangles[i]);
-		}
-		chunk.tris = tris;
+		ChunkMeshData chunkData;
+		chunkData.id = id;
+		chunkData.verts = mesh.verts;
+		chunkData.tris = mesh.tris;
+		chunkData.m_liveMesh = mesh.GetMesh();
 
-		//Move final chunk into 
-		chunkDataVec.push_back(chunk);
+		List<ChunkMeshData> chunkDataList(il2cpp_utils::GetFieldValue(geoset, "chunkData"));
+		chunkDataList.Add(chunkData);
+
+		createChunkMeshSlice(-1, id, mesh);
 	}
 
 	void createChunkMeshSlice(
 		int z,
-		const std::vector<Vector3>& vertices,
-		const std::vector<int>& triangles)
+		Vector3i id,
+		Mesh& mesh)
 	{
-		Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "ChunkMeshSlice");
-		Il2CppObject* s = il2cpp_functions::object_new(klass);
-		auto ctor = il2cpp_utils::GetMethod(klass, ".ctor", 1);
-		il2cpp_utils::RunMethod(s, ctor, &z);
+		ChunkMeshSlice chunkSlice = {
+			z,
+			mesh.verts,
+			nullptr,
+			mesh.tris,
+			mesh.GetMesh()
+		};
 
-		auto meshKlass = il2cpp_utils::GetClassFromName("UnityEngine", "Mesh");
-		Il2CppObject* mesh = il2cpp_utils::New(meshKlass);
+		//Add chunkMeshData object to chunkData list object inside geoset
+		List<ChunkMeshSlice> chunkSlicesList(il2cpp_utils::GetFieldValue(geoset, "chunkSlices"));
+		chunkSlicesList.Add(chunkSlice);
+	}
 
-
-		ChunkMeshSlice* slice = (ChunkMeshSlice*)il2cpp_functions::object_unbox(s);
-		slice->m_liveMesh = mesh;
-		//Create verts array and assign it
-		size_t size = sizeof(Vector3) * vertices.size();
-		Il2CppArray* verts = il2cpp_utils::CreateIl2CppArray("UnityEngine", "Vector3", size);
-		for (size_t i = 0; i < vertices.size(); i++)
-		{
-			il2cpp_array_set(verts, Vector3, i, vertices[i]);
-		}
-		slice->verts = verts;
-
-		//Create tris array and assign it
-		size = sizeof(int) * triangles.size();
-		Il2CppArray* tris = il2cpp_utils::CreateIl2CppArray("System", "Int32", size);
-		for (size_t i = 0; i < triangles.size(); i++)
-		{
-			il2cpp_array_set(tris, int, i, triangles[i]);
-		}
-		slice->tris = tris;
-
-
-		auto generateMesh = il2cpp_utils::GetMethod(klass, "get_mesh", 0);
-		il2cpp_utils::RunMethod(il2cpp_functions::value_box(klass, slice), generateMesh);
-
-		//Move final chunk into 
-		slices.push_back(*slice);
+	void loadDecoratorCubes()
+	{
 
 	}
 
@@ -244,11 +217,12 @@ private:
 	std::vector<ChunkMeshData> chunkDataVec;
 	std::vector<ChunkMeshSlice> slices;
 
-	std::string testPath = "Custom Levels/x01";
+	std::string testPath = "Custom Levels/x02";
+	std::string decorCubeFileName = "decors.json";
 	// Geoset Fields
 	Il2CppObject* track = nullptr;			//public TrackData track; // 0x18
 	Vector3i chunkSize = {1, 1, 1};			//public Vector3i chunkSize; // 0x20
-	float scale = 1;						//public float scale; // 0x2C
+	float scale = 0.5f;						//public float scale; // 0x2C
 	Il2CppObject* chunkData = nullptr;		//public List<ChunkMeshData> chunkData; // 0x30
 	Il2CppObject* chunkSlices = nullptr;	//public List<ChunkMeshSlice> chunkSlices; // 0x38
 	Il2CppObject* staticProps = nullptr;	//public List<WorldObject> staticProps; // 0x40

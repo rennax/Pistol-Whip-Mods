@@ -4,6 +4,9 @@
 #include <il2cpp-api-types.h>
 #include <il2cpp-tabledefs.h>
 #include <windows.h>
+#include "logger.h"
+#include <type_traits>
+
 // TAKEN FROM https://github.com/sc2ad/pistol-whip-hook/blob/fd7edc3d1d39d231e43c1430dbf4336045a056cc/shared/utils/il2cpp-functions.hpp
 // A class which contains all available il2cpp functions
 // Created by zoller27osu
@@ -268,6 +271,41 @@ public:
 	// MANUALLY DEFINED CONST DEFINITIONS
 	inline static const Il2CppType* (*class_get_type_const)(const Il2CppClass* klass);
 	inline static const char* (*class_get_name_const)(const Il2CppClass* klass);
+
+
+
+	inline static const Il2CppMetadataRegistration** s_Il2CppMetadataRegistrationPtr;
+	inline static const void** s_GlobalMetadataPtr;
+	inline static const Il2CppGlobalMetadataHeader** s_GlobalMetadataHeaderPtr;
+
+	inline static std::remove_pointer_t<decltype(il2cpp_functions::s_GlobalMetadataPtr)> s_GlobalMetadata = nullptr;
+	inline static std::remove_pointer_t<decltype(il2cpp_functions::s_GlobalMetadataHeaderPtr)> s_GlobalMetadataHeader = nullptr;
+	inline static const Il2CppDefaults* defaults;
+
+	// must be done on-demand because the pointers aren't necessarily correct at the time of il2cpp_functions::Init
+	inline static void CheckS_GlobalMetadata() {
+		if (!s_GlobalMetadataHeader) {
+			s_GlobalMetadata = *(il2cpp_functions::s_GlobalMetadataPtr);
+			s_GlobalMetadataHeader = *(il2cpp_functions::s_GlobalMetadataHeaderPtr);
+			LOG("DEBUG: sanity: %X (should be 0xFAB11BAF)", s_GlobalMetadataHeader->sanity);
+			LOG("DEBUG: version: %i", s_GlobalMetadataHeader->version);
+			assert(s_GlobalMetadataHeader->sanity == 0xFAB11BAF);
+			LOG("DEBUG: typeDefinitionsOffset: %i", s_GlobalMetadataHeader->typeDefinitionsOffset);
+			LOG("DEBUG: exportedTypeDefinitionsOffset: %i", s_GlobalMetadataHeader->exportedTypeDefinitionsOffset);
+			LOG("DEBUG: nestedTypesOffset: %i", s_GlobalMetadataHeader->nestedTypesOffset);
+			// TODO: use il2cpp_functions::defaults to define the il2cpp_defaults variable mentioned in il2cpp-class-internals.h
+		}
+	}
+
+	// COPIES OF FREQUENTLY INLINED NON-API LIBIL2CPP FUNCTIONS:
+	static const char* MetadataCache_GetStringFromIndex(StringIndex index);
+	static const Il2CppTypeDefinition* MetadataCache_GetTypeDefinitionFromIndex(TypeDefinitionIndex index);
+	static TypeDefinitionIndex MetadataCache_GetExportedTypeFromIndex(TypeDefinitionIndex index);
+	static const Il2CppGenericContainer* MetadataCache_GetGenericContainerFromIndex(GenericContainerIndex index);
+	static const Il2CppGenericParameter* MetadataCache_GetGenericParameterFromIndex(GenericParameterIndex index);
+	static Il2CppClass* MetadataCache_GetNestedTypeFromIndex(NestedTypeIndex index);
+	static const TypeDefinitionIndex MetadataCache_GetIndexForTypeDefinition(const Il2CppClass* typeDefinition);
+
 
 	// Whether all of the il2cpp functions have been initialized or not
 	inline static bool initialized = false;

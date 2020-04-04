@@ -1,7 +1,6 @@
 #ifndef IL2CPP_UTILS_HPP
 #define IL2CPP_UTILS_HPP
 
-#include "il2cpp_functions.hpp"
 #include <string_view>
 #include <stdio.h>
 #include <stdlib.h>
@@ -152,7 +151,7 @@ namespace il2cpp_utils
 
     template<typename... TArgs>
     // Returns if a given MethodInfo's parameters match the Il2CppTypes provided as args
-    bool ParameterMatch(const MethodInfo* method, TArgs* ...args) {
+    bool ParameterMatch(const MethodInfo* method, TArgs&& ...args) {
 
         constexpr auto count = sizeof...(TArgs);
         Il2CppType* argarr[] = { reinterpret_cast<Il2CppType*>(args)... };
@@ -238,51 +237,72 @@ namespace il2cpp_utils
     // Returns PropertyInfo given the name, if it exists
     const PropertyInfo* GetProperty(Il2CppClass* klass, std::string_view propertyName);
 
-
-    template<typename TObj = Il2CppObject, typename... TArgs>
-    // Creates a new object of the given class and Il2CppTypes parameters and casts it to TObj*
-    TObj* New(Il2CppClass* klass, TArgs const& ...args) {
-
-        constexpr int count = sizeof...(TArgs);
-
-        void** invokeParams = { il2cpp_type_check::il2cpp_arg_ptr<decltype(args)>::get(args)... };
-        Il2CppType** argarr = { il2cpp_type_check::il2cpp_arg_type<decltype(args)>::get(args)... };
-        // object_new call
-        auto obj = il2cpp_functions::object_new(klass);
-        // runtime_invoke constructor with right number of args, return null if multiple matches (or take a vector of type pointers to resolve it), return null if constructor errors
-
-        void* myIter = nullptr;
-        const MethodInfo* current;
-        const MethodInfo* ctor = il2cpp_utils::GetMethod(klass, ".ctor", count);
-        // Il2CppType* argarr[] = {reinterpret_cast<Il2CppType*>(args)...};
-
-        //while ((current = il2cpp_functions::class_get_methods(klass, &myIter))) {
-        //    if (ParameterMatch(current, argarr, count) && strcmp(ctor->name, ".ctor") == 0) {
-        //        ctor = current;
-        //    }
-        //}
-        if (!ctor) {
-            LOG("il2cpp_utils: New: Could not find constructor for provided class!");
-            return nullptr;
-        }
-        // TODO FIX CTOR CHECKING
-        if (strcmp(ctor->name, ".ctor") != 0) {
-            LOG("il2cpp_utils: New: Found a method matching parameter count and types, but it is not a constructor!");
-            return nullptr;
-        }
-        Il2CppException* exp = nullptr;
-        il2cpp_functions::runtime_invoke(ctor, obj, invokeParams, &exp);
-        if (exp) {
-            LOG("il2cpp_utils: New: Failed with exception: %s", ExceptionToString(exp).c_str());
-            return nullptr;
-        }
-        return reinterpret_cast<TObj*>(obj);
+    inline auto ExtractValues() {
+        return std::vector<void*>();
     }
+
+    template<class T>
+    std::vector<void*> ExtractValues(T&& arg) {
+        using Dt = std::decay_t<T>;
+        std::vector<void*> valVec;
+        void* val;
+        if constexpr (std::is_same_v<Dt, Il2CppType*> || std::is_same_v<Dt, Il2CppClass*>) {
+            val = nullptr;
+        }
+        else if constexpr (std::is_pointer_v<Dt>) {
+            val = reinterpret_cast<void*>(arg);
+        }
+        else {
+            val = const_cast<Dt*>(&arg);
+        }
+        valVec.push_back(val);
+        return valVec;
+    }
+
+    template<class T, class... TArgs>
+    std::vector<void*> ExtractValues(T&& arg, TArgs&& ...args) {
+        auto base = ExtractValues(arg);
+        auto rec = ExtractValues(args...);
+        base.insert(base.end(), rec.begin(), rec.end());
+        return base;
+    }
+
+
+    //template<typename TObj = Il2CppObject, typename... TArgs>
+    //// Creates a new object of the given class and Il2CppTypes parameters and casts it to TObj*
+    //TObj* New(Il2CppClass* klass, TArgs&& ...args) {
+
+    //    constexpr int count = sizeof...(TArgs);
+    //    auto invokeParamVec = ExtractValues(args...);
+    //  
+    //    // object_new call
+    //    auto obj = il2cpp_functions::object_new(klass);
+    //    // runtime_invoke constructor with right number of args, return null if multiple matches (or take a vector of type pointers to resolve it), return null if constructor errors
+
+    //    const MethodInfo* ctor = il2cpp_utils::GetMethod(klass, ".ctor", count);
+
+    //    if (!ctor) {
+    //        LOG("il2cpp_utils: New: Could not find constructor for provided class!");
+    //        return nullptr;
+    //    }
+    //    // TODO FIX CTOR CHECKING
+    //    if (strcmp(ctor->name, ".ctor") != 0) {
+    //        LOG("il2cpp_utils: New: Found a method matching parameter count and types, but it is not a constructor!");
+    //        return nullptr;
+    //    }
+    //    Il2CppException* exp = nullptr;
+    //    il2cpp_functions::runtime_invoke(ctor, obj, invokeParamVec.data(), &exp);
+    //    if (exp) {
+    //        LOG("il2cpp_utils: New: Failed with exception: %s", ExceptionToString(exp).c_str());
+    //        return nullptr;
+    //    }
+    //    return reinterpret_cast<TObj*>(obj);
+    //}
 
     template<typename TObj = Il2CppObject, typename... TArgs>
     // Creates a New object of the given class and parameters and casts it to TObj*
     // DOES NOT PERFORM TYPE-SAFE CHECKING!
-    TObj* NewUnsafe(Il2CppClass* klass, TArgs* ...args) {
+    TObj* NewUnsafe(Il2CppClass* klass, TArgs&& ...args) {
 
         void* invokeParams[] = { reinterpret_cast<void*>(args)... };
         // object_new call
@@ -305,19 +325,34 @@ namespace il2cpp_utils
         return reinterpret_cast<TObj*>(obj);
     }
 
-    template<class TOut, class... TArgs>
+
+
+    template<class TOut, class T, class... TArgs>
     // Runs a MethodInfo with the specified parameters and instance, with return type TOut
     // Assumes a static method if instance == nullptr
     // Returns false if it fails
     // Created by zoller27osu, modified by Sc2ad
-    bool RunMethod(TOut* out, void* instance, const MethodInfo* method, TArgs* ...params) {
+    bool RunMethod(TOut* out, T* instance, const MethodInfo* method, TArgs&& ...params) {
         if (!method) {
             LOG("il2cpp_utils: RunMethod: Null MethodInfo!");
             return false;
         }
+
+        // runtime_invoke will assume obj is unboxed and box it. We need to counter that for pre-boxed instances.
+        // Note: we could also just call Runtime::Invoke directly, but box non-Il2CppObject instances ourselves as method->klass
+        void* inst = instance;
+        if constexpr (std::is_same_v<T, Il2CppObject>) {
+            if (instance && method->klass->valuetype) {
+                // We assume that if the method is for a ValueType and instance is an Il2CppObject, then it was pre-boxed.
+                inst = il2cpp_functions::object_unbox(instance);
+            }
+        }
+
+
         Il2CppException* exp = nullptr;
-        void* invokeParams = { reinterpret_cast<void*>(params)... };
-        auto ret = il2cpp_functions::runtime_invoke(method, instance, &invokeParams, &exp);
+
+        auto invokeParamsVec = ExtractValues(params...);
+        auto ret = il2cpp_functions::runtime_invoke(method, instance, invokeParamsVec.data(), &exp);
         if constexpr (std::is_pointer<TOut>::value) {
             *out = reinterpret_cast<TOut>(ret);
         }
@@ -333,12 +368,13 @@ namespace il2cpp_utils
         return true;
     }
 
-    template<class... TArgs>
+
+    template<class T, class... TArgs>
     // Runs a MethodInfo with the specified parameters and instance; best for void return type
     // Assumes a static method if instance == nullptr
     // Returns false if it fails
     // Created by zoller27osu
-    bool RunMethod(void* instance, const MethodInfo* method, TArgs* ...params) {
+    bool RunMethod(T* instance, const MethodInfo* method, TArgs&& ...params) {
         void* out = nullptr;
         return RunMethod(&out, instance, method, params...);
     }
@@ -347,7 +383,7 @@ namespace il2cpp_utils
     // Runs a static method with the specified method name, with return type TOut
     // Returns false if it fails
     // Created by zoller27osu, modified by Sc2ad
-    bool RunMethod(TOut* out, Il2CppClass* klass, std::string_view methodName, TArgs* ...params) {
+    bool RunMethod(TOut* out, Il2CppClass* klass, std::string_view methodName, TArgs&& ...params) {
         if (!klass) {
             LOG("il2cpp_utils: RunMethod: Null klass parameter!");
             return false;
@@ -361,7 +397,7 @@ namespace il2cpp_utils
     // Runs a method with the specified method name, with return type TOut
     // Returns false if it fails
     // Created by zoller27osu, modified by Sc2ad
-    bool RunMethod(TOut* out, Il2CppObject* instance, std::string_view methodName, TArgs* ...params) {
+    bool RunMethod(TOut* out, Il2CppObject* instance, std::string_view methodName, TArgs&& ...params) {
         if (!instance) {
             LOG("il2cpp_utils: RunMethod: Null instance parameter!");
             return false;
@@ -380,7 +416,7 @@ namespace il2cpp_utils
     // Runs a static method with the specified method name; best for void return type
     // Returns false if it fails
     // Created by zoller27osu
-    bool RunMethod(Il2CppClass* klass, std::string_view methodName, TArgs* ...params) {
+    bool RunMethod(Il2CppClass* klass, std::string_view methodName, TArgs&& ...params) {
         void* out = nullptr;
         return RunMethod(&out, klass, methodName, params...);
     }
@@ -389,9 +425,21 @@ namespace il2cpp_utils
     // Runs a method with the specified method name; best for void return type
     // Returns false if it fails
     // Created by zoller27osu
-    bool RunMethod(Il2CppObject* instance, std::string_view methodName, TArgs* ...params) {
+    bool RunMethod(Il2CppObject* instance, std::string_view methodName, TArgs&& ...params) {
         void* out = nullptr;
         return RunMethod(&out, instance, methodName, params...);
+    }
+
+    template<typename TObj = Il2CppObject, typename... TArgs>
+    // Creates a new object of the given class using the given constructor parameters and casts it to TObj*
+    // Will only run a .ctor whose parameter types match the given arguments.
+    TObj* New(Il2CppClass* klass, TArgs const& ...args) {
+
+        // object_new call
+        auto obj = il2cpp_functions::object_new(klass);
+        // runtime_invoke constructor with right type(s) of arguments, return null if constructor errors
+        if (!RunMethod(obj, ".ctor", args...)) return nullptr;
+        return reinterpret_cast<TObj*>(obj);
     }
 
     // Returns the FieldInfo for the field of the given class with the given name
@@ -575,7 +623,7 @@ namespace il2cpp_utils
 
     template<typename... TArgs>
     // Runtime Invoke, but with a list initializer for args
-    Il2CppObject* RuntimeInvoke(const MethodInfo* method, Il2CppObject* reference, Il2CppException** exc, TArgs* ...args) {
+    Il2CppObject* RuntimeInvoke(const MethodInfo* method, Il2CppObject* reference, Il2CppException** exc, TArgs&& ...args) {
 
         void** invokeParams = { reinterpret_cast<void*>(args)... };
         return il2cpp_functions::runtime_invoke(method, reference, invokeParams, exc);
