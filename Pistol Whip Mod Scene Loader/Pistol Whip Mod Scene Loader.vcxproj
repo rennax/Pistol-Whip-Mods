@@ -165,11 +165,13 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioClip.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameManager.hpp" />
     <ClInclude Include="GeoSet.hpp" />
     <ClInclude Include="il2cpp_functions.hpp" />
     <ClInclude Include="il2cpp_utils.hpp" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="LevelDatabase.hpp" />
     <ClInclude Include="LevelManager.hpp" />
     <ClInclude Include="LevelSelectTrigger.hpp" />
@@ -183,6 +185,7 @@
     <ClInclude Include="typedefs.h" />
     <ClInclude Include="utils-functions.hpp" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="WorldObject.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\TODO.txt" />

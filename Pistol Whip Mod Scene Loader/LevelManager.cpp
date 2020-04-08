@@ -4,6 +4,7 @@
 #include "logger.h"
 #include "GeoSet.hpp"
 #include "Mesh.hpp"
+#include "AudioClip.hpp"
 
 namespace LevelManager {
 
@@ -309,18 +310,31 @@ namespace LevelManager {
 			}
 		}*/
 
+		auto levelData = il2cpp_utils::GetFieldValue(level, "data");
+
+		WorldObject::GetWorldObjectByName(levelData, "test");
+
 		test = new GeoSet::GeoSet();
 		test->loadVerts(test->getTestFile());
+		test->loadDecoratorCubes();
 		newGeoset = test->generateGeoSet();
 
+		AudioClip clip("song.wav", AUDIOFILE::WAV);
+
+
+		Il2CppObject* track = il2cpp_utils::GetFieldValue(geoset, "track");
+		Il2CppObject* koero = il2cpp_utils::GetFieldValue(track, "koreography");
+		auto audio = il2cpp_utils::GetFieldValue(koero, "mSourceClip");
+		il2cpp_utils::RunMethod(koero, "set_SourceClip", clip.GetAudioClip());
+
 		////For now just copy values we aren't creating
-		il2cpp_utils::SetFieldValue(newGeoset, "track", il2cpp_utils::GetFieldValue(geoset, "track"));
-		Vector3i chunkSize;
-		il2cpp_utils::GetFieldValue(&chunkSize, geoset, "chunkSize");
-		il2cpp_utils::SetFieldValue(newGeoset, "chunkSize", &chunkSize);
+		il2cpp_utils::SetFieldValue(newGeoset, "track", track);
+		//Vector3i chunkSize;
+		//il2cpp_utils::GetFieldValue(&chunkSize, geoset, "chunkSize");
+		//il2cpp_utils::SetFieldValue(newGeoset, "chunkSize", &chunkSize);
 		il2cpp_utils::SetFieldValue(newGeoset, "staticProps", il2cpp_utils::GetFieldValue(geoset, "staticProps"));
 		il2cpp_utils::SetFieldValue(newGeoset, "dynamicProps", il2cpp_utils::GetFieldValue(geoset, "dynamicProps"));
-		il2cpp_utils::SetFieldValue(newGeoset, "decoratorCubes", il2cpp_utils::GetFieldValue(geoset, "decoratorCubes"));
+		//il2cpp_utils::SetFieldValue(newGeoset, "decoratorCubes", il2cpp_utils::GetFieldValue(geoset, "decoratorCubes"));
 
 
 		il2cpp_utils::SetFieldValue(level, "geoSet", newGeoset);

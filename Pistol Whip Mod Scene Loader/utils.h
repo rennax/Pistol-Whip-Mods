@@ -4,6 +4,7 @@
 #include <type_traits>
 #include "il2cpp_functions.hpp"
 #include "il2cpp_utils.hpp"
+#include "json.hpp"
 
 //Example of what MAKE_HOOK creates
 //static void (*sceneManagerLoadScene_orig)(void* self, void* sceneName, void* loadSceneMode);

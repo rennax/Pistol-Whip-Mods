@@ -1,4 +1,18 @@
-Currently fails inside SpawnSlice called from SpawnChunks
+TODO List - highest priority on top:
+- Decorator cubes (Done)
+    - Load cubes from json file
+    - Insert cubes into decoratorCubes list inside geoset.
+    - Verify result ingame
+- Static props
+    - Create descriptor file (json?) for different .obj files
+    - Load objects.
+    - Insert props into staticProps list inside geoset.
+- Dynamic props
+    - Research why those objects are "dynamic", as are they the enemies, obstacles etc.?
+    - Create descriptor file (json?) for different .obj files
+    - Load objects.
+    - Insert objects into dynamicProps list inside geoset.
+- Track data
 
 
 
@@ -6,8 +20,7 @@ Currently fails inside SpawnSlice called from SpawnChunks
 
 
 
-
-
+From @Sc2ad
 `LevelManager.LoadLevel` is where the level geoset is loaded
 Specifically, a call to `SpawnLevelGeo`
  

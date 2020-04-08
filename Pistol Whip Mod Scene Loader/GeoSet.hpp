@@ -6,22 +6,26 @@ extern "C" {
 
 
 #include "Mesh.hpp"
-#include "il2cpp_utils.hpp"
+#include "WorldObject.hpp"
+#include "utils.h"
 #include "List.hpp"
 #include "logger.h"
+
+
 #include <filesystem>
 #include <vector>
 #include <string>
 #include <tuple>
 #include <set>
 #include <fstream>
-#include <fstream>
 #include <iostream>
 #include <algorithm>
+
 
 namespace GeoSet {
 	using namespace CSharp;
 	namespace fs = std::filesystem;
+	using json = nlohmann::json;
 
 typedef struct OscillatingObjectData {
 	Vector3 restPoint;
@@ -37,8 +41,8 @@ public:
 		Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "GeoSet");
 		geoset = il2cpp_functions::object_new(klass);
 		
-		const MethodInfo* m = il2cpp_utils::GetMethod(klass, ".ctor", 0);
-		il2cpp_utils::RunMethod(geoset, m);
+		const MethodInfo* ctor = il2cpp_utils::GetMethod(klass, ".ctor", 0);
+		il2cpp_utils::RunMethod(geoset, ctor);
 		LOG("Created geoset object\n");
 	}
 	void loadVerts(std::string_view filename) {
@@ -117,26 +121,8 @@ public:
 			LOG("ERROR: geoset is not initiated");
 			return nullptr;
 		}
-		//List<ChunkMeshData> chunkData(il2cpp_utils::GetFieldValue(geoset, "chunkData"));
-		//for (size_t i = 0; i < chunkDataVec.size(); i++)
-		//{
-		//	chunkData.Add(chunkDataVec[i]);
-		//	//il2cpp_array_set(chunkData, ChunkMeshData, i, chunkDataVec[i]);
-		//}
 
-		//List<ChunkMeshSlice> sliceData(il2cpp_utils::GetFieldValue(geoset, "chunkSlices"));
-		//for (size_t i = 0; i < slices.size(); i++)
-		//{
-		//	sliceData.Add(slices[i]);
-		//	//il2cpp_array_set(chunkData, ChunkMeshData, i, chunkDataVec[i]);
-		//}
-
-		//Since we are pulling the instance and creating list based on that, 
-		//we shouldn't need to set the field again
- 	//	if (il2cpp_utils::SetFieldValue(geoset, "chunkData", chunkData.getInstance()))
-		//{
-		//	LOG("Failed to set chunkData in geoset\n");
-		//}
+		il2cpp_utils::SetFieldValue(geoset, "chunkSize", &chunkSize);
 		il2cpp_utils::SetFieldValue(geoset, "scale", &scale);
 
 		return geoset; 
@@ -193,7 +179,31 @@ public: //Functions to create geoset
 
 	void loadDecoratorCubes()
 	{
+		decoratorCubes.clear(); // Make sure that on subsequent calls that the vector is empty
+		std::ifstream i(fs::path(testPath + std::string("/") + decorCubeFileName));
+		json j;
+		i >> j;
+		if (j["version"] != 0.1)
+		{
+			LOG("GeoSet: loadDecoratorCubes() tried to load a file version V%.2f that is not supported", j["version"]);
+			return;
+		}
+		// Parse array containing all objects
+		for (auto& elem : j["decorCubes"])
+		{
+			auto pos = elem["restPoint"];
+			decoratorCubes.push_back({
+				{pos["x"], pos["y"], pos["z"]},
+				elem["moveScale"],
+				elem["phase"]
+				});
+		}
 
+		List<OscillatingObjectData> decorCubes(il2cpp_utils::GetFieldValue(geoset, "decoratorCubes"));
+		for (auto& cube : decoratorCubes)
+		{
+			decorCubes.Add(cube);
+		}
 	}
 
 private: //Functions
@@ -216,18 +226,19 @@ private:
 	Il2CppObject* geoset = nullptr;
 	std::vector<ChunkMeshData> chunkDataVec;
 	std::vector<ChunkMeshSlice> slices;
+	std::vector<OscillatingObjectData> decoratorCubes;
 
 	std::string testPath = "Custom Levels/x02";
 	std::string decorCubeFileName = "decors.json";
 	// Geoset Fields
 	Il2CppObject* track = nullptr;			//public TrackData track; // 0x18
-	Vector3i chunkSize = {1, 1, 1};			//public Vector3i chunkSize; // 0x20
+	Vector3i chunkSize = {32, 32, 32};		//public Vector3i chunkSize; // 0x20
 	float scale = 0.5f;						//public float scale; // 0x2C
-	Il2CppObject* chunkData = nullptr;		//public List<ChunkMeshData> chunkData; // 0x30
-	Il2CppObject* chunkSlices = nullptr;	//public List<ChunkMeshSlice> chunkSlices; // 0x38
-	Il2CppObject* staticProps = nullptr;	//public List<WorldObject> staticProps; // 0x40
-	Il2CppObject* dynamicProps = nullptr;	//public List<WorldObject> dynamicProps; // 0x48
-	Il2CppObject* decoratorCubes = nullptr; //public List<OscillatingObjectData> decoratorCubes; // 0x50
+	//Il2CppObject* chunkData = nullptr;		//public List<ChunkMeshData> chunkData; // 0x30
+	//Il2CppObject* chunkSlices = nullptr;	//public List<ChunkMeshSlice> chunkSlices; // 0x38
+	//Il2CppObject* staticProps = nullptr;	//public List<WorldObject> staticProps; // 0x40
+	//Il2CppObject* dynamicProps = nullptr;	//public List<WorldObject> dynamicProps; // 0x48
+	//Il2CppObject* decoratorCubes = nullptr; //public List<OscillatingObjectData> decoratorCubes; // 0x50
 
 };
 

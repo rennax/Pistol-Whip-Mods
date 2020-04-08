@@ -267,38 +267,6 @@ namespace il2cpp_utils
         return base;
     }
 
-
-    //template<typename TObj = Il2CppObject, typename... TArgs>
-    //// Creates a new object of the given class and Il2CppTypes parameters and casts it to TObj*
-    //TObj* New(Il2CppClass* klass, TArgs&& ...args) {
-
-    //    constexpr int count = sizeof...(TArgs);
-    //    auto invokeParamVec = ExtractValues(args...);
-    //  
-    //    // object_new call
-    //    auto obj = il2cpp_functions::object_new(klass);
-    //    // runtime_invoke constructor with right number of args, return null if multiple matches (or take a vector of type pointers to resolve it), return null if constructor errors
-
-    //    const MethodInfo* ctor = il2cpp_utils::GetMethod(klass, ".ctor", count);
-
-    //    if (!ctor) {
-    //        LOG("il2cpp_utils: New: Could not find constructor for provided class!");
-    //        return nullptr;
-    //    }
-    //    // TODO FIX CTOR CHECKING
-    //    if (strcmp(ctor->name, ".ctor") != 0) {
-    //        LOG("il2cpp_utils: New: Found a method matching parameter count and types, but it is not a constructor!");
-    //        return nullptr;
-    //    }
-    //    Il2CppException* exp = nullptr;
-    //    il2cpp_functions::runtime_invoke(ctor, obj, invokeParamVec.data(), &exp);
-    //    if (exp) {
-    //        LOG("il2cpp_utils: New: Failed with exception: %s", ExceptionToString(exp).c_str());
-    //        return nullptr;
-    //    }
-    //    return reinterpret_cast<TObj*>(obj);
-    //}
-
     template<typename TObj = Il2CppObject, typename... TArgs>
     // Creates a New object of the given class and parameters and casts it to TObj*
     // DOES NOT PERFORM TYPE-SAFE CHECKING!
@@ -379,6 +347,7 @@ namespace il2cpp_utils
         return RunMethod(&out, instance, method, params...);
     }
 
+
     template<class TOut, class... TArgs>
     // Runs a static method with the specified method name, with return type TOut
     // Returns false if it fails
@@ -388,10 +357,12 @@ namespace il2cpp_utils
             LOG("il2cpp_utils: RunMethod: Null klass parameter!");
             return false;
         }
-        auto method = GetMethod(klass, methodName, sizeof...(TArgs));
+        const MethodInfo* method = GetMethod(klass, methodName, sizeof...(TArgs));
         if (!method) return false;
-        return RunMethod(out, nullptr, method, params...);
+        Il2CppObject* instance = nullptr;
+        return RunMethod(out, instance, method, params...);
     }
+
 
     template<class TOut, class... TArgs>
     // Runs a method with the specified method name, with return type TOut
