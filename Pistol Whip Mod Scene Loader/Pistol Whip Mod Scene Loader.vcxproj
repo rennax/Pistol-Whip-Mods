@@ -167,6 +167,7 @@
     <ClCompile Include="SimpleMusicPlayer.cpp" />
     <ClCompile Include="SongSelectionUIController.cpp" />
     <ClCompile Include="TrackData.cpp" />
+    <ClCompile Include="AssetBundle.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="WorldObject.cpp" />
   </ItemGroup>

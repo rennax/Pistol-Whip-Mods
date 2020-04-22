@@ -332,9 +332,7 @@ namespace LevelManager {
 		WorldObject::GetWorldObjectByName(levelData, "test");
 
 		test = new GeoSet::GeoSet();
-		//test->loadVerts(test->getTestFile());
-		//test->loadDecoratorCubes();
-		newGeoset = test->generateGeoSet();
+		newGeoset = test->Load("Custom Levels/x02");
 
 		clip = new AudioClip("song.wav", AUDIOFILE::WAV);
 

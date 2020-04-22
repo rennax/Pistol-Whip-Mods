@@ -37,8 +37,11 @@
     <Filter Include="Source Files\hooks\music">
       <UniqueIdentifier>{7c24ddb0-cad6-400d-ba91-18bfa1ee1dff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\utils\UnityHelper">
+    <Filter Include="Header Files\utils\unityhelper">
       <UniqueIdentifier>{e2c44021-a663-43ce-bc4b-200e631ebff4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils\unityhelper">
+      <UniqueIdentifier>{a2ad8ad8-7f7a-47bf-b071-b2d0b41da3cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +104,9 @@
     </ClCompile>
     <ClCompile Include="GeoSet.cpp">
       <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetBundle.cpp">
+      <Filter>Source Files\utils\unityhelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -183,7 +189,7 @@
       <Filter>Header Files\game</Filter>
     </ClInclude>
     <ClInclude Include="AssetBundle.hpp">
-      <Filter>Header Files\utils\UnityHelper</Filter>
+      <Filter>Header Files\utils\unityhelper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

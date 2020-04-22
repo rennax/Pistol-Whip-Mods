@@ -33,21 +33,18 @@ typedef struct OscillatingObjectData {
 	float phase;
 } OscillatingObjectData;
 
+typedef struct ObjFile {
+	std::vector<Vector3> vertices;
+	std::vector<int> tris;
+} ObjFile;
+
 
 class GeoSet {
 public:
 	GeoSet();
 
-	Il2CppObject* generateGeoSet();
-
-	void Load(std::string_view path) {
-
-	}
+	Il2CppObject* Load(std::string_view path);
 private: //Functions
-	void loadVerts(std::string_view filename);
-
-	std::vector<fs::path> getObjectFiles(std::string path);
-
 	void createChunkMeshData(
 		Vector3i id,
 		const std::vector<Vector3>& vertices,
@@ -58,17 +55,22 @@ private: //Functions
 		Vector3i id,
 		Mesh& mesh);
 
+	ObjFile loadObjectFile(std::string_view filename);
 	void loadDecoratorCubes(json j);
+	void loadChunks(json j);
+	void loadStaticProps(json j);
+	void loadDynamicProps(json j);
 private:
 	Il2CppObject* geoset = nullptr;
 	std::vector<ChunkMeshData> chunkDataVec;
 	std::vector<ChunkMeshSlice> slices;
 	std::vector<OscillatingObjectData> decoratorCubes;
+	std::vector<WorldObject> staticProps;
+	std::vector<WorldObject> dynamicProps;
 
-	std::string testPath = "Custom Levels/x02";
+	std::string levelPath = "Custom Levels/x02";
 	std::string decorCubeFileName = "decors.json";
 	// Geoset Fields
-	Il2CppObject* track = nullptr;			//public TrackData track; // 0x18
 	Vector3i chunkSize = {32, 32, 32};		//public Vector3i chunkSize; // 0x20
 	float scale = 0.5f;						//public float scale; // 0x2C
 

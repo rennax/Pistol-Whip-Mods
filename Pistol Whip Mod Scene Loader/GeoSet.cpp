@@ -1,4 +1,5 @@
 #include "GeoSet.hpp"
+#include "AssetBundle.hpp"
 
 namespace GeoSet {
 // PUBLIC FUNCTIONS
@@ -12,12 +13,22 @@ namespace GeoSet {
 		LOG("Created geoset object\n");
 	}
 
-	Il2CppObject* GeoSet::generateGeoSet() {
-		if (!geoset)
-		{
-			LOG("ERROR: geoset is not initiated");
-			return nullptr;
-		}
+
+	Il2CppObject* GeoSet::Load(std::string_view path) {
+		levelPath = path;
+		std::string totalPath(path);
+		totalPath += "/level.json";
+		std::ifstream i(totalPath);
+		json level;
+		i >> level;
+		json geo = level["geoset"];
+		
+
+
+		loadDecoratorCubes(geo["decorCubes"]);
+		loadChunks(geo["chunks"]);
+		loadStaticProps(geo["staticProps"]);
+		loadDynamicProps(geo["dynamicProps"]);
 
 		il2cpp_utils::SetFieldValue(geoset, "chunkSize", &chunkSize);
 		il2cpp_utils::SetFieldValue(geoset, "scale", &scale);
@@ -27,6 +38,79 @@ namespace GeoSet {
 
 
 // PRIVATE FUNCTIONS
+
+	void GeoSet::loadStaticProps(json j) {
+		for (auto& prop : j)
+		{
+			json p = prop["point"]["position"];
+			json r = prop["point"]["rotation"];
+			json s = prop["scale"];
+			
+			WorldPoint point = {
+				{p["x"], p["y"], p["z"]},
+				{r["x"], r["y"], r["z"], r["w"]}
+			};
+			Vector3 scale = {
+				s["x"],
+				s["y"],
+				s["z"]
+			};
+			Il2CppObject* prefab = AssetBundle::LoadAsset(levelPath + std::string("/assets"), prop["prefabName"]);
+			WorldObject staticProp(point, prefab, scale);
+			staticProps.push_back(staticProp);
+		}
+
+		List<Il2CppObject*> staticPropList(il2cpp_utils::GetFieldValue(geoset, "staticProps"));
+		for (auto& prop : staticProps)
+		{
+			staticPropList.Add(prop.GetObj());
+		}
+	}
+
+	void GeoSet::loadDynamicProps(json j) {
+		for (auto& prop : j)
+		{
+			json p = prop["point"]["position"];
+			json r = prop["point"]["rotation"];
+			json s = prop["scale"];
+
+			WorldPoint point = {
+				{p["x"], p["y"], p["z"]},
+				{r["x"], r["y"], r["z"], r["w"]}
+			};
+			Vector3 scale = {
+				s["x"],
+				s["y"],
+				s["z"]
+			};
+			Il2CppObject* prefab = AssetBundle::LoadAsset(levelPath + std::string("/assets"), prop["prefabName"]);
+			WorldObject dynamicProp(point, prefab, scale);
+			dynamicProps.push_back(dynamicProp);
+		}
+
+		List<Il2CppObject*> staticPropList(il2cpp_utils::GetFieldValue(geoset, "dynamicProps"));
+		for (auto& prop : dynamicProps)
+		{
+			staticPropList.Add(prop.GetObj());
+		}
+	}
+
+	void GeoSet::loadChunks(json j)
+	{
+		// Parse array containing all objects
+		for (auto& elem : j)
+		{
+			Vector3i id = { 
+				elem["id"]["x"],
+				elem["id"]["y"],
+				elem["id"]["z"]
+			};
+
+			std::string objPath = levelPath + std::string("/") + std::string(elem["name"]);
+			ObjFile obj = loadObjectFile(objPath);
+			createChunkMeshData(id, obj.vertices, obj.tris);
+		}
+	}
 
 	void GeoSet::createChunkMeshData(
 		Vector3i id,
@@ -74,13 +158,8 @@ namespace GeoSet {
 
 	void GeoSet::loadDecoratorCubes(json j)
 	{
-		if (j["version"] != 0.1)
-		{
-			LOG("GeoSet: loadDecoratorCubes() tried to load a file version V%.2f that is not supported", j["version"]);
-			return;
-		}
 		// Parse array containing all objects
-		for (auto& elem : j["decorCubes"])
+		for (auto& elem : j)
 		{
 			auto pos = elem["restPoint"];
 			decoratorCubes.push_back({
@@ -97,44 +176,18 @@ namespace GeoSet {
 		}
 	}
 
-	std::vector<fs::path> GeoSet::getObjectFiles(std::string path) {
+	ObjFile GeoSet::loadObjectFile(std::string_view filename) {
+		ObjFile obj;
 
-		std::vector<fs::path> paths;
-		for (const auto& entry : fs::directory_iterator(path))
-		{
-
-			if (entry.path().extension() == ".obj")
-			{
-				LOG("Found an object file, path: %s\n", entry.path().c_str());
-				paths.push_back(entry.path());
-			}
-		}
-		return paths;
-	}
-
-	void GeoSet::loadVerts(std::string_view filename) {
-		std::vector<fs::path> paths = getObjectFiles(testPath);
-		if (paths.size() == 0)
-		{
-			LOG("Couldn't find any object files in %s\n", testPath.c_str());
-			return;
-		}
-
-		std::fstream file(paths[0], std::ios::in | std::ios::app);
+		std::fstream file(filename, std::ios::in | std::ios::app);
 		if (!file.is_open())
 		{
-			LOG("Couldn't open object file %s\n", paths[0].c_str());
-			return;
-		}
-		for (auto& f : paths)
-		{
-			LOG("Loading %s\n", f.c_str());
+			LOG("Couldn't open object file %s\n", filename.data());
+			return obj;
 		}
 
-		std::vector<int> indices;
-		std::vector<Vector3> vertices;
 		std::vector<std::string> lines;
-		std::vector<int> tris;
+
 		std::string line;
 		while (std::getline(file, line))
 		{
@@ -163,18 +216,17 @@ namespace GeoSet {
 			{
 				Vector3 v;
 				ss >> v.x >> v.y >> v.z;
-				vertices.push_back(v);
+				obj.vertices.push_back(v);
 			}
 			else if (start == "f")
 			{
 				int t1, t2, t3;
 				ss >> t1 >> t2 >> t3;
-				tris.push_back(t1 - 1);
-				tris.push_back(t2 - 1);
-				tris.push_back(t3 - 1);
+				obj.tris.push_back(t1 - 1);
+				obj.tris.push_back(t2 - 1);
+				obj.tris.push_back(t3 - 1);
 			}
 		}
-		Vector3i id{ 0, 0, 0 };
-		createChunkMeshData(id, vertices, tris);
+		return obj;
 	}
 };

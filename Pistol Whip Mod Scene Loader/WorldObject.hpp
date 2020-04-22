@@ -30,7 +30,10 @@ public:
 		//}
 		return nullptr;
 	}
-
+	Il2CppObject* GetObj() {
+		return worldObject;
+	}
+	
 private:
 	static std::string GetObjectName(Il2CppObject* obj) {
 		auto klass = il2cpp_utils::GetClassFromName("UnityEngine", "Object");
