@@ -494,6 +494,13 @@ void il2cpp_functions::Init(HMODULE module)
         *(void**)(&custom_attrs_free) = GetProcAddress(module, "il2cpp_custom_attrs_free");
         LOG("Loaded: il2cpp_custom_attrs_free");
 
+
+        // MANUALLY DEFINED CONST DEFINITIONS
+        *(void**)(&class_get_type_const) = GetProcAddress(module, "il2cpp_class_get_type");
+        LOG("Loaded: il2cpp_class_get_type CONST VERSION!");
+        *(void**)(&class_get_name_const) = GetProcAddress(module, "il2cpp_class_get_name");
+        LOG("Loaded: il2cpp_class_get_name CONST VERSION!");
+
 	}
 }
 

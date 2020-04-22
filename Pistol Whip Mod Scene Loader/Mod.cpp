@@ -17,6 +17,7 @@
 #include "SceneManager.hpp"
 #include "LevelSelectTrigger.hpp"
 #include "LevelManager.hpp"
+#include "SimpleMusicPlayer.hpp"
 
 extern "C" { // name mangle 
 #include <funchook.h>
@@ -42,6 +43,7 @@ SAMPLEMOD_API int load(HANDLE logHandle, HMODULE gameAssembly) {
 	SceneManager::initHooks(funchook);
 	LevelSelectTrigger::initHooks(funchook);
 	LevelManager::initHooks(funchook);
+	SimpleMusicPlayer::initHooks(funchook);
 
 
 	int rv = funchook_install(funchook, 0);

@@ -31,6 +31,15 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{ddbf7c72-d6b0-44e3-92fd-c6b584a23abe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hooks\music">
+      <UniqueIdentifier>{3e752140-5e26-4f06-a819-1bc6ab686a67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hooks\music">
+      <UniqueIdentifier>{7c24ddb0-cad6-400d-ba91-18bfa1ee1dff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils\UnityHelper">
+      <UniqueIdentifier>{e2c44021-a663-43ce-bc4b-200e631ebff4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -74,6 +83,24 @@
     </ClCompile>
     <ClCompile Include="logger.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\WavLoader.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMusicPlayer.cpp">
+      <Filter>Source Files\hooks\music</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackData.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="BeatData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldObject.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoSet.cpp">
+      <Filter>Source Files\game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +166,24 @@
     </ClInclude>
     <ClInclude Include="AudioClip.hpp">
       <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\WavLoader.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMusicPlayer.hpp">
+      <Filter>Header Files\hooks\music</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackData.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="BeatData.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorShiftPoint.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetBundle.hpp">
+      <Filter>Header Files\utils\UnityHelper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

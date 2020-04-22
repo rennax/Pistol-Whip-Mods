@@ -3,6 +3,7 @@
 
 #include "utils.h"
 #include "logger.h"
+#include "Libraries/WavLoader.hpp"
 
 
 #include <filesystem>
@@ -18,26 +19,6 @@ enum class AUDIOFILE {
 	MP3,
 	DEFAULT = 0
 };
-
-struct Wav {
-    /* RIFF Chunk Descriptor */
-    uint8_t         RIFF[4];        // RIFF Header Magic header
-    uint32_t        ChunkSize;      // RIFF Chunk Size
-    uint8_t         WAVE[4];        // WAVE Header
-    /* "fmt" sub-chunk */
-    uint8_t         fmt[4];         // FMT header
-    uint32_t        Subchunk1Size;  // Size of the fmt chunk
-    uint16_t        AudioFormat;    // Audio format 1=PCM,6=mulaw,7=alaw,     257=IBM Mu-Law, 258=IBM A-Law, 259=ADPCM
-    uint16_t        NumOfChan;      // Number of channels 1=Mono 2=Sterio
-    uint32_t        SamplesPerSec;  // Sampling Frequency in Hz
-    uint32_t        bytesPerSec;    // bytes per second
-    uint16_t        blockAlign;     // 2=16-bit mono, 4=16-bit stereo
-    uint16_t        bitsPerSample;  // Number of bits per sample
-    /* "data" sub-chunk */
-    uint8_t         Subchunk2ID[4]; // "data"  string
-    uint32_t        Subchunk2Size;  // Sampled data length
-};
-
 
 class AudioClip
 {
@@ -55,23 +36,31 @@ private:
 
     Il2CppArray* floatData = nullptr;
     Il2CppObject* audioClip = nullptr;
-    Wav wav;
-    std::vector<uint8_t> data;
+    WavLoader wav;
 };
 
 
 inline AudioClip::AudioClip(std::string_view file_, AUDIOFILE fileType) :
-    file(file_), type(fileType)
+    file(file_), type(fileType), wav(testPath + file)
 {
     auto klass = il2cpp_utils::GetClassFromName("UnityEngine", "AudioClip");
     audioClip = il2cpp_functions::object_new(klass);
-    il2cpp_utils::RunMethod(audioClip, ".ctor");
+    if (!il2cpp_utils::RunMethod(audioClip, ".ctor"))
+        LOG("WARNING: AudioClip: Failed to call .ctor()\n");
+    
     
     if (type == AUDIOFILE::WAV)
     {
         LoadWav();
         int offsetSamples = 0;
-        il2cpp_utils::RunMethod(audioClip, "SetData", floatData, &offsetSamples);
+        int sampleLen = wav.NumberOfSamples();
+        int sampleRate = wav.SampleRate();
+        int channels = wav.NumberOfChannels();
+        bool isStream = false;
+        il2cpp_utils::RunMethod(&audioClip, klass, "Create", il2cpp_utils::createcsstr(file_), &sampleLen, &channels, &sampleRate, &isStream);
+        bool res = false;
+        auto method = il2cpp_utils::GetMethod(klass, "SetData", 2);
+        il2cpp_utils::RunMethod(audioClip, method, floatData, &offsetSamples);
     }
 
 }
@@ -83,68 +72,16 @@ AudioClip::~AudioClip()
 // TODO Optimize this shite
 inline void AudioClip::LoadWav()
 {
-    int headerSize = sizeof(Wav), filelength = 0;
+    auto data = wav.GetData();
+    floatData = il2cpp_utils::CreateIl2CppArray("System", "Single", data.size() * sizeof(float));
 
-    std::string fname = testPath + file;
-    std::FILE* f = std::fopen(fname.c_str(), "r");
-    if (!f.is_open())
+    for (size_t i = 0; i < data.size(); i++)
     {
-        LOG("Warning: AudioClip: Failed to open sound file: %s", file.c_str());
-        return;
+        il2cpp_array_set(floatData, float, i, data[i]);
     }
 
-    for (size_t i = 0; i < 4; i++)
-    {
-        f >> wav.RIFF[i];
-    }
-
-    f >> wav.ChunkSize;
-
-    for (size_t i = 0; i < 4; i++)
-    {
-        f >> wav.WAVE[i];
-    }
-
-    for (size_t i = 0; i < 4; i++)
-    {
-        f >> wav.fmt[i];
-    }
-
-    f >> wav.Subchunk1Size;  // Size of the fmt chunk
-    f >> wav.AudioFormat;    // Audio format 1=PCM,6=mulaw,7=alaw,     257=IBM Mu-Law, 258=IBM A-Law, 259=ADPCM
-    f >> wav.NumOfChan;      // Number of channels 1=Mono 2=Sterio
-    f >> wav.SamplesPerSec;  // Sampling Frequency in Hz
-    f >> wav.bytesPerSec;    // bytes per second
-    f >> wav.blockAlign;     // 2=16-bit mono, 4=16-bit stereo
-    f >> wav.bitsPerSample;  // Number of bits per sample
-
-    for (size_t i = 0; i < 4; i++)
-    {
-        f >> wav.Subchunk2ID[i];
-    }
-
-    f >> wav.Subchunk2Size;  // Sampled data length
-
-    for (size_t i = 0; i < wav.Subchunk2Size; i++)
-    {
-        uint8_t tmp;
-        f >> tmp;
-        data.push_back(tmp);
-    }
-
-    
-    floatData = il2cpp_utils::CreateIl2CppArray("System", "Single", data.size());
-    std::vector<float> floats;
-    floats.reserve(data.size()/sizeof(floats));
-
-    std::memcpy(floats.data(), data.data(), data.size());
-
-    for (size_t i = 0; i < floats.size(); i++)
-    {
-        il2cpp_array_set(floatData, float, i, floats[i]);
-    }
-
-    LOG("AudioClip contains %u floats\n", floats.size());
+    LOG("AudioClip contains %u floats\n", data.size());
+    LOG("Allocated array size %u\n", il2cpp_functions::array_length(floatData));
 }
 
 #endif // !AUDIOCLIP_HPP

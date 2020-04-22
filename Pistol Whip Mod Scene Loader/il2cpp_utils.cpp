@@ -22,13 +22,13 @@ namespace il2cpp_utils {
 
 	const PropertyInfo* GetProperty(Il2CppClass* klass, std::string_view propertyName) {
 		if (!klass) {
-			LOG("ERROR: GetProperty: parameter klass is nullptr");
+			LOG("ERROR: GetProperty: parameter klass is nullptr\n");
 			return nullptr;
 		}
 		const PropertyInfo* prop = il2cpp_functions::class_get_property_from_name(klass, propertyName.data());
 		if (!prop)
 		{
-			LOG("WARNING: GetProperty: class %s does not contain property %s", 
+			LOG("WARNING: GetProperty: class %s does not contain property %s\n", 
 				il2cpp_functions::class_get_name(klass),
 				propertyName.data());
 			return nullptr;
@@ -38,7 +38,7 @@ namespace il2cpp_utils {
 
 	const MethodInfo* GetPropertyGetMethod(Il2CppClass* klass, std::string_view propertyName) {
 		if (!klass) {
-			LOG("ERROR: GetPropertyGetMethod: parameter klass is nullptr");
+			LOG("ERROR: GetPropertyGetMethod: parameter klass is nullptr\n");
 			return nullptr;
 		}
 		const PropertyInfo* prop = GetProperty(klass, propertyName);
@@ -49,7 +49,7 @@ namespace il2cpp_utils {
 		const MethodInfo* method = il2cpp_functions::property_get_get_method(prop);
 		if (!method)
 		{
-			LOG("WARNING: GetPropertyGetMethod: class %s does not contain property %s with get field",
+			LOG("WARNING: GetPropertyGetMethod: class %s does not contain property %s with get field\n",
 				il2cpp_functions::class_get_name(klass),
 				propertyName.data());
 			return nullptr;
@@ -59,7 +59,7 @@ namespace il2cpp_utils {
 
 	const MethodInfo* GetPropertySetMethod(Il2CppClass* klass, std::string_view propertyName) {
 		if (!klass) {
-			LOG("ERROR: GetPropertySetMethod: parameter klass is nullptr");
+			LOG("ERROR: GetPropertySetMethod: parameter klass is nullptr\n");
 			return nullptr;
 		}
 		const PropertyInfo* prop = GetProperty(klass, propertyName);
@@ -70,7 +70,7 @@ namespace il2cpp_utils {
 		const MethodInfo* method = il2cpp_functions::property_get_set_method(prop);
 		if (!method)
 		{
-			LOG("WARNING: GetPropertySetMethod: class %s does not contain property %s with set field",
+			LOG("WARNING: GetPropertySetMethod: class %s does not contain property %s with set field\n",
 				il2cpp_functions::class_get_name(klass),
 				propertyName.data());
 			return nullptr;
@@ -265,5 +265,10 @@ namespace il2cpp_utils {
 	}
 
 	
+	Il2CppString* createcsstr(std::string_view inp)
+	{
+		return il2cpp_functions::string_new_len(inp.data(), (uint32_t)inp.length());
+	}
+
 }
 

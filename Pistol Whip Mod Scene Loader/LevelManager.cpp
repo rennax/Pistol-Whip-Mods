@@ -5,6 +5,8 @@
 #include "GeoSet.hpp"
 #include "Mesh.hpp"
 #include "AudioClip.hpp"
+#include "TrackData.hpp"
+#include "AssetBundle.hpp"
 
 namespace LevelManager {
 
@@ -183,8 +185,23 @@ namespace LevelManager {
 
 	GeoSet::GeoSet* test;
 	Il2CppObject* newGeoset;
+	AudioClip* clip;
 	MAKE_HOOK(LoadLevel, void, void* self, Il2CppObject* level)
 	{
+		LOG("\n\n");
+		//LOG("Trying to get assetbundle stuff\n");
+		//auto AssetBundle = il2cpp_functions::resolve_icall("UnityEngine.AssetBundle::LoadFromFile_Internal(System.String, System.UInt32, System.UInt64)");
+		//if (AssetBundle != nullptr)
+		//	LOG("Got assetbundle stuff at %u\n", AssetBundle);
+		//else
+		//	LOG("Failed to get assetbundle stuff\n");
+		AssetBundle::Init();
+		auto s = AssetBundle::LoadAsset("G:\\SteamLibrary\\steamapps\\common\\Pistol Whip\\Pistol Whip_Data\\AssetBundles\\static_objects", "test");
+		if (s != nullptr)
+			LOG("Sucessfully loaded prefrab from AssetBundle\n");
+		
+		LOG("\n\n");
+
 		LOG("Called LevelManager.LoadLevel() hook!\n");
 		if (level == nullptr)
 		{ 
@@ -315,17 +332,27 @@ namespace LevelManager {
 		WorldObject::GetWorldObjectByName(levelData, "test");
 
 		test = new GeoSet::GeoSet();
-		test->loadVerts(test->getTestFile());
-		test->loadDecoratorCubes();
+		//test->loadVerts(test->getTestFile());
+		//test->loadDecoratorCubes();
 		newGeoset = test->generateGeoSet();
 
-		AudioClip clip("song.wav", AUDIOFILE::WAV);
-
+		clip = new AudioClip("song.wav", AUDIOFILE::WAV);
 
 		Il2CppObject* track = il2cpp_utils::GetFieldValue(geoset, "track");
+		TrackData tmpTrack(track);
+		json j = tmpTrack.DumpToJson();
+		std::ofstream o("trackData.json");
+		o << std::setw(4) << j << std::endl;
+
+
 		Il2CppObject* koero = il2cpp_utils::GetFieldValue(track, "koreography");
 		auto audio = il2cpp_utils::GetFieldValue(koero, "mSourceClip");
-		il2cpp_utils::RunMethod(koero, "set_SourceClip", clip.GetAudioClip());
+		il2cpp_utils::RunMethod(koero, "set_SourceClip", clip->GetAudioClip());
+
+		il2cpp_utils::SetFieldValue(track, "koreography", koero);
+		//Il2CppString* clipPath;
+		//il2cpp_utils::RunMethod(clipPath, koero, "get_SourceClipPath");
+		//il2cpp_utils::RunMethod(koero, "set_SourceClipPath", clip->GetAudioClip());
 
 		////For now just copy values we aren't creating
 		il2cpp_utils::SetFieldValue(newGeoset, "track", track);
