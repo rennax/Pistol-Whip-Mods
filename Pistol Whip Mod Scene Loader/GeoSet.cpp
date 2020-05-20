@@ -1,5 +1,6 @@
 #include "GeoSet.hpp"
 #include "AssetBundle.hpp"
+#include "GameObject.hpp"
 
 namespace GeoSet {
 // PUBLIC FUNCTIONS
@@ -23,12 +24,13 @@ namespace GeoSet {
 		i >> level;
 		json geo = level["geoset"];
 		
-
+		std::string assetPath = levelPath + std::string("/static_objects");
+		assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
 
 		loadDecoratorCubes(geo["decorCubes"]);
 		loadChunks(geo["chunks"]);
 		loadStaticProps(geo["staticProps"]);
-		loadDynamicProps(geo["dynamicProps"]);
+		//loadDynamicProps(geo["dynamicProps"]);
 
 		il2cpp_utils::SetFieldValue(geoset, "chunkSize", &chunkSize);
 		il2cpp_utils::SetFieldValue(geoset, "scale", &scale);
@@ -40,6 +42,10 @@ namespace GeoSet {
 // PRIVATE FUNCTIONS
 
 	void GeoSet::loadStaticProps(json j) {
+
+		auto klass = il2cpp_utils::GetClassFromName("UnityEngine", "GameObject");
+		auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
+
 		for (auto& prop : j)
 		{
 			json p = prop["point"]["position"];
@@ -55,8 +61,37 @@ namespace GeoSet {
 				s["y"],
 				s["z"]
 			};
-			Il2CppObject* prefab = AssetBundle::LoadAsset(levelPath + std::string("/assets"), prop["prefabName"]);
+
+
+			Il2CppObject* prefab = AssetBundle::LoadAsset(assetDB, prop["prefabName"], type);
+			if (prefab == nullptr)
+			{
+				std::string pfName = prop["prefabName"];
+				LOG("ERROR: GeoSet::loadStaticProps: Prefab %s doesn't exist\n", pfName.c_str());
+			}
+
+			//WorldObject::DumpComponents(prefab);
+
+			
+			
+			//Il2CppObject* LODSwitcher = nullptr;			
+			//il2cpp_utils::RunMethod(LODSwitcher, prefab, "GetComponent", GetComponentType(prefab, "", "LODSwitcher"));
+
+			//Il2CppObject* meshFilter = nullptr;
+			//il2cpp_utils::RunMethod(meshFilter, prefab, "GetComponent", GetComponentType(prefab, "UnityEngine", "MeshFilter"));
+
+			//
+
+
+			////int aLevel = prop["prefab"]["aLevel"];
+			//int aLevel = 15;
+			//auto aMesh = il2cpp_utils::GetFieldValue(meshFilter, "mesh");
+			//il2cpp_utils::RunMethod(LODSwitcher, "SetMesh", aMesh, &aLevel);
+
+
+
 			WorldObject staticProp(point, prefab, scale);
+
 			staticProps.push_back(staticProp);
 		}
 
@@ -83,7 +118,7 @@ namespace GeoSet {
 				s["y"],
 				s["z"]
 			};
-			Il2CppObject* prefab = AssetBundle::LoadAsset(levelPath + std::string("/assets"), prop["prefabName"]);
+			Il2CppObject* prefab = AssetBundle::LoadAsset(levelPath + std::string("/static_objects"), prop["prefabName"]);
 			WorldObject dynamicProp(point, prefab, scale);
 			dynamicProps.push_back(dynamicProp);
 		}

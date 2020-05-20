@@ -1,12 +1,9 @@
 TODO List - highest priority on top:
-- Decorator cubes (Done)
-    - Load cubes from json file
-    - Insert cubes into decoratorCubes list inside geoset.
-    - Verify result ingame
 - Static props
     - Create descriptor file (json?) for different .obj files
     - Load objects.
     - Insert props into staticProps list inside geoset.
+    - Figure out LODSwitcher
 - Dynamic props
     - Research why those objects are "dynamic", as are they the enemies, obstacles etc.?
     - Create descriptor file (json?) for different .obj files
@@ -15,6 +12,21 @@ TODO List - highest priority on top:
 - Track data
 
 
+Called LevelManager.LoadLevel() hook!
+Sizes of lists within the geoset object:
+        Scale = 0.500000        chunkData = 611
+        chunkSlices = 33
+        staticProps = 338
+        dynamicProps = 0
+        decoratorCubes = 1898
+
+        Component name: Transform
+        Component name: Transform
+        Component name: Transform
+        Component name: MeshFilter
+        Component name: MeshRenderer
+        Component name: LODSwitcher
+        Component name: Transform
 
 
 

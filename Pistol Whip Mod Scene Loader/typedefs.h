@@ -40,7 +40,7 @@ struct Array : public Il2CppObject
     ArrayBounds* bounds;
     /* total number of elements of the array */
     int32_t max_length;
-    T values[0];
+    T values[1];
 
     int32_t Length() {
         if (bounds) {
@@ -115,6 +115,14 @@ extern "C" {
         float y;
         float z;
     } Vector3;
+
+    // UnityEngine.Vector3i
+    typedef struct Vector3i {
+        int32_t x;
+        int32_t y;
+        int32_t z;
+    } Vector3i;
+
 
     // UnityEngine.Quaternion
     typedef struct Quaternion {

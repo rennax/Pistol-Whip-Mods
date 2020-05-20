@@ -5,23 +5,21 @@
 #include <string_view>
 #include "json.hpp"
 
+using json = nlohmann::json;
+
 typedef struct ColorData {
 	Color mainColor;
 	Color fogColor;
 	Color glowColor;
 } ColorData;
 
-
 class ColorShiftPoint {
 public:
-	ColorShiftPoint() {
-		auto klass = il2cpp_utils::GetClassFromName("", "ColorShiftPoint");
-		object = il2cpp_functions::object_new(klass);
-		il2cpp_utils::RunMethod(object, ".ctor");
-	}
-	ColorShiftPoint(Il2CppObject* obj) : object(object) {}
-	void Load(std::string_view) {};
-	void Load(nlohmann::json json) {}
+	ColorShiftPoint();
+	ColorShiftPoint(Il2CppObject* obj);
+	ColorShiftPoint(int start, int end, ColorData colors);
+	Il2CppObject* Load(json j);
+	json Dump();
 private:
 	Il2CppObject* object;
 };

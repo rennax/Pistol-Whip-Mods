@@ -149,26 +149,26 @@ namespace il2cpp_utils
         };
     }
 
-    template<typename... TArgs>
-    // Returns if a given MethodInfo's parameters match the Il2CppTypes provided as args
-    bool ParameterMatch(const MethodInfo* method, TArgs&& ...args) {
-
-        constexpr auto count = sizeof...(TArgs);
-        Il2CppType* argarr[] = { reinterpret_cast<Il2CppType*>(args)... };
-        if (method->parameters_count != count) {
-            return false;
-        }
-        for (int i = 0; i < method->parameters_count; i++) {
-            if (!il2cpp_functions::type_equals(method->parameters[i].parameter_type, argarr[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     // Returns if a given MethodInfo's parameters match the Il2CppType array provided as type_arr
     bool ParameterMatch(const MethodInfo* method, Il2CppType** type_arr, int count);
 
+
+    // Returns if a given MethodInfo's parameters match the Il2CppType array provided as type_arr
+    bool ParameterMatch(const MethodInfo* method, const Il2CppType* const* type_arr, decltype(MethodInfo::parameters_count) count);
+
+    template<typename... TArgs>
+    // Returns if a given MethodInfo's parameters match the Il2CppTypes provided as args
+    bool ParameterMatch(const MethodInfo* method, TArgs* ...args) {
+        constexpr auto count = sizeof...(TArgs);
+        Il2CppType* argarr[] = { reinterpret_cast<Il2CppType*>(args)... };
+        return ParameterMatch(method, argarr, count);
+    }
+
+    // Returns if a given MethodInfo's parameters match the Il2CppTypes provided as a vector
+    inline bool ParameterMatch(const MethodInfo* method, std::vector<const Il2CppType*> seq) {
+        return ParameterMatch(method, seq.data(), seq.size());
+    }
 
     //Array Sc2ad
     template<class T>
@@ -205,6 +205,34 @@ namespace il2cpp_utils
 
     Il2CppArray* CreateIl2CppArray(const char* name_space, const char* type_name, size_t array_size);
 
+
+    std::vector<const Il2CppType*> ClassVecToTypes(std::vector<const Il2CppClass*> seq);
+
+    // Returns the MethodInfo for the method on the given class with the given name and types of arguments
+// Created by zoller27osu
+    const MethodInfo* FindMethod(Il2CppClass* klass, std::string_view methodName, std::vector<const Il2CppType*> argTypes);
+    const MethodInfo* FindMethod(Il2CppClass* klass, std::string_view methodName, std::vector<const Il2CppClass*> argClasses);
+    const MethodInfo* FindMethod(Il2CppClass* klass, std::string_view methodName, std::vector<std::string_view> argSpaceClass);
+
+    // Returns the MethodInfo for the method on the given instance
+    template<class... TArgs>
+    const MethodInfo* FindMethod(Il2CppObject* instance, TArgs&&... params) {
+        auto klass = il2cpp_functions::object_get_class(instance);
+        if (klass == nullptr)
+        {
+            return nullptr;
+        }
+        return FindMethod(klass, params...);
+    }
+
+    const MethodInfo* FindMethodFromArgsName(Il2CppClass* klass, std::string_view methodName, std::vector<std::string_view> argNames);
+
+    // Returns the MethodInfo for the method on the given class with the given name and number of arguments
+ // Created by zoller27osu
+    const MethodInfo* FindMethodUnsafe(Il2CppClass* klass, std::string_view methodName, int argsCount);
+
+    const MethodInfo* FindMethodUnsafe(Il2CppObject* instance, std::string_view methodName, int argsCount);
+    const MethodInfo* FindMethodUnsafe(std::string_view nameSpace, std::string_view className, std::string_view methodName, int argsCount);
 
     //template<typename TObj = Il2CppObject, typename... TArgs>
     //// Creates a new object of the given class using the given constructor parameters and casts it to TObj*

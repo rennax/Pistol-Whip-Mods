@@ -1,4 +1,6 @@
 #include "AssetBundle.hpp"
+#include <map>
+#include <string>
 
 namespace AssetBundle {
 
@@ -13,6 +15,8 @@ namespace AssetBundle {
 	static Il2CppObject* (*Contains_Internal)(void* self, Il2CppString* name);
 	typedef Il2CppObject* (*Contains_Internal_t)(void* self, Il2CppString* name);
 
+
+
 	void Init()
 	{
 		if (!initialized)
@@ -24,13 +28,34 @@ namespace AssetBundle {
 		}
 	}
 
-	Il2CppObject* LoadFromFile(Il2CppString* path) {
-		return LoadFromFile_Internal(path, 0, 0);
+
+	//std::map<path, assetBundle>
+	std::map<std::string, Il2CppObject*> loadedBundles;
+
+	//If bundle is not already loaded, try fetching it
+	Il2CppObject* LoadFromFile(std::string_view path) {
+		auto search = loadedBundles.find(path.data());
+		if (search != loadedBundles.end())
+		{
+			return search->second;
+		}
+
+		Il2CppObject* bundle = LoadFromFile_Internal(il2cpp_utils::createcsstr(path), 0, 0);
+		if (bundle != nullptr)
+		{
+			loadedBundles.insert({ path.data(), bundle });
+		}
+		return bundle;
+	}
+
+	void UnloadBundle(std::string_view bundlePath) {
+		//TODO Implement me. Resource handling
+		LOG("WARNING: AssetBundle::LoadAsset: Failed to unload AssetBundle from path %s\n", bundlePath.data());
 	}
 
 
 	Il2CppObject* LoadAsset(std::string_view bundlePath, std::string_view assetName) {
-		Il2CppObject* bundle = LoadFromFile(il2cpp_utils::createcsstr(bundlePath));
+		Il2CppObject* bundle = LoadFromFile(bundlePath);
 		if (bundle == nullptr)
 		{
 			LOG("WARNING: AssetBundle::LoadAsset: Failed to load AssetBundle from path %s\n", bundlePath.data());
@@ -48,6 +73,10 @@ namespace AssetBundle {
 		auto klass = il2cpp_utils::GetClassFromName("UnityEngine", "Object");
 		auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
 
+		return LoadAsset(bundle, assetName, type);
+	}
+
+	Il2CppObject* LoadAsset(Il2CppObject* bundle, std::string_view assetName, Il2CppObject* type) {
 		return LoadAsset_Internal(bundle, il2cpp_utils::createcsstr(assetName), type);
 	}
 

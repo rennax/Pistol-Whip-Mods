@@ -70,6 +70,8 @@ private:
 
 	std::string levelPath = "Custom Levels/x02";
 	std::string decorCubeFileName = "decors.json";
+	Il2CppObject* assetDB;
+	std::vector<Il2CppObject*> prefabs;
 	// Geoset Fields
 	Vector3i chunkSize = {32, 32, 32};		//public Vector3i chunkSize; // 0x20
 	float scale = 0.5f;						//public float scale; // 0x2C

@@ -150,19 +150,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BeatData.cpp" />
+    <ClCompile Include="ColorShiftPoint.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GeoSet.cpp" />
     <ClCompile Include="il2cpp_functions.cpp" />
     <ClCompile Include="il2cpp_utils.cpp" />
+    <ClCompile Include="LevelData.cpp" />
     <ClCompile Include="LevelDatabase.cpp" />
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="LevelSelectTrigger.cpp" />
     <ClCompile Include="Libraries\WavLoader.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MultiMusicPlayer.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Mod.cpp" />
+    <ClCompile Include="PlaySound.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SimpleMusicPlayer.cpp" />
     <ClCompile Include="SongSelectionUIController.cpp" />
@@ -170,6 +174,7 @@
     <ClCompile Include="AssetBundle.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="WorldObject.cpp" />
+    <ClCompile Include="WorldRegion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetBundle.hpp" />
@@ -178,19 +183,24 @@
     <ClInclude Include="ColorShiftPoint.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameManager.hpp" />
+    <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="GeoSet.hpp" />
     <ClInclude Include="il2cpp_functions.hpp" />
     <ClInclude Include="il2cpp_utils.hpp" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="LevelData.hpp" />
     <ClInclude Include="LevelDatabase.hpp" />
     <ClInclude Include="LevelManager.hpp" />
     <ClInclude Include="LevelSelectTrigger.hpp" />
     <ClInclude Include="Libraries\WavLoader.hpp" />
     <ClInclude Include="List.hpp" />
+    <ClInclude Include="LODSwitcher.hpp" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="MultiMusicPlayer.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Mod.h" />
+    <ClInclude Include="PlaySound.hpp" />
     <ClInclude Include="SceneManager.hpp" />
     <ClInclude Include="SimpleMusicPlayer.hpp" />
     <ClInclude Include="SongSelectionUIController.hpp" />
@@ -199,6 +209,7 @@
     <ClInclude Include="utils-functions.hpp" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="WorldObject.hpp" />
+    <ClInclude Include="WorldRegion.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\TODO.txt" />

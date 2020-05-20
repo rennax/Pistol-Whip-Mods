@@ -13,6 +13,7 @@ static char buffer[4096];
 
 void init_logger(HANDLE handle)
 {
+	//AllocConsole();
 	log_handle = handle;
 }
 

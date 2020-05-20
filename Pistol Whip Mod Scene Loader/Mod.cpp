@@ -18,6 +18,8 @@
 #include "LevelSelectTrigger.hpp"
 #include "LevelManager.hpp"
 #include "SimpleMusicPlayer.hpp"
+#include "MultiMusicPlayer.hpp"
+#include "PlaySound.hpp"
 
 extern "C" { // name mangle 
 #include <funchook.h>
@@ -44,7 +46,8 @@ SAMPLEMOD_API int load(HANDLE logHandle, HMODULE gameAssembly) {
 	LevelSelectTrigger::initHooks(funchook);
 	LevelManager::initHooks(funchook);
 	SimpleMusicPlayer::initHooks(funchook);
-
+	MultiMusicPlayer::initHooks(funchook);
+	ValvePlaySound::initHooks(funchook);
 
 	int rv = funchook_install(funchook, 0);
 	if (rv != 0) {

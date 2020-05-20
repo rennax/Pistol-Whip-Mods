@@ -108,6 +108,21 @@
     <ClCompile Include="AssetBundle.cpp">
       <Filter>Source Files\utils\unityhelper</Filter>
     </ClCompile>
+    <ClCompile Include="MultiMusicPlayer.cpp">
+      <Filter>Source Files\hooks\music</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaySound.cpp">
+      <Filter>Source Files\hooks\music</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelData.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorShiftPoint.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldRegion.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -190,6 +205,24 @@
     </ClInclude>
     <ClInclude Include="AssetBundle.hpp">
       <Filter>Header Files\utils\unityhelper</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.hpp">
+      <Filter>Header Files\utils\unityhelper</Filter>
+    </ClInclude>
+    <ClInclude Include="LODSwitcher.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiMusicPlayer.hpp">
+      <Filter>Header Files\hooks\music</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaySound.hpp">
+      <Filter>Header Files\hooks\music</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelData.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldRegion.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

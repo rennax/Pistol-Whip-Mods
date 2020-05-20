@@ -7,6 +7,9 @@
 #include "AudioClip.hpp"
 #include "TrackData.hpp"
 #include "AssetBundle.hpp"
+#include "LevelData.hpp"
+
+#include <vector>
 
 namespace LevelManager {
 
@@ -186,6 +189,7 @@ namespace LevelManager {
 	GeoSet::GeoSet* test;
 	Il2CppObject* newGeoset;
 	AudioClip* clip;
+	LevelData* lvlData;
 	MAKE_HOOK(LoadLevel, void, void* self, Il2CppObject* level)
 	{
 		LOG("\n\n");
@@ -196,11 +200,11 @@ namespace LevelManager {
 		//else
 		//	LOG("Failed to get assetbundle stuff\n");
 		AssetBundle::Init();
-		auto s = AssetBundle::LoadAsset("G:\\SteamLibrary\\steamapps\\common\\Pistol Whip\\Pistol Whip_Data\\AssetBundles\\static_objects", "test");
-		if (s != nullptr)
-			LOG("Sucessfully loaded prefrab from AssetBundle\n");
-		
-		LOG("\n\n");
+		//auto s = AssetBundle::LoadAsset("G:\\SteamLibrary\\steamapps\\common\\Pistol Whip\\Pistol Whip_Data\\AssetBundles\\static_objects", "test");
+		//if (s != nullptr)
+		//	LOG("Sucessfully loaded prefrab from AssetBundle\n");
+		//
+		//LOG("\n\n");
 
 		LOG("Called LevelManager.LoadLevel() hook!\n");
 		if (level == nullptr)
@@ -228,142 +232,62 @@ namespace LevelManager {
 		LOG("\tdynamicProps = %u\n", dynamicProps.Count());
 		LOG("\tdecoratorCubes = %u\n\n", decoratorCubes.Count());
 
-		//Il2CppClass* klass = il2cpp_utils::GetFieldValue(geoset, "chunkData")->klass;
-		//LOG("\tchunkData namespace:%s type_name: %s\n", 
-		//	il2cpp_functions::class_get_namespace(klass),
-		//	il2cpp_functions::class_get_name(klass)
-		//	);
-		//klass = il2cpp_utils::GetFieldValue(geoset, "chunkSlices")->klass;
-		//LOG("\tchunkSlices namespace:%s type_name: %s\n",
-		//	il2cpp_functions::class_get_namespace(klass),
-		//	il2cpp_functions::class_get_name(klass)
-		//	);
-		//
 
-		//ChunkMeshSlice slice = chunkSlices[0];
-
-		/*LOG("Dumping size of all vertices inside chunkData objects\n");
-		for (size_t i = 0; i < chunkData.Count(); i++)
-		{
-			ChunkMeshData chunk = chunkData[i];
-			LOG("\tGot chunk at index %u\n", i);
-			Il2CppArray* verts = chunk.verts;
-			Vector3i id = chunk.id;
-			LOG("\tChunkSlice id: {%d, %d, %d}", id.x, id.y, id.z);
-
-			if (verts == nullptr) {
-				LOG("Failed to get verts\n");
-			}
-			else {
-				uint32_t length = il2cpp_functions::array_length(verts);
-				LOG("contains %u vertices\n", length);
-			}
-
-			Il2CppArray* meshSizes = chunk.meshSizes;
-			if (meshSizes == nullptr) {
-				LOG("Failed to get meshSizes\n");
-			}
-			else {
-				uint32_t length = il2cpp_functions::array_length(meshSizes);
-				LOG("\tContains %u meshSizes\n", length);
-			}
-
-			Il2CppArray* tris = chunk.tris;
-			if (tris == nullptr)
-			{
-				LOG("Failed to get tris\n");
-			}
-			else {
-				uint32_t length = il2cpp_functions::array_length(tris);
-				LOG("\tContains %u tris\n\n", length);
-			}
-
-			if (chunk.m_liveMesh != nullptr)
-			{
-				LOG("\tContains livemesh\n\n");
-			}
-		}*/
-
-
-		/*LOG("Dumping size of all vertices inside chunkSlices objects\n");
-		for (size_t i = 0; i < chunkSlices.Count(); i++)
-		{
-			ChunkMeshSlice chunk = chunkSlices[i];
-			LOG("\tGot chunk at index %u\n", i);
-			Il2CppArray* verts = chunk.verts;
-			int z = chunk.z;
-			LOG("\tChunkSlice z: %d, ", z);
-
-			if (verts == nullptr) {
-				LOG("Failed to get verts\n");
-			}
-			else {
-				uint32_t length = il2cpp_functions::array_length(verts);
-				LOG("contains %u vertices\n", length);
-			}
-
-			Il2CppArray* meshSizes = chunk.meshSizes;
-			if (meshSizes == nullptr) {
-				LOG("Failed to get meshSizes\n");
-			}
-			else {
-				uint32_t length = il2cpp_functions::array_length(meshSizes);
-				LOG("\tContains %u meshSizes\n", length);
-			}
-
-			Il2CppArray* tris = chunk.tris;
-			if (tris == nullptr)
-			{
-				LOG("Failed to get tris\n");
-			}
-			else {
-				uint32_t length = il2cpp_functions::array_length(tris);
-				LOG("\tContains %u tris\n\n", length);
-			}
-
-			if (chunk.m_liveMesh != nullptr)
-			{
-				LOG("\tContains livemesh\n\n");
-			}
-		}*/
-
-		auto levelData = il2cpp_utils::GetFieldValue(level, "data");
-
-		WorldObject::GetWorldObjectByName(levelData, "test");
 
 		test = new GeoSet::GeoSet();
-		newGeoset = test->Load("Custom Levels/x02");
+		newGeoset = test->Load("Custom Levels\\x02");
 
-		clip = new AudioClip("song.wav", AUDIOFILE::WAV);
+		//clip = new AudioClip("song.wav", AUDIOFILE::WAV);
 
 		Il2CppObject* track = il2cpp_utils::GetFieldValue(geoset, "track");
 		TrackData tmpTrack(track);
-		json j = tmpTrack.DumpToJson();
-		std::ofstream o("trackData.json");
-		o << std::setw(4) << j << std::endl;
+		//json j = tmpTrack.DumpToJson();
+		//std::ofstream o = std::ofstream("trackData.json");
+		//o << std::setw(4) << j << std::endl;
 
 
-		Il2CppObject* koero = il2cpp_utils::GetFieldValue(track, "koreography");
-		auto audio = il2cpp_utils::GetFieldValue(koero, "mSourceClip");
-		il2cpp_utils::RunMethod(koero, "set_SourceClip", clip->GetAudioClip());
 
-		il2cpp_utils::SetFieldValue(track, "koreography", koero);
+		std::ifstream i("Custom Levels/x02/level.json");
+		json j;
+		i >> j;
+
+		
+		auto levelData = il2cpp_utils::GetFieldValue(level, "data");
+		//WorldObject::Dump(levelData, "test");
+		lvlData = new LevelData();
+		auto wo = il2cpp_utils::GetFieldValue(lvlData->Load(j["levelData"]), "worldObjects");
+		il2cpp_utils::SetFieldValue(levelData, "worldObjects", wo);
+		il2cpp_utils::SetFieldValue(levelData, "simpleStaticWorldObjects", il2cpp_utils::GetFieldValue(newGeoset, "staticProps"));
+		il2cpp_utils::SetFieldValue(levelData, "simpleDynamicWorldObjects", il2cpp_utils::GetFieldValue(newGeoset, "dynamicProps"));
+		//il2cpp_utils::SetFieldValue(level, "data", levelData);
+
+		//json lvlDataJson = lvlData.Dump();
+		//std::ofstream o("LevelData.json");
+		//o << std::setw(4) << lvlDataJson << std::endl;
+		//o.close();
+
 		//Il2CppString* clipPath;
 		//il2cpp_utils::RunMethod(clipPath, koero, "get_SourceClipPath");
 		//il2cpp_utils::RunMethod(koero, "set_SourceClipPath", clip->GetAudioClip());
 
 		////For now just copy values we aren't creating
 		il2cpp_utils::SetFieldValue(newGeoset, "track", track);
+
+		//auto gameLevel = il2cpp_utils::GetFieldValue(level, "data");
+		//auto simpleStaticWorldObjects = il2cpp_utils::GetFieldValue(geoset, "staticProps");
+
+
 		//Vector3i chunkSize;
 		//il2cpp_utils::GetFieldValue(&chunkSize, geoset, "chunkSize");
 		//il2cpp_utils::SetFieldValue(newGeoset, "chunkSize", &chunkSize);
-		il2cpp_utils::SetFieldValue(newGeoset, "staticProps", il2cpp_utils::GetFieldValue(geoset, "staticProps"));
-		il2cpp_utils::SetFieldValue(newGeoset, "dynamicProps", il2cpp_utils::GetFieldValue(geoset, "dynamicProps"));
+		//il2cpp_utils::SetFieldValue(newGeoset, "staticProps", il2cpp_utils::GetFieldValue(geoset, "staticProps"));
+		//il2cpp_utils::SetFieldValue(newGeoset, "dynamicProps", il2cpp_utils::GetFieldValue(geoset, "dynamicProps"));
 		//il2cpp_utils::SetFieldValue(newGeoset, "decoratorCubes", il2cpp_utils::GetFieldValue(geoset, "decoratorCubes"));
 
 
 		il2cpp_utils::SetFieldValue(level, "geoSet", newGeoset);
 		LoadLevel_orig(self, level);
+		LOG("Loaded level!\n");
 	}
 	
 	void initHooks(funchook_t* funchookp)
