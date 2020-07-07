@@ -57,6 +57,17 @@ namespace LevelManager {
 		return CSharp::List<T>(fieldInstance);
 	}
 
+	void* lvlmng = nullptr;
+	MAKE_HOOK(OnEnable, void, void* self) {
+		lvlmng = self;
+		OnEnable_orig(self);
+	}
+
+	void* levelManager() {
+		return lvlmng;
+	}
+
+
 	MAKE_HOOK(SpawnGeoLevel, void, Il2CppObject *level, Il2CppObject *lvlAssetDB, int minLOD)
 	{
 		LOG("Called LevelManager::SpawnGeoLevel() hook!\n");
@@ -192,6 +203,7 @@ namespace LevelManager {
 	LevelData* lvlData;
 	MAKE_HOOK(LoadLevel, void, void* self, Il2CppObject* level)
 	{
+		return LoadLevel_orig(self, level);
 		LOG("\n\n");
 		//LOG("Trying to get assetbundle stuff\n");
 		//auto AssetBundle = il2cpp_functions::resolve_icall("UnityEngine.AssetBundle::LoadFromFile_Internal(System.String, System.UInt32, System.UInt64)");
@@ -298,6 +310,10 @@ namespace LevelManager {
 
 		LoadLevel_orig = (LoadLevel_t)il2cpp_utils::GetMethod("", "LevelManager", "LoadLevel", 1)->methodPointer;
 		INSTALL_HOOK(LoadLevel);
+
+		OnEnable_orig = (OnEnable_t)il2cpp_utils::GetMethod("", "LevelManager", "OnEnable", 0)->methodPointer;
+		INSTALL_HOOK(OnEnable);
+		
 	}
 
 };

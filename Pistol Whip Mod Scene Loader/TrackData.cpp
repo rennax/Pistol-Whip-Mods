@@ -3,7 +3,7 @@
 
 TrackData::TrackData()
 {
-	auto klass = il2cpp_utils::GetClassFromName("", "TrackData");
+	Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "TrackData");
 	trackData = il2cpp_functions::object_new(klass);
 	il2cpp_utils::RunMethod(trackData, ".ctor");
 }

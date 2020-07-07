@@ -5,7 +5,7 @@ extern "C" {
 }
 
 namespace LevelManager {
-
+	void* levelManager();
 	void initHooks(funchook_t* funchookp);
 };
 

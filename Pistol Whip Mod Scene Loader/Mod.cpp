@@ -41,13 +41,13 @@ SAMPLEMOD_API int load(HANDLE logHandle, HMODULE gameAssembly) {
 
 	GameManager::initHooks(funchook);
 	LevelDatabase::initHooks(funchook);
-	SongSelectionUIController::initHooks(funchook);
+	//SongSelectionUIController::initHooks(funchook);
 	SceneManager::initHooks(funchook);
 	LevelSelectTrigger::initHooks(funchook);
 	LevelManager::initHooks(funchook);
-	SimpleMusicPlayer::initHooks(funchook);
-	MultiMusicPlayer::initHooks(funchook);
-	ValvePlaySound::initHooks(funchook);
+	//SimpleMusicPlayer::initHooks(funchook);
+	//MultiMusicPlayer::initHooks(funchook);
+	//ValvePlaySound::initHooks(funchook);
 
 	int rv = funchook_install(funchook, 0);
 	if (rv != 0) {
