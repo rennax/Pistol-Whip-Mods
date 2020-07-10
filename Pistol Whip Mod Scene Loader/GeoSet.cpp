@@ -3,45 +3,68 @@
 #include "GameObject.hpp"
 
 namespace GeoSet {
-// PUBLIC FUNCTIONS
+
 	GeoSet::GeoSet()
 	{
 		Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "GeoSet");
-		geoset = il2cpp_functions::object_new(klass);
+		self = il2cpp_functions::object_new(klass);
 
-		const MethodInfo* ctor = il2cpp_utils::GetMethod(klass, ".ctor", 0);
-		il2cpp_utils::RunMethod(geoset, ctor);
-		LOG("Created geoset object\n");
+		if (!il2cpp_utils::RunMethod(self, ".ctor"))
+			LOG("WARNING: Failed to create geoset\n");
+		else
+			LOG("Created geoset object\n");
 	}
 
 
-	Il2CppObject* GeoSet::Load(std::string_view path) {
-		levelPath = path;
-		std::string totalPath(path);
-		totalPath += "/level.json";
-		std::ifstream i(totalPath);
-		json level;
-		i >> level;
-		json geo = level["geoset"];
-		
-		std::string assetPath = levelPath + std::string("/static_objects");
+	//Il2CppObject* GeoSet::Load(std::string_view path) {
+	//	levelPath = path;
+	//	std::string totalPath(path);
+	//	totalPath += "/level.json";
+	//	std::ifstream i(totalPath);
+	//	json level;
+	//	i >> level;
+	//	json geo = level["geoset"];
+	//	
+	//	std::string assetPath = levelPath + std::string("/static_objects");
+	//	assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
+
+	//	LoadDecoratorCubes(geo["decorCubes"]);
+	//	LoadChunks(geo["chunks"]);
+	//	LoadStaticProps(geo["staticProps"]);
+	//	//loadDynamicProps(geo["dynamicProps"]);
+
+	//	il2cpp_utils::SetFieldValue(self, "chunkSize", &chunkSize);
+	//	il2cpp_utils::SetFieldValue(self, "scale", &scale);
+
+	//	return self;
+	//}
+
+	Il2CppObject* GeoSet::Load(json j)
+	{
+		json geo = j;
+
+		//TODO change this so path is sent as an argument, or stored in level.json
 		assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
 
-		loadDecoratorCubes(geo["decorCubes"]);
-		loadChunks(geo["chunks"]);
-		loadStaticProps(geo["staticProps"]);
-		//loadDynamicProps(geo["dynamicProps"]);
+		LoadDecoratorCubes(geo["decorCubes"]);
+		LoadChunks(geo["chunks"]);
+		LoadStaticProps(geo["staticProps"]);
 
-		il2cpp_utils::SetFieldValue(geoset, "chunkSize", &chunkSize);
-		il2cpp_utils::SetFieldValue(geoset, "scale", &scale);
+		if (!il2cpp_utils::SetFieldValue(self, "chunkSize", &chunkSize))
+			LOG("WARNING: Failed to set chunkSize in GeoSet::Load()\n");
 
-		return geoset;
+		if (!il2cpp_utils::SetFieldValue(self, "scale", &scale))
+			LOG("WARNING: Failed to set scale in GeoSet::Load()\n");
+
+		return self;
 	}
 
 
-// PRIVATE FUNCTIONS
 
-	void GeoSet::loadStaticProps(json j) {
+
+
+
+	void GeoSet::LoadStaticProps(json j) {
 
 		auto klass = il2cpp_utils::GetClassFromName("UnityEngine", "GameObject");
 		auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
@@ -95,7 +118,7 @@ namespace GeoSet {
 			staticProps.push_back(staticProp);
 		}
 
-		List<Il2CppObject*> staticPropList(il2cpp_utils::GetFieldValue(geoset, "staticProps"));
+		List<Il2CppObject*> staticPropList(il2cpp_utils::GetFieldValue(self, "staticProps"));
 		for (auto& prop : staticProps)
 		{
 			staticPropList.Add(prop.GetObj());
@@ -123,14 +146,14 @@ namespace GeoSet {
 			dynamicProps.push_back(dynamicProp);
 		}
 
-		List<Il2CppObject*> staticPropList(il2cpp_utils::GetFieldValue(geoset, "dynamicProps"));
+		List<Il2CppObject*> staticPropList(il2cpp_utils::GetFieldValue(self, "dynamicProps"));
 		for (auto& prop : dynamicProps)
 		{
 			staticPropList.Add(prop.GetObj());
 		}
 	}
 
-	void GeoSet::loadChunks(json j)
+	void GeoSet::LoadChunks(json j)
 	{
 		// Parse array containing all objects
 		for (auto& elem : j)
@@ -167,7 +190,7 @@ namespace GeoSet {
 		chunkData.tris = mesh.tris;
 		chunkData.m_liveMesh = mesh.GetMesh();
 
-		List<ChunkMeshData> chunkDataList(il2cpp_utils::GetFieldValue(geoset, "chunkData"));
+		List<ChunkMeshData> chunkDataList(il2cpp_utils::GetFieldValue(self, "chunkData"));
 		chunkDataList.Add(chunkData);
 
 		createChunkMeshSlice(-1, id, mesh);
@@ -187,11 +210,11 @@ namespace GeoSet {
 		};
 
 		//Add chunkMeshData object to chunkData list object inside geoset
-		List<ChunkMeshSlice> chunkSlicesList(il2cpp_utils::GetFieldValue(geoset, "chunkSlices"));
+		List<ChunkMeshSlice> chunkSlicesList(il2cpp_utils::GetFieldValue(self, "chunkSlices"));
 		chunkSlicesList.Add(chunkSlice);
 	}
 
-	void GeoSet::loadDecoratorCubes(json j)
+	void GeoSet::LoadDecoratorCubes(json j)
 	{
 		// Parse array containing all objects
 		for (auto& elem : j)
@@ -204,7 +227,7 @@ namespace GeoSet {
 				});
 		}
 
-		List<OscillatingObjectData> decorCubes(il2cpp_utils::GetFieldValue(geoset, "decoratorCubes"));
+		List<OscillatingObjectData> decorCubes(il2cpp_utils::GetFieldValue(self, "decoratorCubes"));
 		for (auto& cube : decoratorCubes)
 		{
 			decorCubes.Add(cube);

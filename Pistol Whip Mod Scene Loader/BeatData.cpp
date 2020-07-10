@@ -1,36 +1,52 @@
 #include "BeatData.hpp"
+
 #include "WorldObject.hpp"
 
 BeatData::BeatData(float time)
 {
 	auto klass = il2cpp_utils::GetClassFromName("", "BeatData");
-	beatData = il2cpp_functions::object_new(klass);
-	il2cpp_utils::RunMethod(beatData, ".ctor", &time);
+	self = il2cpp_functions::object_new(klass);
+	il2cpp_utils::RunMethod(self, ".ctor", &time);
 }
 
-BeatData::BeatData(Il2CppObject* obj) : beatData(obj)
+BeatData::BeatData(Il2CppObject* obj) : self(obj)
 {
 }
 
 CSharp::List<Il2CppObject*> BeatData::GetTargets()
 {
-	return CSharp::List<Il2CppObject*>(il2cpp_utils::GetFieldValue(beatData, "targets"));
+	return CSharp::List<Il2CppObject*>(il2cpp_utils::GetFieldValue(self, "targets"));
 }
 
 CSharp::List<Il2CppObject*> BeatData::GetObstacles()
 {
-	return CSharp::List<Il2CppObject*>(il2cpp_utils::GetFieldValue(beatData, "obstacles"));
+	return CSharp::List<Il2CppObject*>(il2cpp_utils::GetFieldValue(self, "obstacles"));
 }
 
 float BeatData::GetTime()
 {
 	float time = 0;
-	il2cpp_utils::GetFieldValue(&time, beatData, "time");
+	il2cpp_utils::GetFieldValue(&time, self, "time");
 	return time;
 }
 
-void BeatData::Load(std::string_view path)
+Il2CppObject* BeatData::Load(json j)
 {
+	CSharp::List<Il2CppObject*> obstacleList(il2cpp_utils::GetFieldValue(self, "obstacles"));
+	for (auto o : j["obstacles"])
+	{
+		ObstacleData obstacle;
+		obstacleList.Add(obstacle.Load(o));
+		obstacles.push_back(obstacle);
+	}
+
+	CSharp::List<Il2CppObject*> targetList(il2cpp_utils::GetFieldValue(self, "targets"));
+	for (auto o : j["targets"])
+	{
+		LOG("WARNING: TODO BeatData::targets");
+	}
+
+	return self;
 }
 
 json BeatData::DumpToJson()

@@ -2,12 +2,12 @@
 #define BEATDATA_HPP
 #include "il2cpp_utils.hpp"
 #include "List.hpp"
-#include <string_view>
 #include "json.hpp"
+#include "TargetData.hpp"
+#include "ObstacleData.hpp"
+#include <vector>
 
 using json = nlohmann::json;
-
-
 
 class BeatData {
 public:
@@ -16,10 +16,11 @@ public:
 	CSharp::List<Il2CppObject*> GetTargets();
 	CSharp::List<Il2CppObject*> GetObstacles();
 	float GetTime();
-	void Load(std::string_view path);
+	Il2CppObject* Load(json j);
 	json DumpToJson();
 private:
-	Il2CppObject* beatData;
+	Il2CppObject* self;
+	std::vector<ObstacleData> obstacles;
 };
 
 #endif // !BEATDATA_HPP

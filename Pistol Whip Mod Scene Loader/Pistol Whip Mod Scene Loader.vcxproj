@@ -153,6 +153,7 @@
     <ClCompile Include="ColorShiftPoint.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GeoSet.cpp" />
     <ClCompile Include="il2cpp_functions.cpp" />
     <ClCompile Include="il2cpp_utils.cpp" />
@@ -164,12 +165,14 @@
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MultiMusicPlayer.cpp" />
+    <ClCompile Include="ObstacleData.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Mod.cpp" />
     <ClCompile Include="PlaySound.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SimpleMusicPlayer.cpp" />
     <ClCompile Include="SongSelectionUIController.cpp" />
+    <ClCompile Include="TargetData.cpp" />
     <ClCompile Include="TrackData.cpp" />
     <ClCompile Include="AssetBundle.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -183,6 +186,7 @@
     <ClInclude Include="ColorShiftPoint.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameManager.hpp" />
+    <ClInclude Include="GameMap.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="GeoSet.hpp" />
     <ClInclude Include="il2cpp_functions.hpp" />
@@ -198,12 +202,14 @@
     <ClInclude Include="logger.h" />
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="MultiMusicPlayer.hpp" />
+    <ClInclude Include="ObstacleData.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Mod.h" />
     <ClInclude Include="PlaySound.hpp" />
     <ClInclude Include="SceneManager.hpp" />
     <ClInclude Include="SimpleMusicPlayer.hpp" />
     <ClInclude Include="SongSelectionUIController.hpp" />
+    <ClInclude Include="TargetData.hpp" />
     <ClInclude Include="TrackData.hpp" />
     <ClInclude Include="typedefs.h" />
     <ClInclude Include="utils-functions.hpp" />

@@ -96,9 +96,6 @@
     <ClCompile Include="TrackData.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
-    <ClCompile Include="BeatData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="WorldObject.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
@@ -121,6 +118,18 @@
       <Filter>Source Files\game</Filter>
     </ClCompile>
     <ClCompile Include="WorldRegion.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMap.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="BeatData.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="ObstacleData.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="TargetData.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -222,6 +231,15 @@
       <Filter>Header Files\game</Filter>
     </ClInclude>
     <ClInclude Include="WorldRegion.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMap.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="ObstacleData.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="TargetData.hpp">
       <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>

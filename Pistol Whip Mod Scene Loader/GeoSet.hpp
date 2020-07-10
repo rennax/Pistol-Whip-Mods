@@ -43,7 +43,8 @@ class GeoSet {
 public:
 	GeoSet();
 
-	Il2CppObject* Load(std::string_view path);
+	//Il2CppObject* Load(std::string_view path);
+	Il2CppObject* Load(json j);
 private: //Functions
 	void createChunkMeshData(
 		Vector3i id,
@@ -56,12 +57,12 @@ private: //Functions
 		Mesh& mesh);
 
 	ObjFile loadObjectFile(std::string_view filename);
-	void loadDecoratorCubes(json j);
-	void loadChunks(json j);
-	void loadStaticProps(json j);
+	void LoadDecoratorCubes(json j);
+	void LoadChunks(json j);
+	void LoadStaticProps(json j);
 	void loadDynamicProps(json j);
 private:
-	Il2CppObject* geoset = nullptr;
+	Il2CppObject* self = nullptr;
 	std::vector<ChunkMeshData> chunkDataVec;
 	std::vector<ChunkMeshSlice> slices;
 	std::vector<OscillatingObjectData> decoratorCubes;

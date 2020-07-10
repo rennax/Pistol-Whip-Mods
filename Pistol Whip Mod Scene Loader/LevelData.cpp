@@ -15,10 +15,10 @@ LevelData::LevelData()
 {
 	Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "LevelData");
 	self = il2cpp_functions::object_new(klass);
-
-	const MethodInfo* ctor = il2cpp_utils::GetMethod(klass, ".ctor", 0);
-	il2cpp_utils::RunMethod(self, ctor);
-	LOG("Created LevelData object\n");
+	if (!il2cpp_utils::RunMethod(self, ".ctor"))
+		LOG("WARNING: Failed to create LevelData object\n");
+	else
+		LOG("Created LevelData object\n");
 }
 
 LevelData::~LevelData()
@@ -111,19 +111,75 @@ json LevelData::Dump()
 
 Il2CppObject* LevelData::Load(json level)
 {
+	LoadSongSwitch(level["song"]);
+	LoadGameMaps(level["gameMaps"]);
 
 	LoadWorldObjects(level["worldObjects"]);
 
 	//loadDynamicProps(geo["dynamicProps"]);
 
-
+	
 
 	List<Il2CppObject*> worldObjectsList(il2cpp_utils::GetFieldValue(self, "worldObjects"));
 	for (auto& wo : worldObjects)
 	{
 		worldObjectsList.Add(wo.GetObj());
 	}
+
+	//float playerSpeed = 3;
+	//il2cpp_utils::SetFieldValue(self, "playerSpeed", &playerSpeed);
+
+
 	return self;
+}
+
+void LevelData::LoadSongSwitch(json j)
+{
+	LOG("TODO Switch song in LevelData::LoadSongSwitch\n");
+	//il2cpp_utils::SetFieldValue(self, "songLength", songLength);
+	//il2cpp_utils::SetFieldValue(self, "songName", songName);
+}
+
+void LevelData::LoadGameMaps(json j)
+{
+	for (auto& gm : j) {
+		GameMap* map = new GameMap(self);
+		map->Load(gm);
+		maps.push_back(map);
+	}
+
+	Il2CppArray* array_maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(self, "maps"));
+
+	//We might create a memory leak here.
+	//TODO check and fix
+	if (array_maps == nullptr ||
+		il2cpp_functions::array_length(array_maps) < maps.size())
+	{
+		//il2cpp_functions::free(array_maps);
+		Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "GameMap");
+		array_maps = il2cpp_functions::array_new(klass, maps.size());
+
+	}
+
+	for (size_t i = 0; i < maps.size(); i++)
+	{
+		il2cpp_array_set(array_maps, Il2CppObject*, i, maps[i]->GetIl2CppObject());
+	}
+
+	if (!il2cpp_utils::SetFieldValue(self, "maps", array_maps))
+		LOG("WARNING: Failed to set new maps array in LevelData\n");
+}
+
+void LevelData::LoadTrackSections(json j)
+{
+}
+
+void LevelData::LoadWorldRegions(json j)
+{
+}
+
+void LevelData::LoadColorShiftPoints(json j)
+{
 }
 
 
@@ -160,4 +216,20 @@ void LevelData::LoadWorldObjects(json j)
 
 		worldObjects.push_back(worldObject);
 	}
+}
+
+void LevelData::LoadSimpleStaticWorldObjects(json j)
+{
+}
+
+void LevelData::LoadSimpleDynamicWorldObjects(json j)
+{
+}
+
+void LevelData::LoadStaticCullingRanges(json j)
+{
+}
+
+void LevelData::LoadDynamicCullingRanges(json j)
+{
 }

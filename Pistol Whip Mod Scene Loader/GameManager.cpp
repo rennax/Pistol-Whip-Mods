@@ -3,11 +3,18 @@
 #include "utils.h"
 #include "logger.h"
 #include "LevelManager.hpp"
-
+#include "GeoSet.hpp"
+#include "LevelData.hpp"
+#include "AssetBundle.hpp"
+#include "List.hpp"
+#include "TrackData.hpp"
 
 namespace GameManager {
 
 
+
+	LevelData* data = nullptr;
+	Il2CppObject* levelData = nullptr;
 
 	static bool pressed = false;
 
@@ -32,16 +39,32 @@ namespace GameManager {
 		{
 			LOG("Pressed F1\n");
 			pressed = true;
+			
+
+			AssetBundle::Init();
+
+			std::ifstream i("Custom Levels/x02/level.json");
+			json j;
+			i >> j;
+			//std::string s = j.dump();
+			//LOG("%s\n", s.c_str());
+
+			data = new LevelData();
+			std::string version = j["version"];
+			LOG("%s\n", version.c_str());
+			levelData = data->Load(j["levelData"]);
+
+			
 			Il2CppObject* levels = il2cpp_utils::GetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levels");
 			Il2CppObject* lastReleasedScene = il2cpp_utils::GetFieldValue(levels, "lastReleasedScene");
-			Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(lastReleasedScene, "maps"));
+			il2cpp_utils::SetFieldValue(levelData, "songSwitch", il2cpp_utils::GetFieldValue(lastReleasedScene, "songSwitch"));
+			Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(levelData, "maps"));
 			Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, 0);//GameMap
-
-			Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "Messages/LevelLoadRequest");
-
-			msg = il2cpp_functions::object_new(klass);
+			
+			//Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "Messages/LevelLoadRequest");
+			/*msg = il2cpp_functions::object_new(klass);
 			il2cpp_utils::RunMethod(msg, ".ctor");
-			il2cpp_utils::RunMethod(msg, "Set", map);
+			il2cpp_utils::RunMethod(msg, "Set", map);*/
 
 			//il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(LevelManager::levelManager()), "OnLevelLoadRequested", msg);
 

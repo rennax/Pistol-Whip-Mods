@@ -93,7 +93,7 @@ namespace il2cpp_utils {
 		if (!klass) return nullptr;
 		auto field = il2cpp_functions::class_get_field_from_name(klass, fieldName.data());
 		if (!field) {
-			LOG("could not find field %s in class %s (namespace '%s')!", fieldName.data(),
+			LOG("could not find field %s in class %s (namespace '%s')!\n", fieldName.data(),
 				il2cpp_functions::class_get_name(klass), il2cpp_functions::class_get_namespace(klass));
 		}
 		return field;
@@ -101,7 +101,7 @@ namespace il2cpp_utils {
 
 	bool SetFieldValue(Il2CppObject* instance, FieldInfo* field, void* value) {
 		if (!field) {
-			LOG("il2cpp_utils: SetFieldValue: Null field parameter!");
+			LOG("il2cpp_utils: SetFieldValue: Null field parameter!\n");
 			return false;
 		}
 		if (instance) {
@@ -119,7 +119,7 @@ namespace il2cpp_utils {
 		Il2CppClass* klass = GetClassFromName(name_space, type_name);
 		if (!klass)
 		{
-			LOG("il2cpp_utils: CreateArray: Couldn't get Il2CppClass from provide namespace and type name");
+			LOG("il2cpp_utils: CreateArray: Couldn't get Il2CppClass from provide namespace and type name\n");
 			return nullptr;
 		}
 		auto arr = il2cpp_functions::array_new(klass, array_size);
@@ -129,7 +129,7 @@ namespace il2cpp_utils {
 
 	bool SetFieldValue(Il2CppClass* klass, std::string_view fieldName, void* value) {
 		if (!klass) {
-			LOG("il2cpp_utils: SetFieldValue: Null klass parameter!");
+			LOG("il2cpp_utils: SetFieldValue: Null klass parameter!\n");
 			return false;
 		}
 		auto field = FindField(klass, fieldName);
@@ -139,12 +139,12 @@ namespace il2cpp_utils {
 
 	bool SetFieldValue(Il2CppObject* instance, std::string_view fieldName, void* value) {
 		if (!instance) {
-			LOG("il2cpp_utils: SetFieldValue: Null instance parameter!");
+			LOG("il2cpp_utils: SetFieldValue: Null instance parameter!\n");
 			return false;
 		}
 		auto klass = il2cpp_functions::object_get_class(instance);
 		if (!klass) {
-			LOG("il2cpp_utils: SetFieldValue: Could not find object class!");
+			LOG("il2cpp_utils: SetFieldValue: Could not find object class!\n");
 			return false;
 		}
 		auto field = FindField(klass, fieldName);
@@ -156,12 +156,12 @@ namespace il2cpp_utils {
 
 		auto runtimeType = GetClassFromName("System", "RuntimeType");
 		if (!runtimeType) {
-			LOG("ERROR: il2cpp_utils: MakeGenericType: Failed to get System.RuntimeType!");
+			LOG("ERROR: il2cpp_utils: MakeGenericType: Failed to get System.RuntimeType!\n");
 			return nullptr;
 		}
 		auto makeGenericMethod = il2cpp_functions::class_get_method_from_name(runtimeType, "MakeGenericType", 2);
 		if (!makeGenericMethod) {
-			LOG("ERROR: il2cpp_utils: MakeGenericType: Failed to get RuntimeType.MakeGenericType(param1, param2) method!");
+			LOG("ERROR: il2cpp_utils: MakeGenericType: Failed to get RuntimeType.MakeGenericType(param1, param2) method!\n");
 			return nullptr;
 		}
 
@@ -169,7 +169,7 @@ namespace il2cpp_utils {
 		void* params[] = { reinterpret_cast<void*>(gt), reinterpret_cast<void*>(types) };
 		auto genericType = il2cpp_functions::runtime_invoke(makeGenericMethod, nullptr, params, &exp);
 		if (exp) {
-			LOG("ERROR: il2cpp_utils: MakeGenericType: Failed with exception: %s", ExceptionToString(exp).c_str());
+			LOG("ERROR: il2cpp_utils: MakeGenericType: Failed with exception: %s\n", ExceptionToString(exp).c_str());
 			return nullptr;
 		}
 		return reinterpret_cast<Il2CppReflectionType*>(genericType);
@@ -183,20 +183,20 @@ namespace il2cpp_utils {
 		}
 		auto getType = il2cpp_functions::class_get_method_from_name(typ, "GetType", 1);
 		if (!getType) {
-			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get System.Type.GetType(param1) method!");
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get System.Type.GetType(param1) method!\n");
 			return nullptr;
 		}
 
 		auto klassType = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
 		if (!klassType) {
-			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get class type object!");
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get class type object!\n");
 			return nullptr;
 		}
 
 		// Call Type.MakeGenericType on it
 		auto a = il2cpp_functions::array_new_specific(typ, args.size());
 		if (!a) {
-			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to make new array with length: %zu", args.size());
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to make new array with length: %zu\n", args.size());
 			return nullptr;
 		}
 
@@ -205,7 +205,7 @@ namespace il2cpp_utils {
 			auto t = il2cpp_functions::class_get_type_const(arg);
 			auto o = il2cpp_functions::type_get_object(t);
 			if (!o) {
-				LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get type for %s", il2cpp_functions::class_get_name_const(arg));
+				LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get type for %s\n", il2cpp_functions::class_get_name_const(arg));
 				return nullptr;
 			}
 			il2cpp_array_set(a, void*, i, reinterpret_cast<void*>(o));
@@ -214,16 +214,16 @@ namespace il2cpp_utils {
 
 		auto reflection_type = MakeGenericType(reinterpret_cast<Il2CppReflectionType*>(klassType), a);
 		if (!reflection_type) {
-			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to MakeGenericType from Il2CppReflectionType and Il2CppArray!");
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to MakeGenericType from Il2CppReflectionType and Il2CppArray!\n");
 			return nullptr;
 		}
 
 		auto ret = il2cpp_functions::class_from_system_type(reinterpret_cast<Il2CppReflectionType*>(reflection_type));
 		if (!ret) {
-			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get class from Il2CppReflectionType!");
+			LOG("ERROR: il2cpp_utils: MakeGeneric: Failed to get class from Il2CppReflectionType!\n");
 			return nullptr;
 		}
-		LOG("DEBUG: il2cpp_utils: MakeGeneric: returning %s", il2cpp_functions::class_get_name(ret));
+		LOG("DEBUG: il2cpp_utils: MakeGeneric: returning %s\n", il2cpp_functions::class_get_name(ret));
 		return ret;
 	}
 
@@ -231,7 +231,7 @@ namespace il2cpp_utils {
 
 		auto dom = il2cpp_functions::domain_get();
 		if (!dom) {
-			LOG("ERROR: GetClassFromName: Could not get domain!");
+			LOG("ERROR: GetClassFromName: Could not get domain!\n");
 			return nullptr;
 		}
 		size_t assemb_count;
@@ -241,7 +241,7 @@ namespace il2cpp_utils {
 			auto assemb = allAssemb[i];
 			auto img = il2cpp_functions::assembly_get_image(assemb);
 			if (!img) {
-				LOG("ERROR: Assembly with name: %s has a null image!", assemb->aname.name);
+				LOG("ERROR: Assembly with name: %s has a null image!\n", assemb->aname.name);
 				continue;
 			}
 			auto klass = il2cpp_functions::class_from_name(img, name_space, type_name);
@@ -249,7 +249,7 @@ namespace il2cpp_utils {
 				return klass;
 			}
 		}
-		LOG("ERROR: il2cpp_utils: GetClassFromName: Could not find class with namepace: %s and name: %s", name_space, type_name);
+		LOG("ERROR: il2cpp_utils: GetClassFromName: Could not find class with namepace: %s and name: %s\n", name_space, type_name);
 		return nullptr;
 	}
 
@@ -276,12 +276,12 @@ namespace il2cpp_utils {
 	bool IsConvertible(const Il2CppType* to, const Il2CppType* from) {
 		if (to->byref) {
 			if (!from->byref) {
-				LOG("DEBUG: IsConvertible: to (%s, %p) is ref/out while from (%s, %p) is not. Not convertible.",
+				LOG("DEBUG: IsConvertible: to (%s, %p) is ref/out while from (%s, %p) is not. Not convertible.\n",
 					TypeGetSimpleName(to), to, TypeGetSimpleName(from), from);
 				return false;
 			}
 			else {
-				LOG("DEBUG: IsConvertible: to (%s, %p) and from (%s, %p) are both ret/out. May be convertible.",
+				LOG("DEBUG: IsConvertible: to (%s, %p) and from (%s, %p) are both ret/out. May be convertible.\n",
 					TypeGetSimpleName(to), to, TypeGetSimpleName(from), from);
 			}
 		}
@@ -291,7 +291,7 @@ namespace il2cpp_utils {
 		/*LOG("DEBUG: IsConvertible: class_is_assignable_from(%s, %s) returned %s",
 			ClassStandardName(classTo).c_str(), ClassStandardName(classFrom).c_str(), ret ? "true" : "false");*/
 		if (!ret && il2cpp_functions::class_is_enum(classTo)) {
-			LOG("DEBUG: IsConvertible: but classTo is enum! Comparing against class_enum_basetype.");
+			LOG("DEBUG: IsConvertible: but classTo is enum! Comparing against class_enum_basetype.\n");
 			ret = IsConvertible(il2cpp_functions::class_enum_basetype(classTo), from);
 		}
 		return ret;
@@ -458,7 +458,7 @@ namespace il2cpp_utils {
 				first = false;
 				ss << t;
 			}
-			LOG("ERROR: %s", ss.str().c_str());
+			LOG("ERROR: %s\n", ss.str().c_str());
 		}
 		return methodInfo;
 	}
@@ -481,7 +481,7 @@ namespace il2cpp_utils {
 		// Recurses through klass's parents
 		auto methodInfo = il2cpp_functions::class_get_method_from_name(klass, methodName.data(), argsCount);
 		if (!methodInfo) {
-			LOG("ERROR: could not find method %s with %i parameters in class '%s'!", methodName.data(), argsCount,
+			LOG("ERROR: could not find method %s with %i parameters in class '%s'!\n", methodName.data(), argsCount,
 				ClassStandardName(klass, false).c_str());
 			//LogMethods(klass, true);
 		}
