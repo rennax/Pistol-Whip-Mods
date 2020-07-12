@@ -68,9 +68,11 @@ namespace GameManager {
 
 			//il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(LevelManager::levelManager()), "OnLevelLoadRequested", msg);
 
-			//il2cpp_utils::SetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levelData", lastReleasedScene);
+			il2cpp_utils::SetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levelData", levelData);
 			il2cpp_utils::SetFieldValue(reinterpret_cast<Il2CppObject*>(self), "map", map);
-			il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "PrepAndStartGame");
+			//il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "LoadLevel");
+			//il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "StartSong");
+			//il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "OnRestartGame");
 			il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "OnStartButton");
 
 			//Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "Messenger");
@@ -98,6 +100,5 @@ namespace GameManager {
 
 		Start_orig = (Start_t)il2cpp_utils::GetMethod("", "GameManager", "Start", 0)->methodPointer;
 		INSTALL_HOOK(Start);
-	
 	}
 };

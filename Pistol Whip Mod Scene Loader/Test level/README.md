@@ -1,0 +1,1 @@
+Place files inside "Pistol Whip/Custom Levels/x02" as this is the path currently used for testing.

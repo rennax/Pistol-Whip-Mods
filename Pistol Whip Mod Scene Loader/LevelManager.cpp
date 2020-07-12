@@ -203,6 +203,7 @@ namespace LevelManager {
 	LevelData* lvlData;
 	MAKE_HOOK(LoadLevel, void, void* self, Il2CppObject* level)
 	{
+		LOG("Called LevelManager.LoadLevel() hook!\n");
 		return LoadLevel_orig(self, level);
 		LOG("\n\n");
 		//LOG("Trying to get assetbundle stuff\n");
@@ -218,7 +219,6 @@ namespace LevelManager {
 		//
 		//LOG("\n\n");
 
-		LOG("Called LevelManager.LoadLevel() hook!\n");
 		if (level == nullptr)
 		{ 
 			LOG("GameMap is null!\n");
@@ -301,6 +301,8 @@ namespace LevelManager {
 		LoadLevel_orig(self, level);
 		LOG("Loaded level!\n");
 	}
+
+
 	
 	void initHooks(funchook_t* funchookp)
 	{

@@ -43,7 +43,7 @@ private:
 	Il2CppObject* koreography = nullptr;
 	float playerSpeed = 3;
 	std::vector<float> beatTimesVec;
-	std::vector<BeatData> beats;
+	std::vector<BeatData*> beats;
 };
 
 

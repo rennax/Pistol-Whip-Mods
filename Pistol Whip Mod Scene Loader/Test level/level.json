@@ -1,0 +1,173 @@
+{
+    "version": "0.1",
+    "levelData":{
+        "song": "song.wem",
+        "songName": "xxx",
+        "songLength": 20,
+        "worldObjects": [
+            {
+                "point": {
+                    "position": {"x": 0, "y": 0, "z": 0},
+                    "rotation": {"x": 0, "y": 0, "z": 0, "w": 0}
+                },
+                "prefabName": "Test Map - Cubes",
+                "scale": {"x": 1, "y": 1, "z": 1}
+            }
+        ],
+        "gameMaps": [
+            {
+                "geoset": {
+                    "chunks": [
+                        {
+                            "id": {"x": 0, "y": 0, "z": 0},
+                            "name" : "chunk1.obj"
+                        },
+                        {
+                            "id": {"x": 0, "y": 0, "z": 1},
+                            "name" : "chunk1.obj"
+                        }
+                    ],
+                    "decorCubes" : [
+                        {
+                            "restPoint": {"x": -2.0, "y": 0.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": -2.0, "y": 1.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": -1.0, "y": 0.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": -1.0, "y": 1.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 0.0, "y": 0.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 0.0, "y": 1.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 1.0, "y": 0.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 1.0, "y": 1.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 2.0, "y": 0.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 2.0, "y": 1.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                
+                
+                
+                        {
+                            "restPoint": {"x": -0.5, "y": 2.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 0.5, "y": 2.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": -0.5, "y": 3.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 0.5, "y": 3.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": -0.5, "y": 4.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 0.5, "y": 4.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": -0.5, "y": 5.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 0.5, "y": 5.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                
+                
+                        {
+                            "restPoint": {"x": -1.0, "y": 6.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 0.0, "y": 6.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 1.0, "y": 6.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": -0.5, "y": 7.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        },
+                        {
+                            "restPoint": {"x": 0.5, "y": 7.0, "z": 5},
+                            "moveScale": 1.0,
+                            "phase": 1.0
+                        }
+                    ],
+                    "staticProps": [
+
+                    ],
+                    "dynamicProps": [
+                    ]
+                },
+                "trackData": {
+                    "difficulty": 0,
+                    "playerSpeed": 3.0,
+                    "beatTimes": [
+                        5
+                    ],
+                    "beats": [
+
+                    ]
+                }
+            }
+        ]
+    }
+    
+}
+

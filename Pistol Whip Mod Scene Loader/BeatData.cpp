@@ -2,7 +2,7 @@
 
 #include "WorldObject.hpp"
 
-BeatData::BeatData(float time)
+BeatData::BeatData(float time_) : time(time_)
 {
 	auto klass = il2cpp_utils::GetClassFromName("", "BeatData");
 	self = il2cpp_functions::object_new(klass);
@@ -35,8 +35,8 @@ Il2CppObject* BeatData::Load(json j)
 	CSharp::List<Il2CppObject*> obstacleList(il2cpp_utils::GetFieldValue(self, "obstacles"));
 	for (auto o : j["obstacles"])
 	{
-		ObstacleData obstacle;
-		obstacleList.Add(obstacle.Load(o));
+		ObstacleData* obstacle = new ObstacleData();
+		obstacleList.Add(obstacle->Load(o));
 		obstacles.push_back(obstacle);
 	}
 

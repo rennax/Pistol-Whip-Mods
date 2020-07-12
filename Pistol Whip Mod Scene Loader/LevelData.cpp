@@ -6,6 +6,18 @@
 
 using namespace CSharp;
 
+MAKE_HOOK(get_isPlayable, bool, void* self) {
+	LOG("LevelData::get_isPlayable is called\n");
+	return true;
+}
+
+void LevelData::initHooks(funchook_t* funchookp)
+{
+	LOG("LevelData::initHooks()\n");
+	get_isPlayable_orig = (get_isPlayable_t)il2cpp_utils::GetMethod("", "LevelData", "get_isPlayable", 0)->methodPointer;
+	INSTALL_HOOK(get_isPlayable);
+}
+
 LevelData::LevelData(Il2CppObject* obj)
 {
 	self = obj;
@@ -114,20 +126,23 @@ Il2CppObject* LevelData::Load(json level)
 	LoadSongSwitch(level["song"]);
 	LoadGameMaps(level["gameMaps"]);
 
-	LoadWorldObjects(level["worldObjects"]);
+	//LoadWorldObjects(level["worldObjects"]);
 
 	//loadDynamicProps(geo["dynamicProps"]);
 
 	
 
-	List<Il2CppObject*> worldObjectsList(il2cpp_utils::GetFieldValue(self, "worldObjects"));
-	for (auto& wo : worldObjects)
-	{
-		worldObjectsList.Add(wo.GetObj());
-	}
 
-	//float playerSpeed = 3;
-	//il2cpp_utils::SetFieldValue(self, "playerSpeed", &playerSpeed);
+	songLength = level["songLength"];
+	if (!il2cpp_utils::SetFieldValue(self, "songLength", &songLength))
+		LOG("WARNING: Failed to assign songLength in levelData\n");
+	
+	songName = level["songName"];
+	Il2CppString* name = il2cpp_utils::createcsstr(songName.c_str());
+	if (!il2cpp_utils::SetFieldValue(self, "songName", name))
+		LOG("WARNING: Failed to assign songName in LevelData\n");
+	
+
 
 
 	return self;
@@ -215,6 +230,12 @@ void LevelData::LoadWorldObjects(json j)
 		WorldObject worldObject(point, prefab, scale);
 
 		worldObjects.push_back(worldObject);
+	}
+
+	List<Il2CppObject*> worldObjectsList(il2cpp_utils::GetFieldValue(self, "worldObjects"));
+	for (auto& wo : worldObjects)
+	{
+		worldObjectsList.Add(wo.GetObj());
 	}
 }
 

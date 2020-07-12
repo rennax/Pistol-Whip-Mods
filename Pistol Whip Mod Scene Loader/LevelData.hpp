@@ -6,12 +6,20 @@
 #include "GameMap.hpp"
 #include <vector>
 
+extern "C" { // name mangle 
+#include <funchook.h>
+}
+
+
+
+
 using json = nlohmann::json;
 
 
 class LevelData
 {
 public:
+	static void initHooks(funchook_t* funchookp);
 	LevelData(Il2CppObject* obj);
 	LevelData();
 	~LevelData();
@@ -30,6 +38,9 @@ private:
 	void LoadDynamicCullingRanges(json j); // TODO
 private:
 	std::vector<WorldObject> worldObjects;
+	float songLength = 0;
+	std::string songName;
+	
 	Il2CppObject* self;
 	std::vector<GameMap*> maps;
 };

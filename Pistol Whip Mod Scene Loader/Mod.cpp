@@ -20,6 +20,7 @@
 #include "SimpleMusicPlayer.hpp"
 #include "MultiMusicPlayer.hpp"
 #include "PlaySound.hpp"
+#include "LevelData.hpp"
 
 extern "C" { // name mangle 
 #include <funchook.h>
@@ -48,6 +49,7 @@ SAMPLEMOD_API int load(HANDLE logHandle, HMODULE gameAssembly) {
 	//SimpleMusicPlayer::initHooks(funchook);
 	//MultiMusicPlayer::initHooks(funchook);
 	//ValvePlaySound::initHooks(funchook);
+	LevelData::initHooks(funchook);
 
 	int rv = funchook_install(funchook, 0);
 	if (rv != 0) {

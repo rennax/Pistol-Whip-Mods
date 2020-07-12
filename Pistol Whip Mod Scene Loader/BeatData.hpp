@@ -11,7 +11,7 @@ using json = nlohmann::json;
 
 class BeatData {
 public:
-	BeatData(float time);
+	BeatData(float time_);
 	BeatData(Il2CppObject* obj);
 	CSharp::List<Il2CppObject*> GetTargets();
 	CSharp::List<Il2CppObject*> GetObstacles();
@@ -20,7 +20,8 @@ public:
 	json DumpToJson();
 private:
 	Il2CppObject* self;
-	std::vector<ObstacleData> obstacles;
+	float time = 0;
+	std::vector<ObstacleData*> obstacles;
 };
 
 #endif // !BEATDATA_HPP

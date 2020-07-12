@@ -1,0 +1,42 @@
+ManifestFileVersion: 0
+CRC: 2883534207
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: e3c8cf30e3934ceabc9ebe7a94b4264c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9c84ad1f116e303274d40437e59c3895
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9f3a22bbbe371d94186cc2cc3182b422, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+Assets:
+- Assets/Prefabs/Test Map - Cubes.prefab
+- Assets/Prefabs/PF_Ball_01.prefab
+- Assets/Prefabs/PF_JustCubing_01.prefab
+- Assets/song.ogg
+- Assets/section01.fbx
+Dependencies: []

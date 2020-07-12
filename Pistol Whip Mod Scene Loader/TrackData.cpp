@@ -79,8 +79,8 @@ void TrackData::LoadBeats(json j)
 	List<Il2CppObject*> beatsList(il2cpp_utils::GetFieldValue(self, "beats"));
 	for (auto b : j)
 	{
-		BeatData beat(b["time"]);
-		beatsList.Add(beat.Load(b));
+		BeatData* beat = new BeatData(b["time"]);
+		beatsList.Add(beat->Load(b));
 		beats.push_back(beat);
 	}
 }
