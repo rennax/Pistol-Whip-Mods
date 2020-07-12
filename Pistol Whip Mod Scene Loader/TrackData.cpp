@@ -39,6 +39,9 @@ Il2CppObject* TrackData::Load(json j)
 	if (!il2cpp_utils::RunMethod(koreography, ".ctor"))
 		LOG("WARNING: Failed to construct Koreography in TrackData\n");
 
+	if (!il2cpp_utils::RunMethod(koreography, "set_SourceClip", audio))
+		LOG("WARNING: Failed to call Koreography::set_SourceClip(audioClip) in TrackData");
+
 	if (!il2cpp_utils::SetFieldValue(self, "koreography", koreography))
 		LOG("WARNING: Failed to assign koreography in TrackData\n");
 
