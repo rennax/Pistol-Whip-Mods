@@ -1,25 +1,3 @@
-An idea for map format can be seen in ####. A short description is here.
-The audio is kept as a bank file, named whatever. Once a level is loaded, rename 183547081.wem to 183547081old.wem, 
-copy the level bnk file and rename it to 183547081.wem. Now we have our music in place. 
-Next a description of the level is loaded, this is in json format. This contains positions of all the objects, models etc that are to be loaded, positions of enemies, obstacles, decor cubes, static world objects, dynamic world objects etc.
-The json file also contains information about level length etc, this must match the song length and other general meta data.
-Assets are kept in an AssetBundle. This bundle does contain an AudioClip of the song. 
-This is used to generate the correct koerography at runtime, as this is the beat data etc.
-
-To load the map, consider the following:
-
-
-
-
-
-
-
-
-
-
-
-
-
 #####################################################################################################
 From @Sc2ad
 `LevelManager.LoadLevel` is where the level geoset is loaded
