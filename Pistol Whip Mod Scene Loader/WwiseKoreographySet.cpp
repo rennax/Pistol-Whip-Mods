@@ -45,8 +45,9 @@ json WwiseKoreographySet::Dump()
 		
 		std::string clipName;
 		Il2CppString* cn = nullptr;
-		il2cpp_utils::GetFieldValue(cn, koreo, "clipName");
-		clipName = to_utf8(csstrtostr(cn));
+		il2cpp_utils::GetFieldValue(&cn, koreo, "clipName");
+		if (cn != nullptr)
+			clipName = to_utf8(csstrtostr(cn));
 
 
 		t["mediaID"] = mediaID;
