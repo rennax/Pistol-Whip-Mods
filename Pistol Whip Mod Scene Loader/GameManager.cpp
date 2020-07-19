@@ -9,6 +9,9 @@
 #include "List.hpp"
 #include "TrackData.hpp"
 
+#include "WwiseKoreographySet.hpp"
+#include "TempoSectionDef.hpp"
+
 namespace GameManager {
 
 
@@ -16,7 +19,7 @@ namespace GameManager {
 	LevelData* data = nullptr;
 	Il2CppObject* levelData = nullptr;
 
-	static bool pressed = false;
+	static bool pf1 = false, pf2;
 
 	MAKE_HOOK(OnSceneSelect, void, void* self) {
 		LOG("Called GameManager.OnSceneSelect() hook\n");
@@ -35,10 +38,10 @@ namespace GameManager {
 		SHORT keyState;
 		
 
-		if ((keyState = GetAsyncKeyState(VK_F1)) && pressed == false)// & 0x8000
+		if ((keyState = GetAsyncKeyState(VK_F1)) && pf1 == false)// & 0x8000
 		{
 			LOG("Pressed F1\n");
-			pressed = true;
+			pf1 = true;
 			
 
 			AssetBundle::Init();
@@ -59,7 +62,7 @@ namespace GameManager {
 			Il2CppObject* lastReleasedScene = il2cpp_utils::GetFieldValue(levels, "lastReleasedScene");
 			il2cpp_utils::SetFieldValue(levelData, "songSwitch", il2cpp_utils::GetFieldValue(lastReleasedScene, "songSwitch"));
 			Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(levelData, "maps"));
-			Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, 0);//GameMap
+			Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, 0); //GameMap
 			
 			//Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "Messages/LevelLoadRequest");
 			/*msg = il2cpp_functions::object_new(klass);
@@ -83,7 +86,44 @@ namespace GameManager {
 			//il2cpp_utils::RunMethod(Messenger, "Send", map);
 
 		}
-		if ( GetAsyncKeyState(VK_F2)) pressed = false;
+		else if (GetAsyncKeyState(VK_F2) && pf2 == false) 
+		{
+			pf2 = true;
+
+			Il2CppObject* levels = il2cpp_utils::GetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levels");
+			Il2CppObject* lastReleasedScene = il2cpp_utils::GetFieldValue(levels, "lastReleasedScene");
+			Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(lastReleasedScene, "maps"));
+			Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, (int)Difficulty::Easy); //GameMap
+			Il2CppObject* trackData = il2cpp_utils::GetFieldValue(map, "trackData");
+			Il2CppObject* koreo = il2cpp_utils::GetFieldValue(trackData, "koreography");
+
+
+
+			Il2CppObject* lvlDb = il2cpp_utils::GetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levels");
+			//Il2CppArray* koreoSets = nullptr;
+			//il2cpp_utils::GetFieldValue(koreoSets, lvlDb, "koreoSets");
+
+
+			Il2CppObject* frontLotKoreoSet = il2cpp_utils::GetFieldValue(levels, "frontLotKoreoSet");
+			WwiseKoreographySet koreoSet(koreo, frontLotKoreoSet);
+			json j = koreoSet.Dump();
+			std::ofstream o = std::ofstream("WWiseKoreoSetDump.json");
+			o << std::setw(4) << j << std::endl;
+			//uint32_t koreoSetsSize = il2cpp_functions::array_length(koreoSets);
+			//LOG("LevelDatabase.koreoSets.size is %u\n", koreoSetsSize);
+			//if (koreoSetsSize > 0)
+			//{
+			//	WwiseKoreographySet koreoSet(koreo);
+			//	json j = koreoSet.Dump();
+			//	std::ofstream o = std::ofstream("WWiseKoreosetDump.json");
+			//	o << std::setw(4) << j << std::endl;
+			//}
+		}
+		if (GetAsyncKeyState(VK_F3))
+		{
+			pf1 = false;
+			pf2 = false;
+		}
 
 		Update_orig(self);
 	}
