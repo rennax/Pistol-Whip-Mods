@@ -43,6 +43,12 @@
     <Filter Include="Source Files\utils\unityhelper">
       <UniqueIdentifier>{a2ad8ad8-7f7a-47bf-b071-b2d0b41da3cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\game\Koreographer">
+      <UniqueIdentifier>{41a4266e-2bbf-4402-9b48-ae0c0642b4b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\koreographer">
+      <UniqueIdentifier>{6d932f4d-be71-46fc-aa13-fd8a64b82917}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -131,6 +137,15 @@
     </ClCompile>
     <ClCompile Include="TargetData.cpp">
       <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="WwiseKoreoMediaIDEntry.cpp">
+      <Filter>Source Files\game\koreographer</Filter>
+    </ClCompile>
+    <ClCompile Include="WwiseKoreographySet.cpp">
+      <Filter>Source Files\game\koreographer</Filter>
+    </ClCompile>
+    <ClCompile Include="TempoSectionDef.cpp">
+      <Filter>Source Files\game\koreographer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,8 +257,23 @@
     <ClInclude Include="TargetData.hpp">
       <Filter>Header Files\game</Filter>
     </ClInclude>
+    <ClInclude Include="WwiseKoreographySet.hpp">
+      <Filter>Header Files\game\Koreographer</Filter>
+    </ClInclude>
+    <ClInclude Include="WwiseKoreoMediaIDEntry.hpp">
+      <Filter>Header Files\game\Koreographer</Filter>
+    </ClInclude>
+    <ClInclude Include="TempoSectionDef.hpp">
+      <Filter>Header Files\game\Koreographer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\TODO.txt" />
+    <Text Include="GameManager.md" />
+    <Text Include="Messages.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MusicManager.md" />
+    <None Include="LevelSelectTrigger.md" />
   </ItemGroup>
 </Project>
