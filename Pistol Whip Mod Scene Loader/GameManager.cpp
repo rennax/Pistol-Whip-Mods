@@ -11,6 +11,7 @@
 
 #include "WwiseKoreographySet.hpp"
 #include "TempoSectionDef.hpp"
+#include "Koreography.hpp"
 
 namespace GameManager {
 
@@ -96,8 +97,12 @@ namespace GameManager {
 			Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, (int)Difficulty::Easy); //GameMap
 			Il2CppObject* trackData = il2cpp_utils::GetFieldValue(map, "trackData");
 			Il2CppObject* koreo = il2cpp_utils::GetFieldValue(trackData, "koreography");
-
-
+			
+			Koreography koreography(koreo);
+			json j = koreography.Dump();
+			std::ofstream o = std::ofstream("Koreography.json");
+			o << std::setw(4) << j << std::endl;
+			o.close();
 
 			Il2CppObject* lvlDb = il2cpp_utils::GetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levels");
 			//Il2CppArray* koreoSets = nullptr;
@@ -106,9 +111,12 @@ namespace GameManager {
 
 			Il2CppObject* frontLotKoreoSet = il2cpp_utils::GetFieldValue(levels, "frontLotKoreoSet");
 			WwiseKoreographySet koreoSet(koreo, frontLotKoreoSet);
-			json j = koreoSet.Dump();
-			std::ofstream o = std::ofstream("WWiseKoreoSetDump.json");
+			
+			j.clear();
+			j = koreoSet.Dump();
+			o = std::ofstream("WWiseKoreoSetDump.json");
 			o << std::setw(4) << j << std::endl;
+			o.close();
 			//uint32_t koreoSetsSize = il2cpp_functions::array_length(koreoSets);
 			//LOG("LevelDatabase.koreoSets.size is %u\n", koreoSetsSize);
 			//if (koreoSetsSize > 0)
