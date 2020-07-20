@@ -9,16 +9,17 @@ class TempoSectionDef
 {
 public:
 	TempoSectionDef();
+	TempoSectionDef(Il2CppObject* obj);
 	~TempoSectionDef();
 	Il2CppObject* Load(json j);
 	json Dump();
 private:
 	Il2CppObject* self = nullptr;
-	std::string sectionName;
-	int64_t startSample;
-	int64_t samplesPerBeat;
-	int64_t beatsPerMeasure;
-	bool bStartNewMeasure;
+	std::string sectionName = "";
+	int64_t startSample = 0;
+	double samplesPerBeat = 0;
+	int64_t beatsPerMeasure = 0;
+	bool bStartNewMeasure = false;
 };
 
 

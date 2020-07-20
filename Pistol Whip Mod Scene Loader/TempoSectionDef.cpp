@@ -8,6 +8,10 @@ TempoSectionDef::TempoSectionDef()
 		LOG("WARNING: Failed to create TempoSectionDef\n");
 }
 
+TempoSectionDef::TempoSectionDef(Il2CppObject* obj) : self(obj)
+{
+}
+
 TempoSectionDef::~TempoSectionDef()
 {
 }
@@ -34,13 +38,16 @@ json TempoSectionDef::Dump()
 	json j;
 
 	Il2CppString* str = nullptr;
-	il2cpp_utils::GetFieldValue(str, self, "sectionName");
+	il2cpp_utils::GetFieldValue(&str, self, "sectionName");
 	il2cpp_utils::GetFieldValue(&startSample, self, "startSample");
 	il2cpp_utils::GetFieldValue(&samplesPerBeat, self, "samplesPerBeat");
 	il2cpp_utils::GetFieldValue(&beatsPerMeasure, self, "beatsPerMeasure");
 	il2cpp_utils::GetFieldValue(&bStartNewMeasure, self, "bStartNewMeasure");
 
-	j["sectionName"] = to_utf8(csstrtostr(str));
+	if (str != nullptr)
+		sectionName = to_utf8(csstrtostr(str));
+
+	j["sectionName"] = sectionName;
 	j["startSample"] = startSample;
 	j["samplesPerBeat"] = samplesPerBeat;
 	j["beatsPerMeasure"] = beatsPerMeasure;
