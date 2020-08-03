@@ -147,6 +147,30 @@
     <ClCompile Include="TempoSectionDef.cpp">
       <Filter>Source Files\game\koreographer</Filter>
     </ClCompile>
+    <ClCompile Include="Koreography.cpp">
+      <Filter>Source Files\game\koreographer</Filter>
+    </ClCompile>
+    <ClCompile Include="KoreographyTrackBase.cpp">
+      <Filter>Source Files\game\koreographer</Filter>
+    </ClCompile>
+    <ClCompile Include="KoreographyEvent.cpp">
+      <Filter>Source Files\game\koreographer</Filter>
+    </ClCompile>
+    <ClCompile Include="Messenger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="typedefs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackSection.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneAppearanceManager.cpp">
+      <Filter>Source Files\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerActionManager.cpp">
+      <Filter>Source Files\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -266,6 +290,36 @@
     <ClInclude Include="TempoSectionDef.hpp">
       <Filter>Header Files\game\Koreographer</Filter>
     </ClInclude>
+    <ClInclude Include="Koreography.hpp">
+      <Filter>Header Files\game\Koreographer</Filter>
+    </ClInclude>
+    <ClInclude Include="KoreographyTrackBase.hpp">
+      <Filter>Header Files\game\Koreographer</Filter>
+    </ClInclude>
+    <ClInclude Include="KoreographyEvent.hpp">
+      <Filter>Header Files\game\Koreographer</Filter>
+    </ClInclude>
+    <ClInclude Include="IPayload.hpp">
+      <Filter>Header Files\game\Koreographer</Filter>
+    </ClInclude>
+    <ClInclude Include="Messenger.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="Messages.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackSection.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="HashSet.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneAppearanceManager.hpp">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerActionManager.hpp">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\TODO.txt" />
@@ -275,5 +329,6 @@
   <ItemGroup>
     <None Include="MusicManager.md" />
     <None Include="LevelSelectTrigger.md" />
+    <None Include="SceneAppearanceManager.md" />
   </ItemGroup>
 </Project>

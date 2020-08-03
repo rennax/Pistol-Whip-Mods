@@ -103,17 +103,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;SAMPLEMOD_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>G:\programmering\libraries\include;G:\Unity editors\2019.2.14f1\Editor\Data\il2cpp\libil2cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\libs\funchook-1.1.0\include;C:\Program Files\Unity\Hub\Editor\2019.3.4f1\Editor\Data\il2cpp\libil2cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>funchook_dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>G:\programmering\libraries\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\libs\funchook-1.1.0\out\build\x64-Debug %28default%29;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(TargetDir)*.dll" "G:\SteamLibrary\steamapps\common\Pistol Whip\Mods" /S /Y </Command>
+      <Command>XCOPY "$(TargetDir)*.dll" "C:\Program Files (x86)\Steam\steamapps\common\Pistol Whip\Mods" /S /Y </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,6 +157,9 @@
     <ClCompile Include="GeoSet.cpp" />
     <ClCompile Include="il2cpp_functions.cpp" />
     <ClCompile Include="il2cpp_utils.cpp" />
+    <ClCompile Include="Koreography.cpp" />
+    <ClCompile Include="KoreographyEvent.cpp" />
+    <ClCompile Include="KoreographyTrackBase.cpp" />
     <ClCompile Include="LevelData.cpp" />
     <ClCompile Include="LevelDatabase.cpp" />
     <ClCompile Include="LevelManager.cpp" />
@@ -164,20 +167,28 @@
     <ClCompile Include="Libraries\WavLoader.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Messenger.cpp" />
     <ClCompile Include="MultiMusicPlayer.cpp" />
     <ClCompile Include="ObstacleData.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Mod.cpp" />
+    <ClCompile Include="PlayerActionManager.cpp" />
     <ClCompile Include="PlaySound.cpp" />
+    <ClCompile Include="SceneAppearanceManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SimpleMusicPlayer.cpp" />
     <ClCompile Include="SongSelectionUIController.cpp" />
     <ClCompile Include="TargetData.cpp" />
+    <ClCompile Include="TempoSectionDef.cpp" />
     <ClCompile Include="TrackData.cpp" />
     <ClCompile Include="AssetBundle.cpp" />
+    <ClCompile Include="TrackSection.cpp" />
+    <ClCompile Include="typedefs.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="WorldObject.cpp" />
     <ClCompile Include="WorldRegion.cpp" />
+    <ClCompile Include="WwiseKoreographySet.cpp" />
+    <ClCompile Include="WwiseKoreoMediaIDEntry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetBundle.hpp" />
@@ -189,9 +200,14 @@
     <ClInclude Include="GameMap.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="GeoSet.hpp" />
+    <ClInclude Include="HashSet.hpp" />
     <ClInclude Include="il2cpp_functions.hpp" />
     <ClInclude Include="il2cpp_utils.hpp" />
+    <ClInclude Include="IPayload.hpp" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="Koreography.hpp" />
+    <ClInclude Include="KoreographyEvent.hpp" />
+    <ClInclude Include="KoreographyTrackBase.hpp" />
     <ClInclude Include="LevelData.hpp" />
     <ClInclude Include="LevelDatabase.hpp" />
     <ClInclude Include="LevelManager.hpp" />
@@ -201,24 +217,39 @@
     <ClInclude Include="LODSwitcher.hpp" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="Messages.hpp" />
+    <ClInclude Include="Messenger.hpp" />
     <ClInclude Include="MultiMusicPlayer.hpp" />
     <ClInclude Include="ObstacleData.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Mod.h" />
+    <ClInclude Include="PlayerActionManager.hpp" />
     <ClInclude Include="PlaySound.hpp" />
+    <ClInclude Include="SceneAppearanceManager.hpp" />
     <ClInclude Include="SceneManager.hpp" />
     <ClInclude Include="SimpleMusicPlayer.hpp" />
     <ClInclude Include="SongSelectionUIController.hpp" />
     <ClInclude Include="TargetData.hpp" />
+    <ClInclude Include="TempoSectionDef.hpp" />
     <ClInclude Include="TrackData.hpp" />
+    <ClInclude Include="TrackSection.hpp" />
     <ClInclude Include="typedefs.h" />
     <ClInclude Include="utils-functions.hpp" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="WorldObject.hpp" />
     <ClInclude Include="WorldRegion.hpp" />
+    <ClInclude Include="WwiseKoreographySet.hpp" />
+    <ClInclude Include="WwiseKoreoMediaIDEntry.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\TODO.txt" />
+    <Text Include="GameManager.md" />
+    <Text Include="Messages.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LevelSelectTrigger.md" />
+    <None Include="MusicManager.md" />
+    <None Include="SceneAppearanceManager.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

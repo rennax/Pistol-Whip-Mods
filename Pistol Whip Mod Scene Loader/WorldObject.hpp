@@ -10,6 +10,7 @@ typedef struct WorldPoint {
 	Vector3 position;
 	Quaternion rotation;
 } WorldPoint;
+void to_json(json& j, const WorldPoint& wp);
 
 
 class WorldObject
@@ -21,8 +22,9 @@ public:
 	~WorldObject();
 	static Il2CppObject* Dump(Il2CppObject* levelData, std::string_view prefabName);
 	Il2CppObject* GetObj() {
-		return worldObject;
+		return self;
 	}
+	json Dump();
 	static void DumpComponents(Il2CppObject* prefab);
 private:
 	static std::string GetObjectName(Il2CppObject* obj);
@@ -33,7 +35,7 @@ private:
 	
 
 private:
-	Il2CppObject* worldObject;
+	Il2CppObject* self;
 	WorldPoint point;
 	Il2CppObject* prefab;
 	Vector3 scale;

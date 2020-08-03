@@ -6,28 +6,26 @@ WorldObject::WorldObject(WorldPoint point_, Il2CppObject* prefab_, Vector3 scale
 	point(point_), prefab(prefab_), scale(scale_)
 {
 	Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "WorldObject");
-	worldObject = il2cpp_functions::object_new(klass);
+	self = il2cpp_functions::object_new(klass);
 
 	const auto ctor = il2cpp_utils::GetMethod(klass, ".ctor", 3);
-	il2cpp_utils::RunMethod(worldObject, ctor, &point, prefab, &scale);
+	il2cpp_utils::RunMethod(self, ctor, &point, prefab, &scale);
 }
 
 WorldObject::WorldObject(WorldPoint point_, Il2CppObject* prefab_) :
 	point(point_), prefab(prefab_), scale({ 1,1,1 })
 {
 	Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "WorldObject");
-	worldObject = il2cpp_functions::object_new(klass);
+	self = il2cpp_functions::object_new(klass);
 
 	const auto ctor = il2cpp_utils::GetMethod(klass, ".ctor", 2);
-	il2cpp_utils::RunMethod(worldObject, ctor, &point, prefab);
+	il2cpp_utils::RunMethod(self, ctor, &point, prefab);
 
-	il2cpp_utils::GetFieldValue(&scale, worldObject, "scale");
+	il2cpp_utils::GetFieldValue(&scale, self, "scale");
 }
 
-WorldObject::WorldObject(Il2CppObject* obj)
-{
-	worldObject = obj;
-}
+WorldObject::WorldObject(Il2CppObject* obj) : self(obj)
+{}
 
 Il2CppObject* WorldObject::Dump(Il2CppObject* levelData, std::string_view prefabName) {
 	auto tmpWorldObjects = il2cpp_utils::GetFieldValue(levelData, "simpleStaticWorldObjects");
@@ -51,6 +49,21 @@ std::string WorldObject::GetObjectName(Il2CppObject* obj) {
 	il2cpp_utils::RunMethod(&str, klass, "GetName", obj);
 	auto name = csstrtostr(str);
 	return std::string(to_utf8(name));
+}
+
+json WorldObject::Dump()
+{
+	json j;
+	il2cpp_utils::GetFieldValue(&point, self, "point");
+	il2cpp_utils::GetFieldValue(&scale, self, "scale");
+	il2cpp_utils::GetFieldValue(&prefab, self, "prefab");
+
+	j["point"] = point;
+	j["scale"] = scale;
+	j["prefab"] = {
+		"prefabName", GetObjectName(prefab)
+	};
+	return j;
 }
 
 void WorldObject::DumpComponents(Il2CppObject* prefab) {
@@ -78,4 +91,11 @@ void WorldObject::DumpComponents(Il2CppObject* prefab) {
 
 WorldObject::~WorldObject()
 {
+}
+
+void to_json(json& j, const WorldPoint& wp)
+{
+	j = json();
+	j = wp.position;
+	j = wp.rotation;
 }

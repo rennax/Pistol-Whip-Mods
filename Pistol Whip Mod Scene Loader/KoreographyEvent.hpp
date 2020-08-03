@@ -18,7 +18,7 @@ private:
 	Il2CppObject* self = nullptr;
 	int64_t mStartSample;
 	int64_t mEndSample;
-	//TODO IPayload
+	Il2CppObject* mPayload = nullptr;
 };
 
 #endif // !KOREOGRAPHYEVENT_HPP

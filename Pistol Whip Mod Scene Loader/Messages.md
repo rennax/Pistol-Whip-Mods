@@ -16,3 +16,14 @@ See more about LevelSelectTrigger here
 Following class send this message
 * GameManager.SetLevelInternal(GameMap map)
 
+
+
+##GameStartEvent
+Following classes register to this message.
+###PlayerActionManager.OnEnable()
+Registers to call to `PlayerActionManager.OnGameStart()`
+
+
+###LevelSelectTrigger.Awake()
+Registers to call `private void OnLevelSelect(Messages.LevelSelectEvent e)`
+See more about LevelSelectTrigger her

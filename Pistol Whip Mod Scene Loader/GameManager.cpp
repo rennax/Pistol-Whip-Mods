@@ -8,10 +8,13 @@
 #include "AssetBundle.hpp"
 #include "List.hpp"
 #include "TrackData.hpp"
+#include "Messenger.hpp"
 
 #include "WwiseKoreographySet.hpp"
 #include "TempoSectionDef.hpp"
 #include "Koreography.hpp"
+#include "TrackSection.hpp"
+#include "SceneAppearanceManager.hpp"
 
 namespace GameManager {
 
@@ -40,10 +43,10 @@ namespace GameManager {
 		
 
 		if ((keyState = GetAsyncKeyState(VK_F1)) && pf1 == false)// & 0x8000
-		{
+		{//Tries to start level
 			LOG("Pressed F1\n");
 			pf1 = true;
-			
+			SceneAppearanceManager::overwriteOnLevelSelect = true;
 
 			AssetBundle::Init();
 
@@ -64,31 +67,19 @@ namespace GameManager {
 			il2cpp_utils::SetFieldValue(levelData, "songSwitch", il2cpp_utils::GetFieldValue(lastReleasedScene, "songSwitch"));
 			Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(levelData, "maps"));
 			Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, 0); //GameMap
-			
-			//Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "Messages/LevelLoadRequest");
-			/*msg = il2cpp_functions::object_new(klass);
-			il2cpp_utils::RunMethod(msg, ".ctor");
-			il2cpp_utils::RunMethod(msg, "Set", map);*/
 
-			//il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(LevelManager::levelManager()), "OnLevelLoadRequested", msg);
+			//il2cpp_utils::SetFieldValue(levelData, "sections", il2cpp_utils::GetFieldValue(lastReleasedScene, "sections"));
 
-			il2cpp_utils::SetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levelData", levelData);
-			il2cpp_utils::SetFieldValue(reinterpret_cast<Il2CppObject*>(self), "map", map);
-			//il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "LoadLevel");
-			//il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "StartSong");
-			//il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "OnRestartGame");
+
+			if (!il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "SetLevelInternal", map))
+				LOG("WARNING: Failed call to GameManager.SetLevelInternal(GameMap)\n");
+
 			il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "OnStartButton");
 
-			//Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "Messenger");
-			//auto* method = il2cpp_utils::GetMethod(klass, "get_Default", 0);
-			//Il2CppObject* Messenger = nullptr;
-			//il2cpp_utils::GetFieldValue(Messenger, klass, "defaultMessenger");
-			////il2cpp_utils::RunMethod(Messenger, klass, method);
-			//il2cpp_utils::RunMethod(Messenger, "Send", map);
 
 		}
 		else if (GetAsyncKeyState(VK_F2) && pf2 == false) 
-		{
+		{//
 			pf2 = true;
 
 			Il2CppObject* levels = il2cpp_utils::GetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levels");
@@ -117,15 +108,24 @@ namespace GameManager {
 			o = std::ofstream("WWiseKoreoSetDump.json");
 			o << std::setw(4) << j << std::endl;
 			o.close();
-			//uint32_t koreoSetsSize = il2cpp_functions::array_length(koreoSets);
-			//LOG("LevelDatabase.koreoSets.size is %u\n", koreoSetsSize);
-			//if (koreoSetsSize > 0)
-			//{
-			//	WwiseKoreographySet koreoSet(koreo);
-			//	json j = koreoSet.Dump();
-			//	std::ofstream o = std::ofstream("WWiseKoreosetDump.json");
-			//	o << std::setw(4) << j << std::endl;
-			//}
+
+			LevelData level(lastReleasedScene);
+			j.clear();
+			j = level.Dump();
+			o = std::ofstream("LevelData.json");
+			o << std::setw(4) << j << std::endl;
+			o.close();
+
+			j.clear();
+			List<Il2CppObject*> sections(il2cpp_utils::GetFieldValue(lastReleasedScene, "sections"));
+			LOG("number of sections %d\n", sections.Count());
+			TrackSection section(sections[0]);
+			j = section.Dump();
+			o = std::ofstream("TrackSection.json");
+			o << std::setw(4) << j << std::endl;
+			o.close();
+
+
 		}
 		if (GetAsyncKeyState(VK_F3))
 		{

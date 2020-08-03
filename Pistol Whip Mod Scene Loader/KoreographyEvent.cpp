@@ -30,5 +30,17 @@ json KoreographyEvent::Dump()
 
 	il2cpp_utils::GetFieldValue(&mEndSample, self, "mEndSample");
 	j["mEndSample"] = mEndSample;
+
+	mPayload = il2cpp_utils::GetFieldValue(self, "mPayload");
+	if (mPayload != nullptr)
+	{
+		Il2CppClass* klass = il2cpp_functions::object_get_class(mPayload);
+		j["mPayload"] = il2cpp_functions::class_get_name(klass);
+	}
+	else
+	{
+		j["mPayload"] = 0;
+	}
+
 	return j;
 }

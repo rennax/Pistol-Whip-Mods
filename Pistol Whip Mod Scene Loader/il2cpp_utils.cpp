@@ -6,6 +6,18 @@
 
 // Many implementaions from https://github.com/sc2ad/pistol-whip-hook/blob/fd7edc3d1d39d231e43c1430dbf4336045a056cc/shared/utils/il2cpp-utils.cpp
 namespace il2cpp_utils {
+
+	//#define DEFINE_IL2CPP_ARG_TYPE(type, nameSpace, className) \
+ //       template<> \
+ //       struct ::il2cpp_utils::il2cpp_type_check::il2cpp_no_arg_class<type> { \
+ //           static inline Il2CppClass* get() { \
+ //               il2cpp_functions::Init(); \
+ //               return il2cpp_utils::GetClassFromName(nameSpace, className); \
+ //           } \
+ //       }
+	//DEFINE_IL2CPP_ARG_TYPE(Il2CppReflectionMethod*, "System.Reflection", "MethodInfo");
+
+
 	using namespace std;
 	const MethodInfo* GetMethod(Il2CppClass* klass, std::string_view methodName, int argsCount) {
 		if (!klass) return nullptr;
@@ -173,6 +185,37 @@ namespace il2cpp_utils {
 			return nullptr;
 		}
 		return reinterpret_cast<Il2CppReflectionType*>(genericType);
+	}
+
+
+	const MethodInfo* MakeGeneric(const MethodInfo* info, std::initializer_list<Il2CppClass*> args) {
+
+		// Ensure it is generic
+		if (!il2cpp_functions::method_is_generic(info)) {
+			return nullptr;
+		}
+		// Create the Il2CppReflectionMethod* from the MethodInfo* using the MethodInfo's type
+		auto* infoObj = il2cpp_functions::method_get_object(info, nullptr);
+		// Populate generic parameters into array
+		static auto* typeClass = il2cpp_utils::GetClassFromName("System", "Type");
+		Array<Il2CppObject*>* arr = reinterpret_cast<Array<Il2CppObject*>*>(il2cpp_functions::array_new(typeClass, args.size()));
+		int i = 0;
+		for (auto* klass : args) {
+			arr->values[i] = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
+			i++;
+		}
+		//Il2CppObject* rbo = nullptr;
+		//il2cpp_utils::RunMethod(&rbo, (Il2CppObject*)infoObj, "MakeGenericMethod", arr);
+
+		// Call instance function on infoObj to MakeGeneric
+		Il2CppReflectionMethod* returnedInfoObj = nullptr;
+		il2cpp_utils::RunMethod(&returnedInfoObj, (Il2CppObject*)infoObj, "MakeGenericMethod", arr);
+		// Get MethodInfo* back from generic instantiated method
+		const auto* inflatedInfo = il2cpp_functions::method_get_from_reflection(returnedInfoObj);
+		// Return method to be invoked by caller
+		return inflatedInfo;
+		// Ex:
+
 	}
 
 	Il2CppClass* MakeGeneric(const Il2CppClass* klass, std::initializer_list<const Il2CppClass*> args) {

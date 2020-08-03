@@ -590,6 +590,9 @@ namespace il2cpp_utils
     // Gets a C# name of a type
     const char* TypeGetSimpleName(const Il2CppType* type);
 
+    // by Sc2ad
+    const MethodInfo* MakeGeneric(const MethodInfo* info, std::initializer_list<Il2CppClass*> args);
+
     // Function made by zoller27osu, modified by Sc2ad
     // Logs information about the given MethodInfo* as log(DEBUG)
     void LogMethod(const MethodInfo* method);

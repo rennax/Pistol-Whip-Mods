@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <type_traits>
 #include <cassert>
+#include "json.hpp"
 #include "../libil2cpp/il2cpp-api-types.h"
 #include "../libil2cpp/il2cpp-class-internals.h"
 #include "../libil2cpp/il2cpp-object-internals.h"
@@ -52,7 +53,7 @@ struct Array : public Il2CppObject
 
 extern "C" {
 #endif /* __cplusplus */
-
+    using json = nlohmann::json;
     // C# SPECIFIC
 
     // System.IntPtr
@@ -102,12 +103,14 @@ extern "C" {
         float b;
         float a;
     } Color;
+    
 
     // UnityEngine.Vector2
     typedef struct Vector2 {
         float x;
         float y;
     } Vector2;
+   
 
     // UnityEngine.Vector3
     typedef struct Vector3 {
@@ -115,6 +118,7 @@ extern "C" {
         float y;
         float z;
     } Vector3;
+    
 
     // UnityEngine.Vector3i
     typedef struct Vector3i {
@@ -122,7 +126,14 @@ extern "C" {
         int32_t y;
         int32_t z;
     } Vector3i;
+   
 
+    typedef struct Vector2i {
+        int32_t x;
+        int32_t y;
+    } Vector2i;
+   
+   
 
     // UnityEngine.Quaternion
     typedef struct Quaternion {
@@ -131,8 +142,16 @@ extern "C" {
         float z;
         float w;
     } Quaternion;
+    
 
 #ifdef __cplusplus
+
 }
+void to_json(json& j, const Color& p);
+void to_json(json& j, const Vector2i& p);
+void to_json(json& j, const Quaternion& q);
+void to_json(json& j, const Vector3i& p);
+void to_json(json& j, const Vector3& p);
+void to_json(json& j, const Vector2& p);
 #endif /* __cplusplus */
 #endif /* TYPEDEFS_H */

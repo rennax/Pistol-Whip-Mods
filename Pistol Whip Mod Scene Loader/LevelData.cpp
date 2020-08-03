@@ -1,7 +1,7 @@
 #include "LevelData.hpp"
 #include "List.hpp"
 #include "ColorShiftPoint.hpp"
-
+#include "TrackSection.hpp"
 #include "AssetBundle.hpp"
 
 using namespace CSharp;
@@ -43,10 +43,12 @@ json LevelData::Dump()
 
 
 	List<Il2CppObject*> sections(il2cpp_utils::GetFieldValue(self, "sections"));
+	j["sections"] = {};
 	LOG("LevelData: length of sections = %u\n", sections.Count());
 	for (size_t i = 0; i < sections.Count(); i++)
 	{
-		//...
+		TrackSection section(sections[i]);
+		j["sections"].push_back(section.Dump());
 	}
 
 	List<Il2CppObject*> regions(il2cpp_utils::GetFieldValue(self, "regions"));
@@ -115,9 +117,6 @@ json LevelData::Dump()
 	il2cpp_utils::GetFieldValue(&songLength, self, "songLength");
 	j["songLength"] = songLength;
 
-	//Il2CppArray* sectionData;
-
-
 	return j;
 }
 
@@ -125,12 +124,7 @@ Il2CppObject* LevelData::Load(json level)
 {
 	LoadSongSwitch(level["song"]);
 	LoadGameMaps(level["gameMaps"]);
-
-	//LoadWorldObjects(level["worldObjects"]);
-
-	//loadDynamicProps(geo["dynamicProps"]);
-
-	
+	LoadTrackSections(level["gameMaps"]);
 
 
 	songLength = level["songLength"];
@@ -143,7 +137,8 @@ Il2CppObject* LevelData::Load(json level)
 		LOG("WARNING: Failed to assign songName in LevelData\n");
 	
 
-
+	List<Il2CppObject*> trackSections(il2cpp_utils::GetFieldValue(self, "sections"));
+	Il2CppObject* section1 = trackSections[0];
 
 	return self;
 }
@@ -187,6 +182,21 @@ void LevelData::LoadGameMaps(json j)
 
 void LevelData::LoadTrackSections(json j)
 {
+	//FOR TEST
+	List<Il2CppObject*> trackSections(il2cpp_utils::GetFieldValue(self, "sections"));
+	trackSections.Clear();
+
+	auto klass = il2cpp_utils::GetClassFromName("", "TrackSection");
+	Il2CppObject* section = nullptr;
+	int type = 0;
+	il2cpp_utils::RunMethod(&section, klass, "Create", &type);
+	trackSections.Add(section);
+
+	//TrackSection sec(section);
+	//j = sec.Dump();
+	//std::ofstream o = std::ofstream("TrackSection_ctor.json");
+	//o << std::setw(4) << j << std::endl;
+	//o.close();
 }
 
 void LevelData::LoadWorldRegions(json j)
