@@ -147,11 +147,19 @@ extern "C" {
 #ifdef __cplusplus
 
 }
-void to_json(json& j, const Color& p);
-void to_json(json& j, const Vector2i& p);
+void to_json(json& j, const Color& c);
+void to_json(json& j, const Vector2i& v);
 void to_json(json& j, const Quaternion& q);
-void to_json(json& j, const Vector3i& p);
-void to_json(json& j, const Vector3& p);
-void to_json(json& j, const Vector2& p);
+void to_json(json& j, const Vector3i& v);
+void to_json(json& j, const Vector3& v);
+void to_json(json& j, const Vector2& v);
+
+void from_json(const json& j, Vector3i& v);
+void from_json(const json& j, Vector3& v);
+void from_json(const json& j, Vector2i& v);
+void from_json(const json& j, Vector2& v);
+void from_json(const json& j, Color& c);
+void from_json(const json& j, Quaternion& q);
+
 #endif /* __cplusplus */
 #endif /* TYPEDEFS_H */

@@ -3,8 +3,13 @@
 #include "ColorShiftPoint.hpp"
 #include "TrackSection.hpp"
 #include "AssetBundle.hpp"
+#include "WwiseKoreographySet.hpp"
+#include "typedefs.h"
+#include <filesystem>
+#include <cstdio>
 
 using namespace CSharp;
+namespace fs = std::filesystem;
 
 MAKE_HOOK(get_isPlayable, bool, void* self) {
 	LOG("LevelData::get_isPlayable is called\n");
@@ -18,12 +23,11 @@ void LevelData::initHooks(funchook_t* funchookp)
 	INSTALL_HOOK(get_isPlayable);
 }
 
-LevelData::LevelData(Il2CppObject* obj)
+LevelData::LevelData(Il2CppObject* _gameManager, Il2CppObject* obj) : self(obj), gameManager(_gameManager)
 {
-	self = obj;
 }
 
-LevelData::LevelData()
+LevelData::LevelData(Il2CppObject* _gameManager) : gameManager(_gameManager)
 {
 	Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "LevelData");
 	self = il2cpp_functions::object_new(klass);
@@ -31,6 +35,10 @@ LevelData::LevelData()
 		LOG("WARNING: Failed to create LevelData object\n");
 	else
 		LOG("Created LevelData object\n");
+
+	auto nameProp = il2cpp_utils::GetPropertySetMethod(klass, "name");
+	Il2CppString* str = il2cpp_utils::createcsstr("Religion_Data");
+	il2cpp_utils::RunMethod(self, nameProp, str);
 }
 
 LevelData::~LevelData()
@@ -64,6 +72,7 @@ json LevelData::Dump()
 	{
 		ColorShiftPoint color(colors[i]);
 		j["colors"].push_back(color.Dump());
+
 	}
 
 	List<Il2CppObject*> worldObjects(il2cpp_utils::GetFieldValue(self, "worldObjects"));
@@ -124,7 +133,10 @@ Il2CppObject* LevelData::Load(json level)
 {
 	LoadSongSwitch(level["song"]);
 	LoadGameMaps(level["gameMaps"]);
-	LoadTrackSections(level["gameMaps"]);
+	LoadAndSetWwiseKoreographySets(level["koreoSets"]);
+	LoadTrackSections(level["sections"]);
+	LoadColorShiftPoints(level["colors"]);
+	LoadWorldRegions(level["regions"]);
 
 
 	songLength = level["songLength"];
@@ -137,17 +149,39 @@ Il2CppObject* LevelData::Load(json level)
 		LOG("WARNING: Failed to assign songName in LevelData\n");
 	
 
-	List<Il2CppObject*> trackSections(il2cpp_utils::GetFieldValue(self, "sections"));
-	Il2CppObject* section1 = trackSections[0];
-
 	return self;
 }
 
 void LevelData::LoadSongSwitch(json j)
 {
+
 	LOG("TODO Switch song in LevelData::LoadSongSwitch\n");
-	//il2cpp_utils::SetFieldValue(self, "songLength", songLength);
-	//il2cpp_utils::SetFieldValue(self, "songName", songName);
+	//TODO, at startup, check if the file is not renamed to its old name
+	/*
+	* Rename current lastReleasedScene to have postfix _saved
+	* Get location of current selected custom song
+	* Copy over the .wem file and rename it to have the id of lastReleasedScene
+	* Done
+	*/
+	try
+	{
+		fs::path toCopy("Custom Levels/x02/song.wem");
+		fs::path destination(lastReleasedScene);
+		if (!fs::exists(fs::path(lastReleasedSceneRenamed)))
+		{
+			if (!std::rename(lastReleasedScene, lastReleasedSceneRenamed))
+			{
+				LOG("Failed to rename Religion' wem file\n");
+			}
+		}
+		
+		fs::copy(toCopy, destination, fs::copy_options::overwrite_existing); // We have already made sure copy exists
+	}
+	catch (const std::exception& e)
+	{
+		LOG("%s\n", e.what());
+	}
+
 }
 
 void LevelData::LoadGameMaps(json j)
@@ -155,6 +189,9 @@ void LevelData::LoadGameMaps(json j)
 	for (auto& gm : j) {
 		GameMap* map = new GameMap(self);
 		map->Load(gm);
+
+
+
 		maps.push_back(map);
 	}
 
@@ -171,6 +208,7 @@ void LevelData::LoadGameMaps(json j)
 
 	}
 
+
 	for (size_t i = 0; i < maps.size(); i++)
 	{
 		il2cpp_array_set(array_maps, Il2CppObject*, i, maps[i]->GetIl2CppObject());
@@ -182,31 +220,59 @@ void LevelData::LoadGameMaps(json j)
 
 void LevelData::LoadTrackSections(json j)
 {
-	//FOR TEST
-	List<Il2CppObject*> trackSections(il2cpp_utils::GetFieldValue(self, "sections"));
-	trackSections.Clear();
-
-	auto klass = il2cpp_utils::GetClassFromName("", "TrackSection");
-	Il2CppObject* section = nullptr;
-	int type = 0;
-	il2cpp_utils::RunMethod(&section, klass, "Create", &type);
-	trackSections.Add(section);
-
+	//////FOR TEST
+	//List<Il2CppObject*> trackSections(il2cpp_utils::GetFieldValue(self, "sections"));
+	////trackSections.Clear();
+	//auto klass = il2cpp_utils::GetClassFromName("", "TrackSection");
+	//Il2CppObject* section = nullptr;
+	//int type = 0;
+	//il2cpp_utils::RunMethod(&section, klass, "Create", &type);
+	//trackSections.Add(section);
 	//TrackSection sec(section);
 	//j = sec.Dump();
 	//std::ofstream o = std::ofstream("TrackSection_ctor.json");
 	//o << std::setw(4) << j << std::endl;
 	//o.close();
+	List<Il2CppObject*> sections(il2cpp_utils::GetFieldValue(self, "sections"));
+	for (auto& sec : j)
+	{
+		TrackSection section;
+		sections.Add(section.Load(sec));
+	}
 }
 
 void LevelData::LoadWorldRegions(json j)
 {
+	List<Il2CppObject*> regions(il2cpp_utils::GetFieldValue(self, "colors"));
+	for (auto& r : j)
+	{
+		//TODO move into own class
+		Il2CppObject* region = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "WorldRegion"));
+		il2cpp_utils::RunMethod(region, ".ctor");
+
+		int32_t type = r["type"];
+		Vector3i position = r["position"];
+		Vector3i min = r["min"];
+		Vector3i max = r["max"];
+		
+		il2cpp_utils::SetFieldValue(region, "position", &position);
+		il2cpp_utils::SetFieldValue(region, "min", &min);
+		il2cpp_utils::SetFieldValue(region, "max", &max);
+		il2cpp_utils::SetFieldValue(region, "type", &type);
+
+		regions.Add(region);
+	}
 }
 
 void LevelData::LoadColorShiftPoints(json j)
 {
+	List<Il2CppObject*> colors(il2cpp_utils::GetFieldValue(self, "colors"));
+	for (auto& p : j)
+	{
+		ColorShiftPoint point;
+		colors.Add(point.Load(p));
+	}
 }
-
 
 
 void LevelData::LoadWorldObjects(json j)
@@ -263,4 +329,46 @@ void LevelData::LoadStaticCullingRanges(json j)
 
 void LevelData::LoadDynamicCullingRanges(json j)
 {
+}
+
+void LevelData::LoadAndSetWwiseKoreographySets(json j)
+{
+	//Set LevelDatabase.koreoSets as this is used when fetching the song
+	Il2CppObject* levelDB = il2cpp_utils::GetFieldValue(gameManager, "levels"); //LevelDatabase
+	Array<Il2CppObject*>* koreoSets;
+	il2cpp_utils::GetFieldValue(&koreoSets, levelDB, "koreoSets");
+	List<Il2CppObject*> koreographiesEasy(il2cpp_utils::GetFieldValue(koreoSets->values[0], "koreographies"));
+	Il2CppObject* koreo = nullptr;
+	for (size_t i = 0; i < koreographiesEasy.Count(); i++)
+	{
+		uint32_t id;
+		il2cpp_utils::GetFieldValue(&id, koreographiesEasy[i], "mediaID");
+		if (id == 561074166)
+		{
+			koreo = koreographiesEasy[i];
+			break;
+		}
+	}
+
+	if (koreo != nullptr)
+	{
+		Il2CppObject* trackData = il2cpp_utils::GetFieldValue(maps[0]->GetIl2CppObject(), "trackData");
+		Il2CppObject* koreography = il2cpp_utils::GetFieldValue(trackData, "koreography");
+		il2cpp_utils::SetFieldValue(koreo, "koreo", koreography);
+		
+		Il2CppString* str;
+		il2cpp_utils::GetFieldValue(&str, koreography, "clipName");
+		LOG("Set new koreography: %s\n\n", to_utf8(csstrtostr(str)).c_str());
+	}
+
+
+	//for (size_t i = 0; i < maps.size(); i++)
+	//{
+	//	Il2CppObject* trackData = il2cpp_utils::GetFieldValue(maps[i]->GetIl2CppObject(), "trackData");
+	//	Il2CppObject* koreo = il2cpp_utils::GetFieldValue(trackData, "koreography");
+	//	List<Il2CppObject*>koreographies(il2cpp_utils::GetFieldValue(koreoSets->values[i], "koreographies"));
+	//	uint32_t id = j.at(i)["koreographies"].at(0)["mediaID"];
+	//	il2cpp_utils::SetFieldValue(koreographies[i], "mediaID", &id);
+	//	il2cpp_utils::SetFieldValue(koreographies[i], "koreo", koreo);
+	//}
 }

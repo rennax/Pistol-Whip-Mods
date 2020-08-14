@@ -25,6 +25,7 @@ public:
 	TrackData();
 	TrackData(Il2CppObject* levelData_, Il2CppObject* obj);
 	TrackData(Il2CppObject* levelData_);
+	TrackData(Il2CppObject* levelData_, bool dontToShit);
 	Il2CppObject* Load(json j);
 	inline Il2CppObject* GetTrackData() { return self; }
 	json DumpToJson();

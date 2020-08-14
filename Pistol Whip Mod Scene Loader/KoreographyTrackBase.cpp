@@ -23,7 +23,16 @@ KoreographyTrackBase::~KoreographyTrackBase()
 
 Il2CppObject* KoreographyTrackBase::Load(json j)
 {
-	return nullptr;
+	il2cpp_utils::SetFieldValue(self, "mEventID", il2cpp_utils::createcsstr(j["mEventID"]));
+
+	List<Il2CppObject*> mEventList(il2cpp_utils::GetFieldValue(self, "mEventList"));
+	for (auto e : j["mEventList"])
+	{
+		KoreographyEvent mEvent;
+		mEventList.Add(mEvent.Load(e));
+	}
+
+	return self;
 }
 
 json KoreographyTrackBase::Dump()

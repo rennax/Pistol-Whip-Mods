@@ -2,8 +2,8 @@
     "version": "0.1",
     "levelData":{
         "song": "song.wem",
-        "songName": "xxx",
-        "songLength": 20,
+        "songName": "mus_core_religion",
+        "songLength": 274.605,
         "worldObjects": [
             {
                 "point": {
@@ -12,6 +12,29 @@
                 },
                 "prefabName": "Test Map - Cubes",
                 "scale": {"x": 1, "y": 1, "z": 1}
+            }
+        ],
+        "koreoSets": [
+            {
+                "koreographies": [
+                    {
+                        "mediaID": 561074166
+                    }
+                ]
+            },
+            {
+                "koreographies": [
+                    {
+                        "mediaID": 561074166
+                    }
+                ]
+            },
+            {
+                "koreographies": [
+                    {
+                        "mediaID": 561074166
+                    }
+                ]
             }
         ],
         "gameMaps": [
@@ -77,76 +100,6 @@
                             "restPoint": {"x": 2.0, "y": 1.0, "z": 5},
                             "moveScale": 1.0,
                             "phase": 1.0
-                        },
-                
-                
-                
-                        {
-                            "restPoint": {"x": -0.5, "y": 2.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": 0.5, "y": 2.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": -0.5, "y": 3.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": 0.5, "y": 3.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": -0.5, "y": 4.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": 0.5, "y": 4.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": -0.5, "y": 5.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": 0.5, "y": 5.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                
-                
-                        {
-                            "restPoint": {"x": -1.0, "y": 6.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": 0.0, "y": 6.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": 1.0, "y": 6.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": -0.5, "y": 7.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
-                        },
-                        {
-                            "restPoint": {"x": 0.5, "y": 7.0, "z": 5},
-                            "moveScale": 1.0,
-                            "phase": 1.0
                         }
                     ],
                     "staticProps": [
@@ -159,13 +112,442 @@
                     "difficulty": 0,
                     "playerSpeed": 3.0,
                     "beatTimes": [
-                        5
+                        10,
+                        100
                     ],
                     "beats": [
+                        {
+                            "time": 10.0,
+                            "targets": [
+                                {
+                                    "distance": 1,
+                                    "placement": {"x": 0, "y": 0},
+                                    "toughness": 0,
+                                    "enemyOffset": {
+                                        "position": {"x": 0, "y": 0, "z": 0},
+                                        "rotation": {"x": 0, "y": 0, "z": 0, "w": 0}
+                                    },
+                                    "enemySequence": {
+                                        "enemyType": {"toughness": 0},
+                                        "forceCheevoID": 1,
+                                        "playerActionLerp": 0.55,
+                                        "localActionPoint": {
+                                            "position": {"x": 0, "y": 0, "z": 5},
+                                            "rotation": {"x": 0, "y": 0, "z": 0, "w": 0}
+                                        },
+                                        "autospawn": true,
+                                        "actionIndex": 0,
+                                        "isThreat": true,
+                                        "duration": 10,
+                                        "actions": [
+                                            {
+                                                "type": 0,
+                                                "waitTime": 1.0,
+                                                "duration": 10.0,
+                                                "localStartingPoint": {
+                                                    "position": {"x": 0, "y": 0, "z": 0},
+                                                    "rotation": {"x": 0, "y": 0, "z": 0, "w": 0}
+                                                },
+                                                "localEndingPoint": {
+                                                    "position": {"x": 0, "y": 0, "z": 0},
+                                                    "rotation": {"x": 0, "y": 0, "z": 0, "w": 0}
+                                                },
+                                                "worldStartingPoint": {
+                                                    "position": {"x": 0, "y": 0, "z": 5},
+                                                    "rotation": {"x": 0, "y": 0, "z": 0, "w": 0}
+                                                },
+                                                "worldEndingPoint": {
+                                                    "position": {"x": 0, "y": 0, "z": 10},
+                                                    "rotation": {"x": 0, "y": 0, "z": 0, "w": 0}
+                                                },
+                                                "sequenceStartTime": 0.0,
+                                                "startTime": 0.0,
+                                                "endTime": 20.0
+                                            }
+                                        ]
+                                    },
+                                    "ignoreForLevelRank": true,
+                                    "fireTimes": [9.0, 10.0],
+                                    "cheevoID": 1,
+                                    "noGround": false
+                                }
+                            ],
+                            "obstacles": [
 
-                    ]
-                }
+                            ]
+                        },
+                        {
+                            "time": 100.0,
+                            "targets": [],
+                            "obstacles": []
+                        }
+                    ],
+                    "koreography": {
+                        "mSampleRate": 44100,
+                        "clipName": "mus_core_religion",
+                        "lastUpdateEnd": 0,
+                        "lastUpdateStart": 0,
+                        "mAudioFilePath": "../PistolWhip_Wwise/Originals/SFX/mus_core_religion.wav",
+                        "mIgnoreLatencyOffset": false,
+                        "mTempoSections": [
+                            {
+                                "bStartNewMeasure": true,
+                                "beatsPerMeasure": 4,
+                                "samplesPerBeat": 20353.846153846156,
+                                "sectionName": "Test Section",
+                                "startSample": 0
+                            },
+                            {
+                                "bStartNewMeasure": true,
+                                "beatsPerMeasure": 4,
+                                "samplesPerBeat": 20353.846153846156,
+                                "sectionName": "New Section",
+                                "startSample": 255002
+                            },
+                            {
+                                "bStartNewMeasure": true,
+                                "beatsPerMeasure": 4,
+                                "samplesPerBeat": 20353.846153846156,
+                                "sectionName": "main",
+                                "startSample": 2203985
+                            }
+                        ],
+                        "mTracks": [
+                            {
+                                "mEventID": "Beat",
+                                "mEventList": [
+                                    {
+                                        "mEndSample": 255002,
+                                        "mPayload": 0,
+                                        "mStartSample": 255002
+                                    },
+                                    {
+                                        "mEndSample": 295709,
+                                        "mPayload": 0,
+                                        "mStartSample": 295709
+                                    },
+                                    {
+                                        "mEndSample": 417832,
+                                        "mPayload": 0,
+                                        "mStartSample": 417832
+                                    },
+                                    {
+                                        "mEndSample": 580663,
+                                        "mPayload": 0,
+                                        "mStartSample": 580663
+                                    },
+                                    {
+                                        "mEndSample": 621371,
+                                        "mPayload": 0,
+                                        "mStartSample": 621371
+                                    },
+                                    {
+                                        "mEndSample": 723140,
+                                        "mPayload": 0,
+                                        "mStartSample": 723140
+                                    },
+                                    {
+                                        "mEndSample": 824909,
+                                        "mPayload": 0,
+                                        "mStartSample": 824909
+                                    },
+                                    {
+                                        "mEndSample": 901304,
+                                        "mPayload": 0,
+                                        "mStartSample": 901304
+                                    },
+                                    {
+                                        "mEndSample": 942011,
+                                        "mPayload": 0,
+                                        "mStartSample": 942011
+                                    },
+                                    {
+                                        "mEndSample": 1064134,
+                                        "mPayload": 0,
+                                        "mStartSample": 1064134
+                                    },
+                                    {
+                                        "mEndSample": 1226965,
+                                        "mPayload": 0,
+                                        "mStartSample": 1226965
+                                    },
+                                    {
+                                        "mEndSample": 1267673,
+                                        "mPayload": 0,
+                                        "mStartSample": 1267673
+                                    },
+                                    {
+                                        "mEndSample": 1389796,
+                                        "mPayload": 0,
+                                        "mStartSample": 1389796
+                                    }
+                                ]
+                            },
+                            {
+                                "mEventID": "NoBeat",
+                                "mEventList": [
+                                    {
+                                        "mEndSample": 2203950,
+                                        "mPayload": 0,
+                                        "mStartSample": 255002
+                                    },
+                                    {
+                                        "mEndSample": 14823334,
+                                        "mPayload": 0,
+                                        "mStartSample": 14579088
+                                    }
+                                ]
+                            },
+                            {
+                                "mEventID": "Event"
+                            }
+                        ]
+                    }
+                },
+                "enemyCount": 1,
+                "isPlayable": true,
+                "enemyIgnoreCount": 0,
+                "enemyHitIgnoreCount": 0,
+                "rankedEnemyCount": 1,
+                "hitCount": 1,
+                "rankedHitCount": 0,
+                "trueMaxScore": 1000,
+                "rankMaxScore": 1000,
+                "rankQuotas": []
             }
+        ],
+        "sections": [
+            {
+                "_customColors": true,
+                "_customEnemyColor": false,
+                "blocks": null,
+                "colorHue": 0.67,
+                "colorSaturation": 0.8066037893295288,
+                "colorValue": 0.80,
+                "debris": null,
+                "derivedType": "FilledSection",
+                "end": 100,
+                "endingWall": false,
+                "enemyHue": 0.0,
+                "enemySaturation": 0.0,
+                "enemyValue": 0.0,
+                "extent": {
+                    "x": 166,
+                    "y": 142,
+                    "z": 100
+                },
+                "fogHue": 0.33,
+                "fogSaturation": 0.75,
+                "fogValue": 0.75,
+                "generateDebris": false,
+                "glowHue": 0.999,
+                "glowSaturation": 1.0,
+                "glowValue": 1.0,
+                "groundHeight": 0,
+                "height": 0,
+                "lastDebrisPoint": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "max": {
+                    "x": 82,
+                    "y": 85,
+                    "z": 100
+                },
+                "min": {
+                    "x": -84,
+                    "y": -57,
+                    "z": 0
+                },
+                "propSeed": 0,
+                "props": null,
+                "seed": -116627799,
+                "size": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "start": 0,
+                "startingWall": false,
+                "yOffsets": [
+                    0,
+                    0,
+                    167,
+                    334,
+                    501,
+                    668,
+                    835,
+                    1002,
+                    1169,
+                    1336,
+                    1503,
+                    1670,
+                    1837,
+                    2004,
+                    2171,
+                    2338,
+                    2505,
+                    2672,
+                    2839,
+                    3006,
+                    3173,
+                    3340,
+                    3507,
+                    3674,
+                    3841,
+                    4008,
+                    4175,
+                    4342,
+                    4509,
+                    4676,
+                    4843,
+                    5010,
+                    5177,
+                    5344,
+                    5511,
+                    5678,
+                    5845,
+                    6012,
+                    6179,
+                    6346,
+                    6513,
+                    6680,
+                    6847,
+                    7014,
+                    7181,
+                    7348,
+                    7515,
+                    7682,
+                    7849,
+                    8016,
+                    8183,
+                    8350,
+                    8517,
+                    8684,
+                    8851,
+                    9018,
+                    9185,
+                    9352,
+                    9519,
+                    9686,
+                    9853,
+                    10020,
+                    10187,
+                    10354,
+                    10521,
+                    10688,
+                    10855,
+                    11022,
+                    11189,
+                    11356,
+                    11523,
+                    11690,
+                    11857,
+                    12024,
+                    12191,
+                    12358,
+                    12525,
+                    12692,
+                    12859,
+                    13026,
+                    13193,
+                    13360,
+                    13527,
+                    13694,
+                    13861,
+                    14028,
+                    14195,
+                    14362,
+                    14529,
+                    14696,
+                    14863,
+                    15030,
+                    15197,
+                    15364,
+                    15531,
+                    15698,
+                    15865,
+                    16032,
+                    16199,
+                    16366,
+                    16533,
+                    16700,
+                    16867,
+                    17034,
+                    17201,
+                    17368,
+                    17535,
+                    17702,
+                    17869,
+                    18036,
+                    18203,
+                    18370,
+                    18537,
+                    18704,
+                    18871,
+                    19038,
+                    19205,
+                    19372,
+                    19539,
+                    19706,
+                    19873,
+                    20040,
+                    20207,
+                    20374,
+                    20541,
+                    20708,
+                    20875,
+                    21042,
+                    21209,
+                    21376,
+                    21543,
+                    21710,
+                    21877,
+                    22044,
+                    22211,
+                    22378,
+                    22545,
+                    22712,
+                    22879,
+                    23046,
+                    23213,
+                    23380,
+                    23547
+                ],
+                "yStep": 167,
+                "zOffsets": [
+                    0,
+                    0,
+                    23881,
+                    47762,
+                    71643,
+                    95524,
+                    119405,
+                    143286,
+                    167167,
+                    191048,
+                    214929,
+                    238810,
+                    262691,
+                    286572,
+                    310453,
+                    334334,
+                    358215,
+                    382096,
+                    405977,
+                    429858,
+                    453739,
+                    477620
+                ],
+                "zStep": 23881
+            }
+        ],
+        "colors": [
+
+        ],
+        "regions": [
+            
         ]
     }
     

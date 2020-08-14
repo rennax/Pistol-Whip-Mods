@@ -13,26 +13,12 @@ BeatData::BeatData(Il2CppObject* obj) : self(obj)
 {
 }
 
-CSharp::List<Il2CppObject*> BeatData::GetTargets()
-{
-	return CSharp::List<Il2CppObject*>(il2cpp_utils::GetFieldValue(self, "targets"));
-}
 
-CSharp::List<Il2CppObject*> BeatData::GetObstacles()
-{
-	return CSharp::List<Il2CppObject*>(il2cpp_utils::GetFieldValue(self, "obstacles"));
-}
-
-float BeatData::GetTime()
-{
-	float time = 0;
-	il2cpp_utils::GetFieldValue(&time, self, "time");
-	return time;
-}
 
 Il2CppObject* BeatData::Load(json j)
 {
 	CSharp::List<Il2CppObject*> obstacleList(il2cpp_utils::GetFieldValue(self, "obstacles"));
+	obstacleList.Clear();
 	for (auto o : j["obstacles"])
 	{
 		ObstacleData* obstacle = new ObstacleData();
@@ -41,10 +27,13 @@ Il2CppObject* BeatData::Load(json j)
 	}
 
 	CSharp::List<Il2CppObject*> targetList(il2cpp_utils::GetFieldValue(self, "targets"));
+	targetList.Clear();
 	for (auto o : j["targets"])
 	{
-		LOG("WARNING: TODO BeatData::targets");
+		TargetData target;
+		targetList.Add(target.Load(o));
 	}
+	LOG("TARGET LIST COUNT %d\n", targetList.Count());
 
 	return self;
 }
@@ -133,4 +122,22 @@ json BeatData::DumpToJson()
 
 	j["time"] = GetTime();
 	return j;
+}
+
+
+CSharp::List<Il2CppObject*> BeatData::GetTargets()
+{
+	return CSharp::List<Il2CppObject*>(il2cpp_utils::GetFieldValue(self, "targets"));
+}
+
+CSharp::List<Il2CppObject*> BeatData::GetObstacles()
+{
+	return CSharp::List<Il2CppObject*>(il2cpp_utils::GetFieldValue(self, "obstacles"));
+}
+
+float BeatData::GetTime()
+{
+	float time = 0;
+	il2cpp_utils::GetFieldValue(&time, self, "time");
+	return time;
 }

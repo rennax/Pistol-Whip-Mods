@@ -159,9 +159,6 @@
     <ClCompile Include="Messenger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="typedefs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TrackSection.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
@@ -170,6 +167,24 @@
     </ClCompile>
     <ClCompile Include="PlayerActionManager.cpp">
       <Filter>Source Files\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\utils\unityhelper</Filter>
+    </ClCompile>
+    <ClCompile Include="typedefs.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Source Files\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemySequence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyAction.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -319,6 +334,18 @@
     </ClInclude>
     <ClInclude Include="PlayerActionManager.hpp">
       <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.hpp">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnManager.hpp">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySequence.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyAction.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

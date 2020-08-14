@@ -204,102 +204,102 @@ namespace LevelManager {
 	MAKE_HOOK(LoadLevel, void, void* self, Il2CppObject* level)
 	{
 		LOG("Called LevelManager.LoadLevel() hook!\n");
-		return LoadLevel_orig(self, level);
-		LOG("\n\n");
-		//LOG("Trying to get assetbundle stuff\n");
-		//auto AssetBundle = il2cpp_functions::resolve_icall("UnityEngine.AssetBundle::LoadFromFile_Internal(System.String, System.UInt32, System.UInt64)");
-		//if (AssetBundle != nullptr)
-		//	LOG("Got assetbundle stuff at %u\n", AssetBundle);
-		//else
-		//	LOG("Failed to get assetbundle stuff\n");
-		AssetBundle::Init();
-		//auto s = AssetBundle::LoadAsset("G:\\SteamLibrary\\steamapps\\common\\Pistol Whip\\Pistol Whip_Data\\AssetBundles\\static_objects", "test");
-		//if (s != nullptr)
-		//	LOG("Sucessfully loaded prefrab from AssetBundle\n");
-		//
-		//LOG("\n\n");
-
-		if (level == nullptr)
-		{ 
-			LOG("GameMap is null!\n");
-			LoadLevel_orig(self, level);
-			return;
-		}		
-
-
-		Il2CppObject* geoset = getGeoSet(level);
-
-		CSharp::List chunkData = getListField<ChunkMeshData>(geoset, "chunkData");
-		CSharp::List chunkSlices = getListField<ChunkMeshSlice>(geoset, "chunkSlices");
-		CSharp::List staticProps = getListField<Il2CppObject*>(geoset, "staticProps");
-		float scale = 0;
-		il2cpp_utils::GetFieldValue(&scale, geoset, "scale");
-		CSharp::List dynamicProps = getListField<Il2CppObject*>(geoset, "dynamicProps");
-		CSharp::List decoratorCubes = getListField<Il2CppObject*>(geoset, "decoratorCubes");
-		LOG("Sizes of lists within the geoset object:\n");
-		LOG("\tScale = %f", scale);
-		LOG("\tchunkData = %u\n", chunkData.Count());
-		LOG("\tchunkSlices = %u\n", chunkSlices.Count());
-		LOG("\tstaticProps = %u\n", staticProps.Count());
-		LOG("\tdynamicProps = %u\n", dynamicProps.Count());
-		LOG("\tdecoratorCubes = %u\n\n", decoratorCubes.Count());
-
-
-
-		test = new GeoSet::GeoSet();
-		newGeoset = test->Load("Custom Levels\\x02");
-
-		//clip = new AudioClip("song.wav", AUDIOFILE::WAV);
-
-		Il2CppObject* track = il2cpp_utils::GetFieldValue(geoset, "track");
-		TrackData tmpTrack(track);
-		//json j = tmpTrack.DumpToJson();
-		//std::ofstream o = std::ofstream("trackData.json");
-		//o << std::setw(4) << j << std::endl;
-
-
-
-		std::ifstream i("Custom Levels/x02/level.json");
-		json j;
-		i >> j;
-
-		
-		auto levelData = il2cpp_utils::GetFieldValue(level, "data");
-		//WorldObject::Dump(levelData, "test");
-		lvlData = new LevelData();
-		auto wo = il2cpp_utils::GetFieldValue(lvlData->Load(j["levelData"]), "worldObjects");
-		il2cpp_utils::SetFieldValue(levelData, "worldObjects", wo);
-		il2cpp_utils::SetFieldValue(levelData, "simpleStaticWorldObjects", il2cpp_utils::GetFieldValue(newGeoset, "staticProps"));
-		il2cpp_utils::SetFieldValue(levelData, "simpleDynamicWorldObjects", il2cpp_utils::GetFieldValue(newGeoset, "dynamicProps"));
-		//il2cpp_utils::SetFieldValue(level, "data", levelData);
-
-		//json lvlDataJson = lvlData.Dump();
-		//std::ofstream o("LevelData.json");
-		//o << std::setw(4) << lvlDataJson << std::endl;
-		//o.close();
-
-		//Il2CppString* clipPath;
-		//il2cpp_utils::RunMethod(clipPath, koero, "get_SourceClipPath");
-		//il2cpp_utils::RunMethod(koero, "set_SourceClipPath", clip->GetAudioClip());
-
-		////For now just copy values we aren't creating
-		il2cpp_utils::SetFieldValue(newGeoset, "track", track);
-
-		//auto gameLevel = il2cpp_utils::GetFieldValue(level, "data");
-		//auto simpleStaticWorldObjects = il2cpp_utils::GetFieldValue(geoset, "staticProps");
-
-
-		//Vector3i chunkSize;
-		//il2cpp_utils::GetFieldValue(&chunkSize, geoset, "chunkSize");
-		//il2cpp_utils::SetFieldValue(newGeoset, "chunkSize", &chunkSize);
-		//il2cpp_utils::SetFieldValue(newGeoset, "staticProps", il2cpp_utils::GetFieldValue(geoset, "staticProps"));
-		//il2cpp_utils::SetFieldValue(newGeoset, "dynamicProps", il2cpp_utils::GetFieldValue(geoset, "dynamicProps"));
-		//il2cpp_utils::SetFieldValue(newGeoset, "decoratorCubes", il2cpp_utils::GetFieldValue(geoset, "decoratorCubes"));
-
-
-		il2cpp_utils::SetFieldValue(level, "geoSet", newGeoset);
 		LoadLevel_orig(self, level);
-		LOG("Loaded level!\n");
+		//LOG("\n\n");
+		////LOG("Trying to get assetbundle stuff\n");
+		////auto AssetBundle = il2cpp_functions::resolve_icall("UnityEngine.AssetBundle::LoadFromFile_Internal(System.String, System.UInt32, System.UInt64)");
+		////if (AssetBundle != nullptr)
+		////	LOG("Got assetbundle stuff at %u\n", AssetBundle);
+		////else
+		////	LOG("Failed to get assetbundle stuff\n");
+		//AssetBundle::Init();
+		////auto s = AssetBundle::LoadAsset("G:\\SteamLibrary\\steamapps\\common\\Pistol Whip\\Pistol Whip_Data\\AssetBundles\\static_objects", "test");
+		////if (s != nullptr)
+		////	LOG("Sucessfully loaded prefrab from AssetBundle\n");
+		////
+		////LOG("\n\n");
+
+		//if (level == nullptr)
+		//{ 
+		//	LOG("GameMap is null!\n");
+		//	LoadLevel_orig(self, level);
+		//	return;
+		//}		
+
+
+		//Il2CppObject* geoset = getGeoSet(level);
+
+		//CSharp::List chunkData = getListField<ChunkMeshData>(geoset, "chunkData");
+		//CSharp::List chunkSlices = getListField<ChunkMeshSlice>(geoset, "chunkSlices");
+		//CSharp::List staticProps = getListField<Il2CppObject*>(geoset, "staticProps");
+		//float scale = 0;
+		//il2cpp_utils::GetFieldValue(&scale, geoset, "scale");
+		//CSharp::List dynamicProps = getListField<Il2CppObject*>(geoset, "dynamicProps");
+		//CSharp::List decoratorCubes = getListField<Il2CppObject*>(geoset, "decoratorCubes");
+		//LOG("Sizes of lists within the geoset object:\n");
+		//LOG("\tScale = %f", scale);
+		//LOG("\tchunkData = %u\n", chunkData.Count());
+		//LOG("\tchunkSlices = %u\n", chunkSlices.Count());
+		//LOG("\tstaticProps = %u\n", staticProps.Count());
+		//LOG("\tdynamicProps = %u\n", dynamicProps.Count());
+		//LOG("\tdecoratorCubes = %u\n\n", decoratorCubes.Count());
+
+
+
+		//test = new GeoSet::GeoSet();
+		//newGeoset = test->Load("Custom Levels\\x02");
+
+		////clip = new AudioClip("song.wav", AUDIOFILE::WAV);
+
+		//Il2CppObject* track = il2cpp_utils::GetFieldValue(geoset, "track");
+		//TrackData tmpTrack(track);
+		////json j = tmpTrack.DumpToJson();
+		////std::ofstream o = std::ofstream("trackData.json");
+		////o << std::setw(4) << j << std::endl;
+
+
+
+		//std::ifstream i("Custom Levels/x02/level.json");
+		//json j;
+		//i >> j;
+
+		//
+		//auto levelData = il2cpp_utils::GetFieldValue(level, "data");
+		////WorldObject::Dump(levelData, "test");
+		//lvlData = new LevelData();
+		//auto wo = il2cpp_utils::GetFieldValue(lvlData->Load(j["levelData"]), "worldObjects");
+		//il2cpp_utils::SetFieldValue(levelData, "worldObjects", wo);
+		//il2cpp_utils::SetFieldValue(levelData, "simpleStaticWorldObjects", il2cpp_utils::GetFieldValue(newGeoset, "staticProps"));
+		//il2cpp_utils::SetFieldValue(levelData, "simpleDynamicWorldObjects", il2cpp_utils::GetFieldValue(newGeoset, "dynamicProps"));
+		////il2cpp_utils::SetFieldValue(level, "data", levelData);
+
+		////json lvlDataJson = lvlData.Dump();
+		////std::ofstream o("LevelData.json");
+		////o << std::setw(4) << lvlDataJson << std::endl;
+		////o.close();
+
+		////Il2CppString* clipPath;
+		////il2cpp_utils::RunMethod(clipPath, koero, "get_SourceClipPath");
+		////il2cpp_utils::RunMethod(koero, "set_SourceClipPath", clip->GetAudioClip());
+
+		//////For now just copy values we aren't creating
+		//il2cpp_utils::SetFieldValue(newGeoset, "track", track);
+
+		////auto gameLevel = il2cpp_utils::GetFieldValue(level, "data");
+		////auto simpleStaticWorldObjects = il2cpp_utils::GetFieldValue(geoset, "staticProps");
+
+
+		////Vector3i chunkSize;
+		////il2cpp_utils::GetFieldValue(&chunkSize, geoset, "chunkSize");
+		////il2cpp_utils::SetFieldValue(newGeoset, "chunkSize", &chunkSize);
+		////il2cpp_utils::SetFieldValue(newGeoset, "staticProps", il2cpp_utils::GetFieldValue(geoset, "staticProps"));
+		////il2cpp_utils::SetFieldValue(newGeoset, "dynamicProps", il2cpp_utils::GetFieldValue(geoset, "dynamicProps"));
+		////il2cpp_utils::SetFieldValue(newGeoset, "decoratorCubes", il2cpp_utils::GetFieldValue(geoset, "decoratorCubes"));
+
+
+		//il2cpp_utils::SetFieldValue(level, "geoSet", newGeoset);
+		//LoadLevel_orig(self, level);
+		//LOG("Loaded level!\n");
 	}
 
 

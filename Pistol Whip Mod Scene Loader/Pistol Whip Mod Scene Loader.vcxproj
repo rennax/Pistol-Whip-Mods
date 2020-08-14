@@ -103,17 +103,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;SAMPLEMOD_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\libs\funchook-1.1.0\include;C:\Program Files\Unity\Hub\Editor\2019.3.4f1\Editor\Data\il2cpp\libil2cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Unity editors\2019.2.0a7\Editor\Data\il2cpp\libil2cpp;G:\programmering\libraries\include;C:\libs\funchook-1.1.0\include;C:\Program Files\Unity\Hub\Editor\2019.3.4f1\Editor\Data\il2cpp\libil2cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>funchook_dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\libs\funchook-1.1.0\out\build\x64-Debug %28default%29;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>G:\programmering\libraries\lib;C:\libs\funchook-1.1.0\out\build\x64-Debug %28default%29;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY "$(TargetDir)*.dll" "C:\Program Files (x86)\Steam\steamapps\common\Pistol Whip\Mods" /S /Y </Command>
+      <Command>XCOPY "$(TargetDir)*.dll" "G:\SteamLibrary\steamapps\common\Pistol Whip\Mods" /S /Y </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -151,9 +151,13 @@
   <ItemGroup>
     <ClCompile Include="BeatData.cpp" />
     <ClCompile Include="ColorShiftPoint.cpp" />
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="EnemyAction.cpp" />
+    <ClCompile Include="EnemySequence.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameMap.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GeoSet.cpp" />
     <ClCompile Include="il2cpp_functions.cpp" />
     <ClCompile Include="il2cpp_utils.cpp" />
@@ -178,6 +182,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SimpleMusicPlayer.cpp" />
     <ClCompile Include="SongSelectionUIController.cpp" />
+    <ClCompile Include="SpawnManager.cpp" />
     <ClCompile Include="TargetData.cpp" />
     <ClCompile Include="TempoSectionDef.cpp" />
     <ClCompile Include="TrackData.cpp" />
@@ -195,6 +200,9 @@
     <ClInclude Include="AudioClip.hpp" />
     <ClInclude Include="BeatData.hpp" />
     <ClInclude Include="ColorShiftPoint.hpp" />
+    <ClInclude Include="Debug.hpp" />
+    <ClInclude Include="EnemyAction.hpp" />
+    <ClInclude Include="EnemySequence.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameManager.hpp" />
     <ClInclude Include="GameMap.hpp" />
@@ -229,6 +237,7 @@
     <ClInclude Include="SceneManager.hpp" />
     <ClInclude Include="SimpleMusicPlayer.hpp" />
     <ClInclude Include="SongSelectionUIController.hpp" />
+    <ClInclude Include="SpawnManager.hpp" />
     <ClInclude Include="TargetData.hpp" />
     <ClInclude Include="TempoSectionDef.hpp" />
     <ClInclude Include="TrackData.hpp" />

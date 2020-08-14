@@ -6,12 +6,12 @@ bool SceneAppearanceManager::overwriteOnLevelSelect = false;
 
 MAKE_HOOK(OnLevelSelect, void, void* self, Il2CppObject* e)
 {
-
+	LOG("Messages.LevelSelectEvent sent and received by SceneAppearanceManger\n");
 	if (!SceneAppearanceManager::overwriteOnLevelSelect)
 	{
 		return OnLevelSelect_orig(self, e);
 	}
-
+	return OnLevelSelect_orig(self, e);
 	Il2CppObject* map = il2cpp_utils::GetFieldValue(e, "level"); //GameMap
 	Il2CppObject* level = il2cpp_utils::GetFieldValue(map, "data"); //LevelData
 	CSharp::List<Il2CppObject*> sections(il2cpp_utils::GetFieldValue(level, "sections"));
@@ -44,22 +44,7 @@ MAKE_HOOK(OnLevelSelect, void, void* self, Il2CppObject* e)
 
 }
 
-MAKE_HOOK(Update, void, void* self)
-{
-	reinterpret_cast<Il2CppObject*>(self);
-	Vector3 pos, pos2;
-	Il2CppObject* headTrans = il2cpp_utils::GetFieldValue(reinterpret_cast<Il2CppObject*>(self), "headAttachPoint");
-	Il2CppObject* playerRoot = il2cpp_utils::GetFieldValue(reinterpret_cast<Il2CppObject*>(self), "playerRoot");
 
-	il2cpp_utils::RunMethod(&pos, headTrans, "get_position");
-	pos.y = 2;
-	//il2cpp_utils::RunMethod(headTrans, "set_position", &pos);
-
-	il2cpp_utils::RunMethod(&pos2, playerRoot, "get_position");
-	pos2.y = 2;
-	//il2cpp_utils::RunMethod(playerRoot, "set_position", &pos2);
-	il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "SetPosition", &pos2);
-}
 
 SceneAppearanceManager::SceneAppearanceManager()
 {
@@ -71,9 +56,7 @@ SceneAppearanceManager::~SceneAppearanceManager()
 
 void SceneAppearanceManager::initHooks(funchook_t* funchookp)
 {
-	OnLevelSelect_orig = (OnLevelSelect_t)il2cpp_utils::GetMethod("", "SceneAppearanceManager", "OnLevelSelect", 1)->methodPointer;
-	INSTALL_HOOK(OnLevelSelect);
+	//OnLevelSelect_orig = (OnLevelSelect_t)il2cpp_utils::GetMethod("", "SceneAppearanceManager", "OnLevelSelect", 1)->methodPointer;
+	//INSTALL_HOOK(OnLevelSelect);
 
-	Update_orig = (Update_t)il2cpp_utils::GetMethod("", "Player", "Update", 0)->methodPointer;
-	INSTALL_HOOK(Update);
 }

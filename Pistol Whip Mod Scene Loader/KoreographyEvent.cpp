@@ -18,7 +18,16 @@ KoreographyEvent::~KoreographyEvent()
 
 Il2CppObject* KoreographyEvent::Load(json j)
 {
-	return nullptr;
+	int32_t mStartSample = j["mStartSample"], mEndSample = j["mEndSample"];
+	
+	if (j["mPayload"] == 0)
+	{
+		void* mPayload = nullptr;
+		il2cpp_utils::SetFieldValue(self, "mPayload", mPayload);
+	}
+	il2cpp_utils::SetFieldValue(self, "mStartSample", &mStartSample);
+	il2cpp_utils::SetFieldValue(self, "mEndSample", &mEndSample);
+	return self;
 }
 
 json KoreographyEvent::Dump()

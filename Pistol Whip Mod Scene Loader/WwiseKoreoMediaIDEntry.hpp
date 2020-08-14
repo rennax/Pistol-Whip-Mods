@@ -14,7 +14,7 @@ public:
 	Il2CppObject* Load(json j, Il2CppObject* koreo);
 private:
 	Il2CppObject* self = nullptr;
-	uint64_t mediaID = 0;
+	uint32_t mediaID = 0;
 };
 
 

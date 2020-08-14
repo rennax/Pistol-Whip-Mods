@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2883534207
+CRC: 3680593169
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e3c8cf30e3934ceabc9ebe7a94b4264c
+    Hash: 9b73800441005e24e478a1bf8cbdf055
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9c84ad1f116e303274d40437e59c3895
@@ -37,6 +37,6 @@ Assets:
 - Assets/Prefabs/Test Map - Cubes.prefab
 - Assets/Prefabs/PF_Ball_01.prefab
 - Assets/Prefabs/PF_JustCubing_01.prefab
-- Assets/song.ogg
+- Assets/mus_core_religion.ogg
 - Assets/section01.fbx
 Dependencies: []

@@ -1,7 +1,8 @@
 #include "TrackData.hpp"
 #include "BeatData.hpp"
 #include "AssetBundle.hpp"
-
+#include "GameObject.hpp"
+#include "Koreography.hpp"
 
 TrackData::TrackData()
 {
@@ -22,6 +23,29 @@ TrackData::TrackData(Il2CppObject* levelData_) : levelData(levelData_)
 		LOG("WARNING: Failed to create TrackData object\n");
 	else
 		LOG("Created TrackData object\n");
+
+	auto nameProp = il2cpp_utils::GetPropertySetMethod(klass, "name");
+	Il2CppString* str = il2cpp_utils::createcsstr("Religion_Easy");
+	il2cpp_utils::RunMethod(self, nameProp, str);
+
+}
+
+TrackData::TrackData(Il2CppObject* levelData_, bool dontToShit) : levelData(levelData_)
+{
+	Il2CppObject* obj = GameObject::InstantiateEmpty({ 0,0,0 }, { 0,0,0,0 });
+	GameObject::SetName(obj, "Test_easy");
+	GameObject::AddComponent(obj, il2cpp_utils::GetClassFromName("", "TrackData"));
+
+	auto klass = il2cpp_utils::GetClassFromName("", "TrackData");
+	auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
+	il2cpp_utils::RunMethod(&self, obj, "GetComponent", type);
+	self = il2cpp_functions::object_new(klass);
+	if (!il2cpp_utils::RunMethod(self, ".ctor"))
+		LOG("WARNING: Failed to create TrackData object\n");
+	else
+		LOG("Created TrackData object\n");
+
+
 }
 
 
@@ -34,15 +58,17 @@ Il2CppObject* TrackData::Load(json j)
 	auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(audioClipClass));
 	Il2CppObject* audio = AssetBundle::LoadAsset(assetDB, "song.ogg", type);
 
-	auto koreographyClass = il2cpp_utils::GetClassFromName("SonicBloom.Koreo", "Koreography");
-	koreography = il2cpp_functions::object_new(koreographyClass);
-	if (!il2cpp_utils::RunMethod(koreography, ".ctor"))
-		LOG("WARNING: Failed to construct Koreography in TrackData\n");
 
-	if (!il2cpp_utils::RunMethod(koreography, "set_SourceClip", audio))
-		LOG("WARNING: Failed to call Koreography::set_SourceClip(audioClip) in TrackData");
+	//auto koreographyClass = il2cpp_utils::GetClassFromName("SonicBloom.Koreo", "Koreography");
+	//koreography = il2cpp_functions::object_new(koreographyClass);
+	//if (!il2cpp_utils::RunMethod(koreography, ".ctor"))
+	//	LOG("WARNING: Failed to construct Koreography in TrackData\n");
 
-	if (!il2cpp_utils::SetFieldValue(self, "koreography", koreography))
+	//if (!il2cpp_utils::RunMethod(koreography, "set_SourceClip", audio))
+	//	LOG("WARNING: Failed to call Koreography::set_SourceClip(audioClip) in TrackData");
+
+	Koreography koreography;
+	if (!il2cpp_utils::SetFieldValue(self, "koreography", koreography.Load(j["koreography"])))
 		LOG("WARNING: Failed to assign koreography in TrackData\n");
 
 	
@@ -65,15 +91,11 @@ Il2CppObject* TrackData::Load(json j)
 
 void TrackData::LoadBeatTimes(json j)
 {
-	for (auto t : j)
-	{
-		beatTimesVec.push_back(t);
-	}
-
 	List<float> beatTimes(il2cpp_utils::GetFieldValue(self, "beatTimes"));
-	for (auto t : beatTimesVec)
+	for (size_t i = 0; i < j.size(); i++)
 	{
-		beatTimes.Add(t);
+		float beatTime = j.at(i);
+		beatTimes.Add(beatTime);
 	}
 }
 

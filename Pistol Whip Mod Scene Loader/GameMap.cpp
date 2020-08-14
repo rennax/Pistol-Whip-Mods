@@ -43,6 +43,39 @@ Il2CppObject* GameMap::Load(json j)
 
 	if (!il2cpp_utils::SetFieldValue(self, "data", levelData))
 		LOG("WARNING: Failed to assign LevelData field in GameMap\n");
+
+	Il2CppString* str;
+	il2cpp_utils::RunMethod(&str, self, "get_name");
+	LOG("GameMap.get_name %s\n", to_utf8(csstrtostr(str)).c_str());
+
+	bool isPlayable = j["isPlayable"];
+	il2cpp_utils::SetFieldValue(self, "isPlayable", &isPlayable);
+	
+	int32_t enemyCount = j["enemyCount"];
+	il2cpp_utils::SetFieldValue(self, "enemyCount", &enemyCount);
+
+	int32_t enemyIgnoreCount = j["enemyIgnoreCount"];
+	il2cpp_utils::SetFieldValue(self, "enemyIgnoreCount", &enemyIgnoreCount);
+
+	int32_t enemyHitIgnoreCount = j["enemyHitIgnoreCount"];
+	il2cpp_utils::SetFieldValue(self, "enemyHitIgnoreCount", &enemyHitIgnoreCount);
+
+	int32_t rankedEnemyCount = j["rankedEnemyCount"];
+	il2cpp_utils::SetFieldValue(self, "rankedEnemyCount", &rankedEnemyCount);
+
+	int32_t trueMaxScore = j["trueMaxScore"];
+	il2cpp_utils::SetFieldValue(self, "trueMaxScore", &trueMaxScore);
+
+	int32_t rankMaxScore = j["rankMaxScore"];
+	il2cpp_utils::SetFieldValue(self, "rankMaxScore", &rankMaxScore);
+
+	int32_t hitCount = j["hitCount"];
+	il2cpp_utils::SetFieldValue(self, "hitCount", &hitCount);
+
+	int32_t rankedHitCount = j["rankedHitCount"];
+	il2cpp_utils::SetFieldValue(self, "rankedHitCount", &rankedHitCount);
+
+
 	return self;
 }
 

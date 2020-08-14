@@ -23,6 +23,8 @@
 #include "LevelData.hpp"
 #include "SceneAppearanceManager.hpp"
 #include "PlayerActionManager.hpp"
+#include "Debug.hpp"
+#include "SpawnManager.hpp"
 
 extern "C" { // name mangle 
 #include <funchook.h>
@@ -53,8 +55,8 @@ SAMPLEMOD_API int load(HANDLE logHandle, HMODULE gameAssembly) {
 	LevelData::initHooks(funchook);
 	SceneAppearanceManager::initHooks(funchook);
 	PlayerActionManager::initHooks(funchook);
-
-
+	Debug::initHooks(funchook);
+	SpawnManager::initHooks(funchook);
 
 	int rv = funchook_install(funchook, 0);
 	if (rv != 0) {

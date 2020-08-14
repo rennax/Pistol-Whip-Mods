@@ -61,7 +61,8 @@ struct Debris
 	bool buildOnAir; // 0x3C
 	Timing timing; // 0x40
 };
-void to_json(json j, const Debris& d);
+void to_json(json& j, const Debris& d);
+void from_json(const json& j, Debris& d);
 
 class TrackSection
 {
@@ -71,6 +72,8 @@ public:
 	~TrackSection();
 	Il2CppObject* Load(json j);
 	json Dump();
+private:
+	void LoadFilledSection(json j);
 private:
 	Il2CppObject* self;
 	float colorHue; // 0x10

@@ -40,8 +40,9 @@ json WwiseKoreographySet::Dump()
 	for (size_t i = 0; i < koreographies.Count(); i++)
 	{
 		json t;
-		uint64_t mediaID = UINT64_MAX; // Makes sure we can see if we failed to set value
+		uint32_t mediaID = 0; // Makes sure we can see if we failed to set value
 		il2cpp_utils::GetFieldValue(&mediaID, koreographies[i], "mediaID");
+		il2cpp_utils::GetFieldValue(&koreo, koreographies[i], "koreo");
 		
 		std::string clipName;
 		Il2CppString* cn = nullptr;
