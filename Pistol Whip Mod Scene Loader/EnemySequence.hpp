@@ -43,7 +43,7 @@ private:
 	Il2CppObject* OnSequenceStop; //Action
 	bool isThreat;
 	float duration;
-	Il2CppObject* enemy; //Enemy
+	Il2CppObject* actor; //Enemy
 };
 
 

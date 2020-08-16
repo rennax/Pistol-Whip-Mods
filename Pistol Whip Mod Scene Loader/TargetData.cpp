@@ -1,5 +1,6 @@
 #include "TargetData.hpp"
 #include "EnemySequence.hpp"
+#include "AssetBundle.hpp"
 
 TargetData::TargetData()
 {
@@ -32,8 +33,19 @@ Il2CppObject* TargetData::Load(json j)
 		fireTimes->values[i] = j["fireTimes"].at(i);
 	}
 
+	//TODO create empty GO and do AddComponent instead to reduce external dependencies
+	Il2CppObject* assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
+	auto goClass = il2cpp_utils::GetClassFromName("UnityEngine", "GameObject");
+	auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(goClass));
+	Il2CppObject* go = AssetBundle::LoadAsset(assetDB, "EnemySequence", type);
+
+	auto esClass = il2cpp_utils::GetClassFromName("", "EnemySequence");
+	type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(esClass));
+	Il2CppObject* esPtr;
+	il2cpp_utils::RunMethod(&esPtr, go, "GetComponent", type);
+
 	//TODO EnemySequence class
-	EnemySequence es;
+	EnemySequence es(esPtr);
 	enemySequence = es.Load(j["enemySequence"]);
 	if (enemySequence == nullptr)
 	{

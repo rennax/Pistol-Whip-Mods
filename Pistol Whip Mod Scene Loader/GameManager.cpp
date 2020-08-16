@@ -172,8 +172,12 @@ namespace GameManager {
 
 			//PrepAndStart(reinterpret_cast<Il2CppObject*>(self), levelData, map);
 
+			//Il2CppObject* UIStateCtrl;
+			//il2cpp_utils::RunMethod(&UIStateCtrl, il2cpp_utils::GetClassFromName("", "UIStateController"), "get_Instance");
+			//il2cpp_utils::RunMethod(UIStateCtrl, "OnSelectStartSongUIButton");
+			//il2cpp_utils::RunMethod(UIStateCtrl, "PlaySong");
 
-			il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "OnStartButton");
+			il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "DelayedSelectStartFromUI");
 
 
 		}

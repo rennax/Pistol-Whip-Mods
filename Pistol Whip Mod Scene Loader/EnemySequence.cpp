@@ -9,9 +9,15 @@ EnemySequence::EnemySequence()
 	self = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "EnemySequence"));
 	if (!il2cpp_utils::RunMethod(self, ".ctor"))
 		LOG("WARNING: Failed to construct EnemySequence\n");
+	Il2CppObject* transform = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"));
+	if (!il2cpp_utils::RunMethod(transform, ".ctor"))
+		LOG("WARNING: Failed to construct EnemySequence\n");
+	il2cpp_utils::SetFieldValue(self, "transform", transform);
+
+	il2cpp_utils::RunMethod(self, "Start");
 }
 
-EnemySequence::EnemySequence(Il2CppObject* obj)
+EnemySequence::EnemySequence(Il2CppObject* obj) : self(obj)
 {
 }
 
@@ -54,13 +60,17 @@ Il2CppObject* EnemySequence::Load(json j)
 		actions.Add(action.Load(j["actions"].at(i)));
 	}
 
+	////Do we need to set something?
+	//actor = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "Enemy"));
+	//il2cpp_utils::RunMethod(actor, ".ctor");
+	//il2cpp_utils::SetFieldValue(self, "actor", actor);
+
 	//TODO
 
 	//The objects below might be instantiated by the game
 	//actionHolder
 	//OnSequenceStart
 	//OnSequenceStop
-	//enemy
 
 	return self;
 }
