@@ -49,6 +49,12 @@
     <Filter Include="Source Files\game\koreographer">
       <UniqueIdentifier>{6d932f4d-be71-46fc-aa13-fd8a64b82917}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{cd1ceeb0-90a8-40fc-9840-1c690464764b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{0a00b5ea-b40b-48ec-9e5e-8b282c5db1db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -181,10 +187,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EnemySequence.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\game</Filter>
     </ClCompile>
     <ClCompile Include="EnemyAction.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="SongSelectController.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -346,6 +355,9 @@
     </ClInclude>
     <ClInclude Include="EnemyAction.hpp">
       <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="SongSelectController.hpp">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

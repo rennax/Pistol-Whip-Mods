@@ -30,7 +30,7 @@ void initHooks(funchook_t* funchookp)
 	//ctor_orig = (ctor_t)il2cpp_utils::GetMethod("", "LevelSelectTrigger", ".ctor", 0)->methodPointer;;
 	//INSTALL_HOOK(ctor);
 
-	OnLevelSelect_orig = (OnLevelSelect_t)il2cpp_utils::GetMethod("", "LevelSelectTrigger", "OnLevelSelect", 1)->methodPointer;;
-	INSTALL_HOOK(OnLevelSelect);
+	//OnLevelSelect_orig = (OnLevelSelect_t)il2cpp_utils::GetMethod("", "LevelSelectTrigger", "OnLevelSelect", 1)->methodPointer;;
+	//INSTALL_HOOK(OnLevelSelect);
 }
 };

@@ -17,7 +17,13 @@
 #include "SceneAppearanceManager.hpp"
 
 #include "GameObject.hpp"
+#include "SongSelectController.hpp"
 
+#include <filesystem>
+#include <fstream>
+#include <bitset>
+
+namespace fs = std::filesystem;
 
 
 namespace GameManager {
@@ -98,17 +104,19 @@ namespace GameManager {
 
 	}
 
-
+	static uint32_t (*LoadBank_internal)(char* buff, uint32_t size, uint32_t* outID);
+	typedef uint32_t (*LoadBank_internal_t)(char* buff, uint32_t size, uint32_t* outID);
 
 	MAKE_HOOK(OnSceneSelect, void, void* self) {
 		LOG("Called GameManager.OnSceneSelect() hook\n");
 		OnSceneSelect_orig(self);
 	}
-
+	SongSelectController *ctrl;
 	MAKE_HOOK(Start, void, void* self) {
 		LOG("Called GameManager.Start() hook\n");
 
 		Start_orig(self);
+		ctrl = new SongSelectController();
 	}
 
 
@@ -313,29 +321,6 @@ namespace GameManager {
 
 	MAKE_HOOK(LateUpdate, void, void* self)
 	{
-		bool playing = false;
-
-		//il2cpp_utils::GetFieldValue(&playing, (Il2CppObject*)self, "playing");
-		//if (playing)
-		//{
-		//	Il2CppString* str;
-		//	Il2CppObject* player = nullptr; //IKoreographedPlayer
-		//	il2cpp_utils::GetFieldValue(&player, il2cpp_utils::GetClassFromName("", "MusicManager"), "player");
-		//	if (player != nullptr)
-		//	{
-		//		if (il2cpp_utils::RunMethod(&str, player, "GetCurrentClipName"))
-		//			LOG("MusicManager.player.GetCurrentClipName = %s\n", to_utf8(csstrtostr(str)).c_str());
-		//		str = nullptr;
-		//		il2cpp_utils::GetFieldValue(&str, il2cpp_utils::GetClassFromName("", "MusicManager"), "songName");
-		//		if (str != nullptr)
-		//		{
-		//			LOG("MusicManager.songName = %s\n", to_utf8(csstrtostr(str)).c_str());
-		//		}
-
-		//	}
-		//}
-
-
 		LateUpdate_orig(self);
 	}
 
@@ -371,13 +356,83 @@ namespace GameManager {
 		return res;
 	}
 
+	MAKE_HOOK(Load, uint32_t, Il2CppString* name, int32_t id, uint32_t * out) {
+		uint32_t res = Load_orig(name, id, out);
+		LOG("AkSoundEngine.Load() called, Result=%u, mempoolid=%d, bankID=%u, pszString=%s\n", res, id, *out, to_utf8(csstrtostr(name)).c_str());
+		return res;
+	}
+
+
+
+	MAKE_HOOK(UIElement, void, void* self)
+	{
+		LOG("VRLaserPointer.Awake called\n");
+		LOG("Awaking VRLaserPointer before we get the layer Mask");
+		UIElement_orig(self);
+		struct LayerMask {
+			int32_t m_Mask;
+		};
+		LayerMask mask;
+		il2cpp_utils::GetFieldValue(&mask, reinterpret_cast<Il2CppObject*>(self), "allowedLayers");
+		LOG("Mask %d\n", mask.m_Mask);
+		std::stringstream ss;
+		ss << std::bitset<32>(mask.m_Mask);
+		LOG("Binary mask: %s\n", ss.str().c_str());
+		for (size_t i = 0; i < 32; i++)
+		{
+			Il2CppString* layerName;
+			il2cpp_utils::RunMethod(&layerName, il2cpp_utils::GetClassFromName("UnityEngine", "LayerMask"), "LayerToName", &i);
+			LOG("Layer %d has the name: %s\n", i, to_utf8(csstrtostr(layerName)).c_str());
+		}
+
+	}
+
+	MAKE_HOOK(HoverEnter, void, void* self)
+	{
+		LOG("CHUI_TriggerEvents.OnHoverEnter() called\n");
+		HoverEnter_orig(self);
+	}
+
+	MAKE_HOOK(Click, void, void* self)
+	{
+		LOG("CHUI_TriggerEvents.OnClick called\n");
+		Click_orig(self);
+	}
+
+	MAKE_HOOK(HoverStay, void, void* self)
+	{
+		LOG("CHUI_TriggerEvents.OnHoverStay called\n");
+		HoverStay_orig(self);
+	}
+
+	MAKE_HOOK(HoverExit, void, void* self)
+	{
+		LOG("CHUI_TriggerEvents.HoverExit called\n");
+		HoverExit_orig(self);
+	}
+
 
 	void initHooks(funchook_t* funchookp)
 	{
 		LOG("GameManager::initHooks()\n");
-		 
-		OnSceneSelect_orig = (OnSceneSelect_t)il2cpp_utils::GetMethod("", "GameManager", "OnSceneSelect", 0)->methodPointer;
-		INSTALL_HOOK(OnSceneSelect);
+		
+		UIElement_orig = (UIElement_t)il2cpp_utils::GetMethod("", "VRLaserPointer", "Awake", 0)->methodPointer;
+		INSTALL_HOOK(UIElement);
+
+		HoverEnter_orig = (HoverEnter_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnHoverEnter", 0)->methodPointer;
+		INSTALL_HOOK(UIElement);
+
+		Click_orig = (Click_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnClick", 0)->methodPointer;
+		INSTALL_HOOK(Click);
+
+		HoverStay_orig = (HoverStay_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnHoverStay", 0)->methodPointer;
+		INSTALL_HOOK(HoverStay);
+
+		HoverExit_orig = (HoverExit_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnHoverExit", 0)->methodPointer;
+		INSTALL_HOOK(HoverExit);
+
+
+
 		
 		Update_orig = (Update_t)il2cpp_utils::GetMethod("", "GameManager", "Update", 0)->methodPointer;
 		INSTALL_HOOK(Update);
@@ -385,8 +440,8 @@ namespace GameManager {
 		Start_orig = (Start_t)il2cpp_utils::GetMethod("", "GameManager", "Start", 0)->methodPointer;
 		INSTALL_HOOK(Start);
 
-		UpdateEnemyAttackInterval_orig = (UpdateEnemyAttackInterval_t)il2cpp_utils::GetMethod("", "GameManager", "UpdateEnemyAttackInterval", 0)->methodPointer;
-		INSTALL_HOOK(UpdateEnemyAttackInterval);
+		//UpdateEnemyAttackInterval_orig = (UpdateEnemyAttackInterval_t)il2cpp_utils::GetMethod("", "GameManager", "UpdateEnemyAttackInterval", 0)->methodPointer;
+		//INSTALL_HOOK(UpdateEnemyAttackInterval);
 
 		OnSongStop_orig = (OnSongStop_t)il2cpp_utils::GetMethod("", "GameManager", "OnSongStop", 0)->methodPointer;
 		INSTALL_HOOK(OnSongStop);
@@ -394,20 +449,22 @@ namespace GameManager {
 		StopMovement_orig = (StopMovement_t)il2cpp_utils::GetMethod("", "PlayerMovementManager", "StopMovement", 0)->methodPointer;
 		INSTALL_HOOK(StopMovement);
 
-		get_GameProgress_orig = (get_GameProgress_t)il2cpp_utils::GetMethod("", "GameManager", "get_GameProgress", 0)->methodPointer;
-		INSTALL_HOOK(get_GameProgress);
+		//get_GameProgress_orig = (get_GameProgress_t)il2cpp_utils::GetMethod("", "GameManager", "get_GameProgress", 0)->methodPointer;
+		//INSTALL_HOOK(get_GameProgress);
 
-		LoadKoreography_orig = (LoadKoreography_t)il2cpp_utils::GetMethod("SonicBloom.Koreo", "Koreographer", "LoadKoreography", 1)->methodPointer;
-		INSTALL_HOOK(LoadKoreography);
+		
 
-		GetSourcePlayPosition_orig = (GetSourcePlayPosition_t)il2cpp_utils::GetMethod("", "AkSoundEngine", "GetSourcePlayPosition", 3)->methodPointer;
-		INSTALL_HOOK(GetSourcePlayPosition);
+		//LoadKoreography_orig = (LoadKoreography_t)il2cpp_utils::GetMethod("SonicBloom.Koreo", "Koreographer", "LoadKoreography", 1)->methodPointer;
+		//INSTALL_HOOK(LoadKoreography);
 
-		SetState_orig = (SetState_t)il2cpp_utils::GetMethod("", "AkSoundEngine", "SetState", 2)->methodPointer;
-		INSTALL_HOOK(SetState);
+		//GetSourcePlayPosition_orig = (GetSourcePlayPosition_t)il2cpp_utils::GetMethod("", "AkSoundEngine", "GetSourcePlayPosition", 3)->methodPointer;
+		//INSTALL_HOOK(GetSourcePlayPosition);
 
-		SeekOnEvent_orig = (SeekOnEvent_t)il2cpp_utils::GetMethod("", "AkSoundEngine", "SeekOnEvent", 3)->methodPointer;
-		INSTALL_HOOK(SeekOnEvent);
+		//SetState_orig = (SetState_t)il2cpp_utils::GetMethod("", "AkSoundEngine", "SetState", 2)->methodPointer;
+		//INSTALL_HOOK(SetState);
+
+		//SeekOnEvent_orig = (SeekOnEvent_t)il2cpp_utils::GetMethod("", "AkSoundEngine", "SeekOnEvent", 3)->methodPointer;
+		//INSTALL_HOOK(SeekOnEvent);
 
 		//LateUpdate_orig = (LateUpdate_t)il2cpp_utils::GetMethod("", "MusicManager", "LateUpdate", 0)->methodPointer;
 		//INSTALL_HOOK(LateUpdate);
@@ -419,3 +476,52 @@ namespace GameManager {
 		INSTALL_HOOK(get_difficulty);*/
 	}
 };
+
+//	LoadBank_internal = (LoadBank_internal_t)il2cpp_functions::resolve_icall("AkSoundEngine::LoadBank(System.IntPtr, System.UInt32, System.UInt32)");
+//if (!fs::exists("Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Song.bnk"))
+//{
+//	LOG("%s does not exists\n", "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Song.bnk\n");
+//	return;
+//}
+//std::ifstream file("Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Song.bnk", std::ios::ate | std::ios::binary);
+//if (file.is_open())
+//{
+//	uint32_t size = file.tellg(); // Might not always give the correct size?
+//	file.seekg(0, std::ios::beg);
+//	char* buffer = new char[size];
+//	file.read(buffer, size);
+//	uint32_t bankID;
+//	uint32_t res;
+//	//int32_t res = LoadBank_internal(buffer, size, &bankID);
+//	il2cpp_utils::RunMethod(&res, il2cpp_utils::GetClassFromName("", "AkSoundEngine"), "LoadBank", buffer, &size, &bankID);
+//	
+//	LOG("Called AkSoundEngine.Load(.., .., ..) bank id is %u, returned %d\n", bankID, res);
+//}
+//else
+//	LOG("Couldn't open %s\n", "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/Song.bnk\n");
+
+//uint32_t version;
+//il2cpp_utils::RunMethod(&version, il2cpp_utils::GetClassFromName("", "AkSoundEngine"), "get_AK_SOUNDBANK_VERSION");
+//LOG("version %u\n", version);
+
+//std::string name = "Song";
+//bool decodeBank = false;
+//bool saveDecodedBank = false;
+//int32_t memPoolID = -1; //AK_DEFAULT_POOL_ID 
+//uint32_t bankID;
+//uint32_t res;
+////il2cpp_utils::RunMethod(il2cpp_utils::GetClassFromName("", "AkBankManager"), "DoUnloadBanks");
+////il2cpp_utils::RunMethod(il2cpp_utils::GetClassFromName("", "AkBankManager"), "LoadBank", il2cpp_utils::createcsstr("Init2"), &decodeBank, &saveDecodedBank);
+//il2cpp_utils::RunMethod(il2cpp_utils::GetClassFromName("", "AkBankManager"), "LoadBank", il2cpp_utils::createcsstr("Init2"), &decodeBank, &saveDecodedBank);
+//il2cpp_utils::RunMethod(il2cpp_utils::GetClassFromName("", "AkBankManager"), "LoadBank", il2cpp_utils::createcsstr("Song"), &decodeBank, &saveDecodedBank);
+////il2cpp_utils::RunMethod(&res, il2cpp_utils::GetClassFromName("", "AkSoundEngine"), "LoadBank", il2cpp_utils::createcsstr(name), &memPoolID, &bankID);
+////LOG("Attempt to load bank %s, with mempoolID %u, we got result %u and bankID %u\n", name.c_str(), memPoolID, res, bankID);
+//
+////il2cpp_utils::RunMethod(&res, il2cpp_utils::GetClassFromName("", "AkSoundEngine"), "SetState", il2cpp_utils::createcsstr("MusicState"), il2cpp_utils::createcsstr("Religion"));
+////LOG("RES %u", res);'
+////Il2CppObject* initSettings = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "AkInitSettings"));
+////il2cpp_utils::RunMethod(initSettings, ".ctor");
+////il2cpp_utils::RunMethod(il2cpp_utils::GetClassFromName("", "AkSoundEngine"), "GetDefaultInitSettings", initSettings);
+////uint32_t poolSize;
+////il2cpp_utils::RunMethod(&poolSize, initSettings, "get_uDefaultPoolSize");
+////LOG("Default wwise pool size %u\n", poolSize); // 16777216

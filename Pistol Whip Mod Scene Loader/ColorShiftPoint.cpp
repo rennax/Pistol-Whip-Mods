@@ -1,12 +1,12 @@
 #include "ColorShiftPoint.hpp"
 
 ColorShiftPoint::ColorShiftPoint() {
-	auto klass = il2cpp_utils::GetClassFromName("", "ColorShiftPoint");
-	object = il2cpp_functions::object_new(klass);
-	il2cpp_utils::RunMethod(object, ".ctor");
+	self = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "ColorShiftPoint"));
+	if (!il2cpp_utils::RunMethod(self, ".ctor"))
+		LOG("WARNING: Failed to Construct ColorShiftPoint\n");
 }
 
-ColorShiftPoint::ColorShiftPoint(Il2CppObject* obj) : object(object) {}
+ColorShiftPoint::ColorShiftPoint(Il2CppObject* obj) : self(self) {}
 
 ColorShiftPoint::ColorShiftPoint(int start, int end, ColorData colors)
 {
@@ -14,43 +14,28 @@ ColorShiftPoint::ColorShiftPoint(int start, int end, ColorData colors)
 
 Il2CppObject* ColorShiftPoint::Load(json j)
 {
-	int start = 0;
-	int end = 0;
-	ColorData colors;
-
 	start = j["start"];
-	start = j["end"];
+	end = j["end"];
 
-	colors.mainColor.r = j["colors"]["mainColor"]["r"];
-	colors.mainColor.g = j["colors"]["mainColor"]["g"];
-	colors.mainColor.b = j["colors"]["mainColor"]["b"];
-	colors.mainColor.a = j["colors"]["mainColor"]["a"];
+	colors.fogColor = j["colors"]["fogColor"];
+	colors.mainColor = j["colors"]["mainColor"];
+	colors.glowColor = j["colors"]["glowColor"];
+	colors.storedEnemyColor = j["colors"]["storedEnemyColor"];
+	colors.customEnemyColor = j["colors"]["customEnemyColor"];
+	
 
-	colors.fogColor.r = j["colors"]["fogColor"]["r"];
-	colors.fogColor.g = j["colors"]["fogColor"]["g"];
-	colors.fogColor.b = j["colors"]["fogColor"]["b"];
-	colors.fogColor.a = j["colors"]["fogColor"]["a"];
+	il2cpp_utils::SetFieldValue(self, "start", &start);
+	il2cpp_utils::SetFieldValue(self, "end", &end);
+	il2cpp_utils::SetFieldValue(self, "colors", &colors);
 
-	colors.glowColor.r = j["colors"]["glowColor"]["r"];
-	colors.glowColor.g = j["colors"]["glowColor"]["g"];
-	colors.glowColor.b = j["colors"]["glowColor"]["b"];
-	colors.glowColor.a = j["colors"]["glowColor"]["a"];
-
-	il2cpp_utils::SetFieldValue(object, "start", &start);
-	il2cpp_utils::SetFieldValue(object, "end", &end);
-	il2cpp_utils::SetFieldValue(object, "colors", &colors);
-
-	return object;
+	return self;
 }
 
 json ColorShiftPoint::Dump()
 {
-	int start = 0;
-	int end = 0;
-	ColorData colors;
-	il2cpp_utils::GetFieldValue(&start, object, "start");
-	il2cpp_utils::GetFieldValue(&end, object, "end");
-	il2cpp_utils::GetFieldValue(&colors, object, "colors");
+	il2cpp_utils::GetFieldValue(&start, self, "start");
+	il2cpp_utils::GetFieldValue(&end, self, "end");
+	il2cpp_utils::GetFieldValue(&colors, self, "colors");
 
 	json j;
 	j["start"] = start;

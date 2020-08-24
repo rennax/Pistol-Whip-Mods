@@ -44,12 +44,18 @@ namespace GameObject {
 		return obj;
 	}
 
-	bool AddComponent(Il2CppObject* object, Il2CppObject* type)
+	Il2CppObject* AddComponent(Il2CppObject* object, Il2CppObject* type)
 	{
-		return il2cpp_utils::RunMethod(object, "AddComponent", type);		
+		Il2CppObject* newComponent;
+		if (!il2cpp_utils::RunMethod(&newComponent, object, "AddComponent", type))
+		{
+			LOG("ERROR: Failed to AddComponent\n");
+			return nullptr;
+		}
+		return newComponent;
 	}
 
-	void AddComponent(Il2CppObject* object, Il2CppClass* klass)
+	Il2CppObject* AddComponent(Il2CppObject* object, Il2CppClass* klass)
 	{
 		auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
 		if (type == nullptr)
@@ -57,8 +63,23 @@ namespace GameObject {
 			LOG("Failed to get type of %s\n", ClassInfoDump(klass).c_str());
 		}
 		
-		if (!AddComponent(object, type))
+		Il2CppObject* newComponent;
+		if ((newComponent = AddComponent(object, type)) == nullptr)
+		{
 			LOG("Failed to add component %s, are you sure it is a component?\n", ClassInfoDump(klass).c_str());
+			return nullptr;
+		}
+		return newComponent;
+	}
+
+	Il2CppObject* AddComponent(Il2CppObject* object, std::string_view namespaze, std::string_view className)
+	{
+		auto klass = il2cpp_utils::GetClassFromName(namespaze.data(), className.data());
+		if (klass == nullptr)
+		{
+			LOG("Failed to class %s in namespace %s\n", className.data(), namespaze.data());
+		}
+		return AddComponent(object, klass);
 	}
 
 	void SetName(Il2CppObject* object, std::string_view name)

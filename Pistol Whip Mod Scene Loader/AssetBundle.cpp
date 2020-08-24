@@ -34,6 +34,8 @@ namespace AssetBundle {
 
 	//If bundle is not already loaded, try fetching it
 	Il2CppObject* LoadFromFile(std::string_view path) {
+		if (!initialized)
+			AssetBundle::Init();
 		auto search = loadedBundles.find(path.data());
 		if (search != loadedBundles.end())
 		{

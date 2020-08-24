@@ -11,6 +11,8 @@ typedef struct ColorData {
 	Color mainColor;
 	Color fogColor;
 	Color glowColor;
+	bool customEnemyColor;
+	Color storedEnemyColor;
 } ColorData;
 
 class ColorShiftPoint {
@@ -21,7 +23,10 @@ public:
 	Il2CppObject* Load(json j);
 	json Dump();
 private:
-	Il2CppObject* object;
+	Il2CppObject* self;
+	int start = 0;
+	int end = 0;
+	ColorData colors;
 };
 
 

@@ -1,6 +1,10 @@
 #include "LevelDatabase.hpp"
 #include "utils.h"
+#include <filesystem>
+#include <fstream>
+#include <string>
 
+namespace fs = std::filesystem;
 
 
 namespace LevelDatabase {
@@ -24,18 +28,7 @@ MAKE_HOOK(Init, void, void* self)
 	Init_orig(self);
 
 
-	//LOG("\n\n");
-
-	//auto klass = il2cpp_utils::GetClassFromName("UnityEngine", "Resources");
-	//auto audioKlass = il2cpp_utils::GetClassFromName("UnityEngine", "AudioClip");
-	//auto type = il2cpp_functions::class_get_type(audioKlass);
-	//
-	//auto method = il2cpp_utils::GetMethod(klass, "Load", 2);
-	//Il2CppObject* audio = nullptr;
-	//char name[] = "Resources/sound.ogg";
-	//il2cpp_utils::RunMethod(audio, klass, "Load", name);
-
-	//LOG("\n\n");
+	
 
 }
 

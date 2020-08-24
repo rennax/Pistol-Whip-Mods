@@ -15,40 +15,15 @@ namespace GeoSet {
 			LOG("Created geoset object\n");
 	}
 
-
-	//Il2CppObject* GeoSet::Load(std::string_view path) {
-	//	levelPath = path;
-	//	std::string totalPath(path);
-	//	totalPath += "/level.json";
-	//	std::ifstream i(totalPath);
-	//	json level;
-	//	i >> level;
-	//	json geo = level["geoset"];
-	//	
-	//	std::string assetPath = levelPath + std::string("/static_objects");
-	//	assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
-
-	//	LoadDecoratorCubes(geo["decorCubes"]);
-	//	LoadChunks(geo["chunks"]);
-	//	LoadStaticProps(geo["staticProps"]);
-	//	//loadDynamicProps(geo["dynamicProps"]);
-
-	//	il2cpp_utils::SetFieldValue(self, "chunkSize", &chunkSize);
-	//	il2cpp_utils::SetFieldValue(self, "scale", &scale);
-
-	//	return self;
-	//}
-
 	Il2CppObject* GeoSet::Load(json j)
 	{
-		json geo = j;
-
 		//TODO change this so path is sent as an argument, or stored in level.json
 		assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
+		assetBundlePath = "Custom Levels/" + j["mapID"].get<std::string>() + "/";
 
-		LoadDecoratorCubes(geo["decorCubes"]);
-		LoadChunks(geo["chunks"]);
-		LoadStaticProps(geo["staticProps"]);
+		LoadDecoratorCubes(j["decorCubes"]);
+		LoadChunks(j["chunks"]);
+		LoadStaticProps(j["staticProps"]);
 
 		if (!il2cpp_utils::SetFieldValue(self, "chunkSize", &chunkSize))
 			LOG("WARNING: Failed to set chunkSize in GeoSet::Load()\n");
@@ -58,10 +33,6 @@ namespace GeoSet {
 
 		return self;
 	}
-
-
-
-
 
 
 	void GeoSet::LoadStaticProps(json j) {
@@ -155,18 +126,44 @@ namespace GeoSet {
 
 	void GeoSet::LoadChunks(json j)
 	{
-		// Parse array containing all objects
-		for (auto& elem : j)
+		std::string chunkDBPath = assetBundlePath + "chunks";
+		Il2CppObject* chunkDB = AssetBundle::LoadFromFile(chunkDBPath);
+		if (chunkDB == nullptr)
 		{
-			Vector3i id = { 
-				elem["id"]["x"],
-				elem["id"]["y"],
-				elem["id"]["z"]
-			};
+			LOG("Failed to open %s, are you sure it exists?\n", chunkDBPath.c_str());
+		}
 
-			std::string objPath = levelPath + std::string("/") + std::string(elem["name"]);
-			ObjFile obj = loadObjectFile(objPath);
-			createChunkMeshData(id, obj.vertices, obj.tris);
+
+		List<ChunkMeshSlice> chunkSlices(il2cpp_utils::GetFieldValue(self, "chunkSlices"));
+		List<ChunkMeshData> chunkData(il2cpp_utils::GetFieldValue(self, "chunkData"));
+
+		//We use the mesh to create both the chunksMeshSlice and the chunkMeshData for given chunk
+		for (auto c : j)
+		{
+			Il2CppObject* chunk = AssetBundle::LoadAsset(chunkDB, c["chunkID"]);
+			Il2CppObject* mesh = nullptr;
+			auto type = il2cpp_functions::type_get_object(
+				il2cpp_functions::class_get_type_const(
+					il2cpp_utils::GetClassFromName("UnityEngine", "Mesh")
+				));
+			il2cpp_utils::RunMethod(&mesh, chunk, "GetComponent", type);
+			ChunkMeshSlice slice;
+			slice.z = c["id"]["z"];
+			slice.meshSizes = nullptr;
+			auto sliceBoxed = il2cpp_functions::value_box(il2cpp_utils::GetClassFromName("", "ChunkMeshSlice"), &slice);
+			il2cpp_utils::SetFieldValue(sliceBoxed, "m_liveMesh", mesh);
+			il2cpp_utils::SetFieldValue(sliceBoxed, "verts", il2cpp_utils::GetFieldValue(mesh, "vertices"));
+			il2cpp_utils::SetFieldValue(sliceBoxed, "tris", il2cpp_utils::GetFieldValue(mesh, "triangles"));
+			chunkSlices.Add(slice);
+
+			ChunkMeshData data;
+			data.id = c["id"];
+			data.meshSizes = nullptr;
+			auto dataBoxed = il2cpp_functions::value_box(il2cpp_utils::GetClassFromName("", "ChunkMeshData"), &data);
+			il2cpp_utils::SetFieldValue(dataBoxed, "m_liveMesh", mesh);
+			il2cpp_utils::SetFieldValue(dataBoxed, "verts", il2cpp_utils::GetFieldValue(mesh, "vertices"));
+			il2cpp_utils::SetFieldValue(dataBoxed, "tris", il2cpp_utils::GetFieldValue(mesh, "triangles"));
+			chunkData.Add(data);
 		}
 	}
 
@@ -212,6 +209,15 @@ namespace GeoSet {
 		//Add chunkMeshData object to chunkData list object inside geoset
 		List<ChunkMeshSlice> chunkSlicesList(il2cpp_utils::GetFieldValue(self, "chunkSlices"));
 		chunkSlicesList.Add(chunkSlice);
+	}
+
+	void GeoSet::LoadChunkMeshSlices(json j)
+	{
+
+	}
+
+	void GeoSet::LoadChunkMeshData(json j)
+	{
 	}
 
 	void GeoSet::LoadDecoratorCubes(json j)

@@ -47,4 +47,8 @@ funchook_prepare(funchookp, (void**)&name ## _orig, name ## _hook);\
 #define RET_V_UNLESS(expr) RET_UNLESS(, expr)
 #define RET_0_UNLESS(expr) RET_UNLESS(0, expr)
 
+
+
+
+
 #endif // !UTILS_H

@@ -19,13 +19,13 @@ MAKE_HOOK(Log, void, Il2CppObject* message) {
 
 MAKE_HOOK(LogError, void, Il2CppObject* message) {
 	Il2CppString* str = reinterpret_cast<Il2CppString*>(message);
-	LOG("Debug.LogError: %s\n", to_utf8(csstrtostr(str)).c_str());
+	LOG("Debug.Error: %s\n", to_utf8(csstrtostr(str)).c_str());
 	return LogError_orig(message);
 }
 
 MAKE_HOOK(LogWarning, void, Il2CppObject* message) {
 	Il2CppString* str = reinterpret_cast<Il2CppString*>(message);
-	LOG("Debug.LogWarning: %s\n", to_utf8(csstrtostr(str)).c_str());
+	LOG("Debug.Warning: %s\n", to_utf8(csstrtostr(str)).c_str());
 	return LogError_orig(message);
 }
 

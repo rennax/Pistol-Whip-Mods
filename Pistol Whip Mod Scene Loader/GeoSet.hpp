@@ -51,10 +51,9 @@ private: //Functions
 		const std::vector<Vector3>& vertices,
 		const std::vector<int>& triangles);
 
-	void createChunkMeshSlice(
-		int z,
-		Vector3i id,
-		Mesh& mesh);
+	void createChunkMeshSlice(int z, Vector3i id, Mesh& mesh);
+	void LoadChunkMeshSlices(json j);
+	void LoadChunkMeshData(json j);
 
 	ObjFile loadObjectFile(std::string_view filename);
 	void LoadDecoratorCubes(json j);
@@ -71,6 +70,7 @@ private:
 
 	std::string levelPath = "Custom Levels/x02";
 	std::string decorCubeFileName = "decors.json";
+	std::string assetBundlePath;
 	Il2CppObject* assetDB;
 	std::vector<Il2CppObject*> prefabs;
 	// Geoset Fields

@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <optional>
+#include <vector>
 #include <string_view>
 #include <unordered_map>
 #include <sstream>
@@ -12,6 +14,7 @@
 #include "il2cpp_functions.hpp"
 #include "utils-functions.hpp"
 #include "logger.h"
+#include "utils.h"
 
 
 namespace il2cpp_utils
@@ -47,6 +50,8 @@ namespace il2cpp_utils
                 *__p = (value);    \
             } while (0)
     }
+
+
 
 
 
@@ -305,17 +310,17 @@ namespace il2cpp_utils
         auto obj = il2cpp_functions::object_new(klass);
         // runtime_invoke constructor with right number of args, return null if constructor errors
         constexpr auto count = sizeof...(TArgs);
-        LOG("Attempting to find .ctor with paramCount: %lu for class name: %s", count, il2cpp_functions::class_get_name(klass));
+        LOG("Attempting to find .ctor with paramCount: %lu for class name: %s\n", count, il2cpp_functions::class_get_name(klass));
         const MethodInfo* ctor = il2cpp_functions::class_get_method_from_name(klass, ".ctor", count);
 
         if (!ctor) {
-            LOG("il2cpp_utils: New: Could not find constructor for provided class!");
+            LOG("il2cpp_utils: New: Could not find constructor for provided class!\n");
             return nullptr;
         }
         Il2CppException* exp;
         il2cpp_functions::runtime_invoke(ctor, obj, invokeParams, &exp);
         if (exp) {
-            LOG("il2cpp_utils: New: Failed with exception: %s", ExceptionToString(exp).c_str());
+            LOG("il2cpp_utils: New: Failed with exception: %s\n", ExceptionToString(exp).c_str());
             return nullptr;
         }
         return reinterpret_cast<TObj*>(obj);
@@ -630,6 +635,63 @@ namespace il2cpp_utils
         void** invokeParams = { reinterpret_cast<void*>(args)... };
         return il2cpp_functions::runtime_invoke(method, reference, invokeParams, exc);
     }
+
+    // function_ptr_t courtesy of DaNike
+    template<typename TRet, typename ...TArgs>
+    // A generic function pointer, which can be called with and set to a `getRealOffset` call
+    using function_ptr_t = TRet(*)(TArgs...);
+
+    template<typename T = MulticastDelegate, typename TObj, typename R, typename... TArgs>
+    // Creates an Action of type actionType, with the given callback and callback self 'obj', and casts it to a T*
+    // PLEASE!!! use the below FieldInfo or MethodInfo versions instead if you can.
+    // Created by zoller27osu
+    T* MakeAction(const Il2CppType* actionType, TObj* obj, function_ptr_t<R, TArgs...> callback) {
+        Il2CppClass* actionClass = il2cpp_functions::class_from_il2cpp_type(actionType);
+
+        /*
+        * TODO: call PlatformInvoke::MarshalFunctionPointerToDelegate directly instead of copying code from it,
+        * or at least use a cache like utils::NativeDelegateMethodCache::GetNativeDelegate(nativeFunctionPointer);
+        */
+        const MethodInfo* invoke = il2cpp_functions::class_get_method_from_name(actionClass, "Invoke", -1);  // well-formed Actions have only 1 invoke method
+        auto* method = (MethodInfo*)calloc(1, sizeof(MethodInfo));
+        method->methodPointer = (Il2CppMethodPointer)callback;
+        method->invoker_method = NULL;
+        method->parameters_count = invoke->parameters_count;
+        method->slot = kInvalidIl2CppMethodSlot;
+        method->is_marshaled_from_native = true;  // "a fake MethodInfo wrapping a native function pointer"
+        // In the event that a function is static, this will behave as normal
+        if (obj == nullptr) method->flags |= METHOD_ATTRIBUTE_STATIC;
+
+        // TODO: figure out why passing method directly doesn't work
+        auto* action = il2cpp_utils::NewUnsafe<T>(actionClass, obj, &method);
+        auto* asDelegate = reinterpret_cast<Delegate*>(action);
+        if (asDelegate->method_ptr != (void*)callback) {
+            LOG("Created Action's method_ptr (%p) is incorrect (should be %p)!", asDelegate->method_ptr, callback);
+            return nullptr;
+        }
+        return action;
+    }
+
+    template<typename T = MulticastDelegate, typename TObj>
+    T* MakeAction(const Il2CppType* actionType, TObj* obj, void* callback) {
+        auto tmp = reinterpret_cast<function_ptr_t<void>>(callback);
+        return MakeAction(actionType, obj, tmp);
+    }
+
+    // Creates an Action fit to be passed in the given parameter position to the given method.
+    template<typename T = MulticastDelegate, typename T1, typename T2>
+    T* MakeAction(const MethodInfo* method, int paramIdx, T1&& arg1, T2&& arg2) {
+        auto* actionType = il2cpp_functions::method_get_param(method, paramIdx);
+        return MakeAction<T, void>(actionType, arg1, arg2);
+    }
+
+    // Creates an Action fit to be assigned to the given field.
+    template<typename T = MulticastDelegate, typename T1, typename T2>
+    T* MakeAction(FieldInfo* field, T1&& arg1, T2&& arg2) {
+        auto* actionType = il2cpp_functions::field_get_type(field);
+        return MakeAction<T, void>(actionType, arg1, arg2);
+    }
+
 };
 
 

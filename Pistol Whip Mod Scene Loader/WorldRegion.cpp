@@ -21,18 +21,30 @@ WorldRegion::~WorldRegion()
 json WorldRegion::Dump()
 {
 	json j;
-	Vector3i position, min, max;
-	Region type;
 	il2cpp_utils::GetFieldValue(&position, self, "position");
 	il2cpp_utils::GetFieldValue(&min, self, "min");
 	il2cpp_utils::GetFieldValue(&max, self, "max");
 	il2cpp_utils::GetFieldValue(&type, self, "type");
 
+	j["position"] = position;
+	j["min"] = min;
+	j["max"] = max;
+	j["type"] = type;
 
-	return json();
+	return j;
 }
 
 Il2CppObject* WorldRegion::Load(json j)
 {
-	return nullptr;
+	position = j["position"];
+	min = j["min"];
+	max = j["max"];
+	type = j["type"].get<Region>();
+
+	il2cpp_utils::SetFieldValue(self, "position", &position);
+	il2cpp_utils::SetFieldValue(self, "min", &min);
+	il2cpp_utils::SetFieldValue(self, "max", &max);
+	il2cpp_utils::SetFieldValue(self, "type", &type);
+
+	return self;
 }

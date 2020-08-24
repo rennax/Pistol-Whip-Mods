@@ -181,6 +181,7 @@
     <ClCompile Include="SceneAppearanceManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SimpleMusicPlayer.cpp" />
+    <ClCompile Include="SongSelectController.cpp" />
     <ClCompile Include="SongSelectionUIController.cpp" />
     <ClCompile Include="SpawnManager.cpp" />
     <ClCompile Include="TargetData.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="SceneAppearanceManager.hpp" />
     <ClInclude Include="SceneManager.hpp" />
     <ClInclude Include="SimpleMusicPlayer.hpp" />
+    <ClInclude Include="SongSelectController.hpp" />
     <ClInclude Include="SongSelectionUIController.hpp" />
     <ClInclude Include="SpawnManager.hpp" />
     <ClInclude Include="TargetData.hpp" />
