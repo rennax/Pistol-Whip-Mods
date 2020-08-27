@@ -6,7 +6,7 @@ namespace GameObject {
 
 	std::string ClassInfoDump(Il2CppClass* klass);
 
-	Il2CppObject* GetComponentType(Il2CppObject* gameObject, std::string_view namespaze, std::string_view klassName) {
+	Il2CppObject* GetComponentType(std::string_view namespaze, std::string_view klassName) {
 		std::tuple<std::string, std::string> klassKey = { namespaze.data(), klassName.data() };
 		auto search = componentTypes.find(klassKey);
 		if (search != componentTypes.end())
@@ -29,6 +29,22 @@ namespace GameObject {
 		}
 		componentTypes.try_emplace(klassKey, type);
 		return type;
+	}
+
+	Il2CppObject* GetComponent(Il2CppObject* gameObject, std::string_view namespaze, std::string_view klassName) {
+		auto type = GetComponentType(namespaze, klassName);
+		if (type == nullptr)
+		{
+			LOG("ERROR: GameObject couldn't get type\n");
+			return nullptr;
+		}
+		Il2CppObject* component = nullptr;
+		if (!il2cpp_utils::RunMethod(&component, gameObject, "GetComponent", type))
+		{
+			LOG("ERROR: GameObject failed to get component %s::%s\n", namespaze.data(), klassName.data());
+			return nullptr;
+		}
+		return component;
 	}
 
 	Il2CppObject* InstantiateEmpty(Vector3 position, Quaternion rotation)

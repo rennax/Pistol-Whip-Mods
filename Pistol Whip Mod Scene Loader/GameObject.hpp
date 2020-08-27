@@ -13,8 +13,8 @@ namespace GameObject
 {
 	
 
-	Il2CppObject* GetComponentType(Il2CppObject* gameObject, std::string_view namespaze, std::string_view klassName);
-
+	Il2CppObject* GetComponentType(std::string_view namespaze, std::string_view klassName);
+	Il2CppObject* GetComponent(Il2CppObject* gameObject, std::string_view namespaze, std::string_view klassName);
 	Il2CppObject* InstantiateEmpty(Vector3 position, Quaternion rotation);
 	Il2CppObject* AddComponent(Il2CppObject* object, Il2CppObject* type);
 	Il2CppObject* AddComponent(Il2CppObject* object, Il2CppClass* klass);

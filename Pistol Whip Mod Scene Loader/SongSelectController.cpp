@@ -9,10 +9,10 @@ Il2CppObject* SongSelectController::Add_CHUIButtonTrigger(Il2CppObject* gameObje
 	auto actionType = il2cpp_functions::class_get_type_const(il2cpp_utils::GetClassFromName("UnityEngine.Events", "UnityAction"));
 
 	void* n = nullptr;
-	Il2CppObject* actionEnter = il2cpp_utils::MakeAction(actionType, n, OnEnter);
-	Il2CppObject* actionStay = il2cpp_utils::MakeAction(actionType, n, OnStay);
-	Il2CppObject* actionExit = il2cpp_utils::MakeAction(actionType, n, OnExit);
-	Il2CppObject* actionClick = il2cpp_utils::MakeAction(actionType, n, OnClick);
+	Il2CppObject* actionEnter = il2cpp_utils::MakeAction(actionType, this, OnEnter);
+	Il2CppObject* actionStay = il2cpp_utils::MakeAction(actionType, this, OnStay);
+	Il2CppObject* actionExit = il2cpp_utils::MakeAction(actionType, this, OnExit);
+	Il2CppObject* actionClick = il2cpp_utils::MakeAction(actionType, this, OnClick);
 
 
 	//UnityEvents
@@ -80,49 +80,12 @@ SongSelectController::SongSelectController()
 	il2cpp_utils::RunMethod(&self, il2cpp_utils::GetClassFromName("UnityEngine", "GameObject"), "Instantiate", toInstantiate, &position, &rotation);
 	il2cpp_utils::RunMethod(&canvas, self, "Find", il2cpp_utils::createcsstr("Canvas"));
 	il2cpp_utils::RunMethod(&songPanelButton, canvas, "Find", il2cpp_utils::createcsstr("Button"));
-	
+	Il2CppObject* tmpGO;
+	il2cpp_utils::RunMethod(&tmpGO, songPanelButton, "Find", il2cpp_utils::createcsstr("TextMeshPro Text"));
+	tmpProText = GameObject::GetComponent(tmpGO, "TMPro", "TMP_Text");
 	Add_CHUIButtonTrigger(self);
 	
 
-	//bool active = false;
-	//il2cpp_utils::RunMethod(songPanelButton, "SetActive", &active);
-
-	////GameObject::AddComponent(canvas, il2cpp_utils::GetClassFromName("", "OVRRaycaster"));
-	//auto el = GameObject::InstantiateEmpty({ 0,0,0 }, { 0,0,0,0 });
-	//auto transformProp = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "GameObject"), "transform");
-	//Il2CppObject* uiTransform, canvasTransform;
-	//il2cpp_utils::RunMethod(&uiTransform, el, transformProp);
-	//il2cpp_utils::RunMethod(&canvasTransform, canvas, transformProp);
-	//il2cpp_utils::RunMethod(uiTransform, "SetParent", canvasTransform);
-	//GameObject::AddComponent(el, il2cpp_utils::GetClassFromName("", "CHUI_Button"));
-
-	//
-	//class CHUI_TriggerEvents {
-	//	
-	//};
-
-	//class CHUIButtonTrigger {
-
-	//};
-	//
-	//class CHUI_CHUITriggerAdapterEvent {
-
-	//};
-
-	//Il2CppObject* action = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("UnityEngine.Events", "UnityAction"));
-	//il2cpp_utils::RunMethod(action, ".ctor", this, [this]() {CallMe(); });
-
-	//auto btnType = GameObject::GetComponentType(songPanelButton, "UnityEngine.UI", "Button");
-	//
-	//Il2CppObject* button = nullptr;
-	//il2cpp_utils::RunMethod(&button, songPanelButton, "GetComponent", btnType);
-	//if (button == nullptr)
-	//{
-	//	LOG("Failed to get button son song select controller\n");
-	//}
-
-	//if (!il2cpp_utils::RunMethod(button, "set_onClick", action))
-	//	LOG("Failed to set onClick action for UI\n");
 }
 
 SongSelectController::~SongSelectController()
@@ -134,44 +97,71 @@ SongSelectController::~SongSelectController()
 //	LOG("\nYou pressed a button\n\n!");
 //}
 //
-//void SongSelectController::OnClick()
+void SongSelectController::OnClick(void* self)
+{
+	SongSelectController* ssc = static_cast<SongSelectController*>(self);
+	if (ssc != nullptr)
+	{
+		ssc->SetText("Clicked!");
+
+	}
+	LOG("SongSelectController::OnClick()!\n");
+}
+
+void SongSelectController::SetText(std::string text)
+{
+	static auto tmp_text_class = il2cpp_utils::GetClassFromName("TMPro", "TMP_Text");
+	static auto get_text_method = il2cpp_utils::GetMethod(tmp_text_class, "get_text", 0);
+	static auto set_text_method = il2cpp_utils::GetMethod(tmp_text_class, "set_text", 1);
+	static auto set_richText_method = il2cpp_utils::GetMethod(tmp_text_class, "set_richText", 1);
+
+	il2cpp_utils::RunMethod(tmpProText, set_text_method, il2cpp_utils::createcsstr(text));
+}
+
+void SongSelectController::OnEnter(void* self)
+{
+	SongSelectController* ssc = static_cast<SongSelectController*>(self);
+
+	LOG("SongSelectController::OnEnter()!\n");
+}
+
+static bool stayCalledOnce = false;
+
+void SongSelectController::OnExit(void* self)
+{
+	SongSelectController* ssc = static_cast<SongSelectController*>(self);
+	LOG("SongSelectController::OnExit()!\n");
+	stayCalledOnce = false;
+}
+
+void SongSelectController::OnStay(void* self)
+{
+	if (!stayCalledOnce)
+	{
+		SongSelectController* ssc = static_cast<SongSelectController*>(self);
+		LOG("SongSelectController::OnStay()!\n");
+		stayCalledOnce = true;
+	}
+}
+
+
+
+//void OnClick()
 //{
 //	LOG("SongSelectController::OnClick()!\n");
 //}
-
-//void SongSelectController::OnEnter()
+//
+//void OnEnter()
 //{
 //	LOG("SongSelectController::OnEnter()!\n");
 //}
-
-//void SongSelectController::OnExit()
+//
+//void OnExit()
 //{
 //	LOG("SongSelectController::OnExit()!\n");
 //}
 //
-////void SongSelectController::OnStay()
-////{
-////	LOG("SongSelectController::OnStay()!\n");
-////}
-
-
-
-void OnClick()
-{
-	LOG("SongSelectController::OnClick()!\n");
-}
-
-void OnEnter()
-{
-	LOG("SongSelectController::OnEnter()!\n");
-}
-
-void OnExit()
-{
-	LOG("SongSelectController::OnExit()!\n");
-}
-
-void OnStay()
-{
-	LOG("SongSelectController::OnStay()!\n");
-}
+//void OnStay()
+//{
+//	LOG("SongSelectController::OnStay()!\n");
+//}

@@ -7,21 +7,18 @@
 
 using json = nlohmann::json;
 
-void OnEnter();
-void OnStay();
-void OnExit();
-void OnClick();
-
 class SongSelectController
 {
 public:
 	SongSelectController();
 	~SongSelectController();	
-	//void OnEnter();
-	//void OnStay();
-	//void OnExit();
-	//void OnClick();
-
+	static void OnEnter(void* self);
+	static void OnStay(void* self);
+	static void OnExit(void* self);
+	static void OnClick(void* self);
+	static void NextNext();
+	static void PreviousSong();
+	void SetText(std::string text);
 private:
 	Il2CppObject* Add_CHUIButtonTrigger(Il2CppObject* gameObject);
 private:
@@ -30,7 +27,7 @@ private:
 	Il2CppObject* songPanel;
 	Il2CppObject* songPanelButton;
 	//ScrollController scroll;
-
+	Il2CppObject* tmpProText;
 
 	std::string_view assetsPath = "Mods/pistol whip mod scene loader assets";
 };
