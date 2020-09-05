@@ -5,6 +5,7 @@
 #include "AssetBundle.hpp"
 #include "WwiseKoreographySet.hpp"
 #include "typedefs.h"
+#include "WorldVolume.hpp"
 #include <filesystem>
 #include <cstdio>
 
@@ -27,7 +28,7 @@ LevelData::LevelData(Il2CppObject* _gameManager, Il2CppObject* obj) : self(obj),
 {
 }
 
-LevelData::LevelData(Il2CppObject* _gameManager) : gameManager(_gameManager)
+LevelData::LevelData()
 {
 	Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "LevelData");
 	self = il2cpp_functions::object_new(klass);
@@ -39,6 +40,11 @@ LevelData::LevelData(Il2CppObject* _gameManager) : gameManager(_gameManager)
 	auto nameProp = il2cpp_utils::GetPropertySetMethod(klass, "name");
 	Il2CppString* str = il2cpp_utils::createcsstr("Religion_Data");
 	il2cpp_utils::RunMethod(self, nameProp, str);
+
+
+	if (!il2cpp_utils::GetFieldValue(&gameManager, il2cpp_utils::GetClassFromName("", "GameManager"), "s_instance"))
+		LOG("WARNING: Failed to get instance of GameManager\n");
+
 }
 
 LevelData::~LevelData()
@@ -136,7 +142,7 @@ Il2CppObject* LevelData::Load(json level)
 	LoadAndSetWwiseKoreographySets(level["koreoSets"]);
 	LoadTrackSections(level["sections"]);
 	LoadColorShiftPoints(level["colors"]);
-	LoadWorldRegions(level["regions"]);
+	LoadWorldVolumes(level["volumes"]);
 
 
 	songLength = level["songLength"];
@@ -144,10 +150,12 @@ Il2CppObject* LevelData::Load(json level)
 		LOG("WARNING: Failed to assign songLength in levelData\n");
 	
 	songName = level["songName"];
-	Il2CppString* name = il2cpp_utils::createcsstr(songName.c_str());
-	if (!il2cpp_utils::SetFieldValue(self, "songName", name))
+	if (!il2cpp_utils::SetFieldValue(self, "songName", il2cpp_utils::createcsstr(songName.c_str())))
 		LOG("WARNING: Failed to assign songName in LevelData\n");
 	
+	description = level["description"];
+	if (!il2cpp_utils::SetFieldValue(self, "songName", il2cpp_utils::createcsstr(description.c_str())))
+		LOG("WARNING: Failed to assign songName in LevelData\n");
 
 	return self;
 }
@@ -190,8 +198,6 @@ void LevelData::LoadGameMaps(json j)
 		GameMap* map = new GameMap(self);
 		map->Load(gm);
 
-
-
 		maps.push_back(map);
 	}
 
@@ -204,14 +210,16 @@ void LevelData::LoadGameMaps(json j)
 	{
 		//il2cpp_functions::free(array_maps);
 		Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "GameMap");
-		array_maps = il2cpp_functions::array_new(klass, maps.size());
+		//NOTE As of 8/31/2020 there must be 3 GameMaps no matter what
+		array_maps = il2cpp_functions::array_new(klass, 3);
 
 	}
 
-
-	for (size_t i = 0; i < maps.size(); i++)
+	//NOTE As of 8/31/2020 there must be 3 GameMaps no matter what
+	//TODO fix in cases where there are multiple gamemaps in actual file
+	for (size_t i = 0; i < 3; i++)
 	{
-		il2cpp_array_set(array_maps, Il2CppObject*, i, maps[i]->GetIl2CppObject());
+		il2cpp_array_set(array_maps, Il2CppObject*, i, maps[0]->GetIl2CppObject());
 	}
 
 	if (!il2cpp_utils::SetFieldValue(self, "maps", array_maps))
@@ -241,26 +249,14 @@ void LevelData::LoadTrackSections(json j)
 	}
 }
 
-void LevelData::LoadWorldRegions(json j)
+void LevelData::LoadWorldVolumes(json j)
 {
-	List<Il2CppObject*> regions(il2cpp_utils::GetFieldValue(self, "colors"));
-	for (auto& r : j)
+	List<Il2CppObject*> worldVolumes(il2cpp_utils::GetFieldValue(self, "volumes"));
+	for (auto& v : j)
 	{
-		//TODO move into own class
-		Il2CppObject* region = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "WorldRegion"));
-		il2cpp_utils::RunMethod(region, ".ctor");
+		WorldVolume volume;
 
-		int32_t type = r["type"];
-		Vector3i position = r["position"];
-		Vector3i min = r["min"];
-		Vector3i max = r["max"];
-		
-		il2cpp_utils::SetFieldValue(region, "position", &position);
-		il2cpp_utils::SetFieldValue(region, "min", &min);
-		il2cpp_utils::SetFieldValue(region, "max", &max);
-		il2cpp_utils::SetFieldValue(region, "type", &type);
-
-		regions.Add(region);
+		worldVolumes.Add(volume.Load(v));
 	}
 }
 

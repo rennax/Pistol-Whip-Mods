@@ -32,6 +32,7 @@ private:
 	Il2CppObject* self = nullptr;
 	Distance distance = Distance::Near;
 	Il2CppObject* enemySequence = nullptr;
+	int32_t enemyType;
 	WorldPoint enemyOffset;
 	bool ignoreForLevelRank = false;
 	Array<float>* fireTimes = nullptr;

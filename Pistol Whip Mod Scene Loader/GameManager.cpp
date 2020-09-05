@@ -107,16 +107,25 @@ namespace GameManager {
 	static uint32_t (*LoadBank_internal)(char* buff, uint32_t size, uint32_t* outID);
 	typedef uint32_t (*LoadBank_internal_t)(char* buff, uint32_t size, uint32_t* outID);
 
-	MAKE_HOOK(OnSceneSelect, void, void* self) {
+	MAKE_HOOK(OnSceneSelect, void, Il2CppObject* self) {
 		LOG("Called GameManager.OnSceneSelect() hook\n");
 		OnSceneSelect_orig(self);
 	}
 	SongSelectController *ctrl;
-	MAKE_HOOK(Start, void, void* self) {
+	MAKE_HOOK(Start, void, Il2CppObject* self) {
 		LOG("Called GameManager.Start() hook\n");
 
 		Start_orig(self);
-		ctrl = new SongSelectController();
+		
+		//Il2CppObject* lvlDB;
+		//il2cpp_utils::GetFieldValue(&lvlDB, self, "levels");
+		//Il2CppString* str;
+		//il2cpp_utils::GetFieldValue(&str, lvlDB, "pistolWhipDescription");
+		//LOG("LevelDatabase.pistolWhipDescription %s", to_utf8(csstrtostr(str)).c_str());
+
+		//ctrl = SongSelectController::get_Instance();
+		AssetBundle::Init();
+		
 	}
 
 
@@ -137,7 +146,7 @@ namespace GameManager {
 	static float gameLength = 0;
 	static float gameTime = 0;
 
-	MAKE_HOOK(Update, void, void* self) {
+	MAKE_HOOK(Update, void, Il2CppObject* self) {
 		SHORT keyState;
 		
 
@@ -156,27 +165,27 @@ namespace GameManager {
 			//LOG("%s\n", s.c_str());
 
 
-			int32_t diff = 0;
-			il2cpp_utils::SetFieldValue(reinterpret_cast<Il2CppObject*>(self), "difficulty", &diff);
+			//int32_t diff = 0;
+			//il2cpp_utils::SetFieldValue(reinterpret_cast<Il2CppObject*>(self), "difficulty", &diff);
 
-			data = new LevelData(reinterpret_cast<Il2CppObject*>(self));
-			std::string version = j["version"];
-			LOG("%s\n", version.c_str());
-			levelData = data->Load(j["levelData"]);
+			//data = new LevelData();
+			//std::string version = j["version"];
+			//LOG("%s\n", version.c_str());
+			//levelData = data->Load(j["levelData"]);
 
-			
-			Il2CppObject* levels = il2cpp_utils::GetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levels");
-			Il2CppObject* lastReleasedScene = il2cpp_utils::GetFieldValue(levels, "lastReleasedScene");
-			il2cpp_utils::SetFieldValue(levelData, "songSwitch", il2cpp_utils::GetFieldValue(lastReleasedScene, "songSwitch"));
-			Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(levelData, "maps"));
-			Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, 0); //GameMap
-			
+			//
+			//Il2CppObject* levels = il2cpp_utils::GetFieldValue(reinterpret_cast<Il2CppObject*>(self), "levels");
+			//Il2CppObject* lastReleasedScene = il2cpp_utils::GetFieldValue(levels, "lastReleasedScene");
+			//il2cpp_utils::SetFieldValue(levelData, "songSwitch", il2cpp_utils::GetFieldValue(lastReleasedScene, "songSwitch"));
+			//Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(levelData, "maps"));
+			//Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, 0); //GameMap
+			//
 
-			//il2cpp_utils::SetFieldValue(levelData, "sections", il2cpp_utils::GetFieldValue(lastReleasedScene, "sections"));
+			////il2cpp_utils::SetFieldValue(levelData, "sections", il2cpp_utils::GetFieldValue(lastReleasedScene, "sections"));
 
 
-			if (!il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "SetLevelInternal", map))
-				LOG("WARNING: Failed call to GameManager.SetLevelInternal(GameMap)\n");
+			//if (!il2cpp_utils::RunMethod(reinterpret_cast<Il2CppObject*>(self), "SetLevelInternal", map))
+			//	LOG("WARNING: Failed call to GameManager.SetLevelInternal(GameMap)\n");
 
 			//PrepAndStart(reinterpret_cast<Il2CppObject*>(self), levelData, map);
 
@@ -278,19 +287,19 @@ namespace GameManager {
 		//	
 		//}
 
-		bool playing;
-		il2cpp_utils::GetFieldValue(&playing, reinterpret_cast<Il2CppObject*>(self), "playing");
-		if (playing)
-		{
-			static int t = 0;
-			if (t % 60 == 0)
-			{
-				il2cpp_utils::GetFieldValue(&gameLength, reinterpret_cast<Il2CppObject*>(self), "gameLength");
-				il2cpp_utils::GetFieldValue(&gameTime, reinterpret_cast<Il2CppObject*>(self), "gameTime");
-				LOG("gameTime: %f, gameProgress: %f, gameLength: %f\n", gameTime, progress, gameLength);
-			}
-			t++;
-		}
+		//bool playing;
+		//il2cpp_utils::GetFieldValue(&playing, self, "playing");
+		//if (playing)
+		//{
+		//	static int t = 0;
+		//	if (t % 60 == 0)
+		//	{
+		//		il2cpp_utils::GetFieldValue(&gameLength, self, "gameLength");
+		//		il2cpp_utils::GetFieldValue(&gameTime, self, "gameTime");
+		//		LOG("gameTime: %f, gameProgress: %f, gameLength: %f\n", gameTime, progress, gameLength);
+		//	}
+		//	t++;
+		//}
 
 
 		Update_orig(self);
@@ -322,6 +331,7 @@ namespace GameManager {
 	MAKE_HOOK(LateUpdate, void, void* self)
 	{
 		LateUpdate_orig(self);
+
 	}
 
 	MAKE_HOOK(LoadKoreography, void, Il2CppObject* self, Il2CppObject* koreo)
@@ -416,20 +426,20 @@ namespace GameManager {
 	{
 		LOG("GameManager::initHooks()\n");
 		
-		UIElement_orig = (UIElement_t)il2cpp_utils::GetMethod("", "VRLaserPointer", "Awake", 0)->methodPointer;
-		INSTALL_HOOK(UIElement);
+		//UIElement_orig = (UIElement_t)il2cpp_utils::GetMethod("", "VRLaserPointer", "Awake", 0)->methodPointer;
+		//INSTALL_HOOK(UIElement);
 
-		HoverEnter_orig = (HoverEnter_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnHoverEnter", 0)->methodPointer;
-		INSTALL_HOOK(UIElement);
+		//HoverEnter_orig = (HoverEnter_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnHoverEnter", 0)->methodPointer;
+		//INSTALL_HOOK(UIElement);
 
-		Click_orig = (Click_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnClick", 0)->methodPointer;
-		INSTALL_HOOK(Click);
+		//Click_orig = (Click_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnClick", 0)->methodPointer;
+		//INSTALL_HOOK(Click);
 
-		HoverStay_orig = (HoverStay_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnHoverStay", 0)->methodPointer;
-		INSTALL_HOOK(HoverStay);
+		//HoverStay_orig = (HoverStay_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnHoverStay", 0)->methodPointer;
+		//INSTALL_HOOK(HoverStay);
 
-		HoverExit_orig = (HoverExit_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnHoverExit", 0)->methodPointer;
-		INSTALL_HOOK(HoverExit);
+		//HoverExit_orig = (HoverExit_t)il2cpp_utils::GetMethod("", "CHUI_TriggerEvents", "OnHoverExit", 0)->methodPointer;
+		//INSTALL_HOOK(HoverExit);
 
 
 

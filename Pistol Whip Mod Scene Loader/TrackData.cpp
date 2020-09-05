@@ -51,12 +51,12 @@ TrackData::TrackData(Il2CppObject* levelData_, bool dontToShit) : levelData(leve
 
 Il2CppObject* TrackData::Load(json j)
 {
-	Il2CppObject* assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
+	Il2CppObject* assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/song");
 
 	//Create and assign koreography
 	auto audioClipClass = il2cpp_utils::GetClassFromName("UnityEngine", "AudioClip");
 	auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(audioClipClass));
-	Il2CppObject* audio = AssetBundle::LoadAsset(assetDB, "song.ogg", type);
+	Il2CppObject* audio = AssetBundle::LoadAsset(assetDB, j["songName"].get<std::string>() + ".ogg", type);
 
 
 	//auto koreographyClass = il2cpp_utils::GetClassFromName("SonicBloom.Koreo", "Koreography");
@@ -64,14 +64,15 @@ Il2CppObject* TrackData::Load(json j)
 	//if (!il2cpp_utils::RunMethod(koreography, ".ctor"))
 	//	LOG("WARNING: Failed to construct Koreography in TrackData\n");
 
-	//if (!il2cpp_utils::RunMethod(koreography, "set_SourceClip", audio))
-	//	LOG("WARNING: Failed to call Koreography::set_SourceClip(audioClip) in TrackData");
+
 
 	Koreography koreography;
-	if (!il2cpp_utils::SetFieldValue(self, "koreography", koreography.Load(j["koreography"])))
+	Il2CppObject* koreo = koreography.Load(j["koreography"]);
+	if (!il2cpp_utils::SetFieldValue(self, "koreography", koreo))
 		LOG("WARNING: Failed to assign koreography in TrackData\n");
 
-	
+	if (!il2cpp_utils::RunMethod(koreo, "set_SourceClip", audio))
+		LOG("WARNING: Failed to call Koreography::set_SourceClip(audioClip) in TrackData");
 
 	LoadBeatTimes(j["beatTimes"]);
 	LoadBeats(j["beats"]);
@@ -84,6 +85,17 @@ Il2CppObject* TrackData::Load(json j)
 	playerSpeed = j["playerSpeed"];
 	if (!il2cpp_utils::SetFieldValue(self, "playerSpeed", &playerSpeed))
 		LOG("WARNING: Failed to assign playerSpeed in TrackData\n");
+
+	if (!il2cpp_utils::SetFieldValue(self, "level", levelData))
+		LOG("WARNING: Failed to assign level in TrackData\n");
+
+	Il2CppObject* musicMap;
+	il2cpp_utils::RunMethod(&musicMap, il2cpp_utils::GetClassFromName("CloudheadGames.PistolWhip.MusicMapperSystem", "MusicMap"), "op_Implicit", koreo);
+	il2cpp_utils::SetFieldValue(self, "musicMap", musicMap);
+
+	sampleRate = j["sampleRate"];
+	if (!il2cpp_utils::SetFieldValue(self, "sampleRate", &sampleRate))
+		LOG("WARNING: Failed to assign sampleRate in TrackData\n");
 
 	return self;
 }

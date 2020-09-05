@@ -25,6 +25,7 @@ typedef struct ChunkMeshData {
 	Il2CppArray* verts = nullptr;
 	Il2CppArray* meshSizes = nullptr;
 	Il2CppArray* tris = nullptr;
+	Il2CppArray* colors = nullptr;
 	Il2CppObject* m_liveMesh = nullptr;
 } ChunkMeshData;
 
@@ -35,6 +36,7 @@ typedef struct ChunkMeshSlice {
 	Il2CppArray* meshSizes = nullptr;
 	Il2CppArray* tris = nullptr;
 	Il2CppObject* m_liveMesh = nullptr;
+	Il2CppArray* colors = nullptr;
 } ChunkMeshSlice;
 
 #endif // !MESH_HPP

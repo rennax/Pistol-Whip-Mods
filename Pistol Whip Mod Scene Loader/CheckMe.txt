@@ -1,0 +1,28 @@
+This document contain thoughts, notes, maybe some reasoning and just generally information that i dont care to remember, 
+but that might be important in future updates.
+
+Make sure that all the correct 
+
+
+This is a dump from a correct map
+GameMap::get_name() : Religion_Easy
+GameMap::get_name() : Religion_Easy
+PlayerMovementManager::OnLevelChange()
+Debug.Log: Setting Steam user presence to Religion_Easy
+GameMap::get_name() : Religion_Easy
+GameMap::get_name() : Religion_Easy
+PlayerMovementManager.OnGameStart() called
+PlayerActionManager::OnGameStart() called
+gameTime: 0.000000, gameProgress: 0.000000, gameLength: 336.230011
+SpawnManager::OnSongStart()
+SpawnManager::OnSongTimeSet()
+SpawnManager::QueueSpawns()
+SpawnManager::PrespawnEnemies()
+PlayerActionManager.OnSpawningComplete()
+gameTime: 0.733000, gameProgress: 0.002180, gameLength: 336.230011
+gameTime: 1.235000, gameProgress: 0.003673, gameLength: 336.230011
+gameTime: 1.746000, gameProgress: 0.005193, gameLength: 336.230011
+gameTime: 2.263000, gameProgress: 0.006731, gameLength: 336.230011
+gameTime: 2.781000, gameProgress: 0.008271, gameLength: 336.230011
+gameTime: 3.300000, gameProgress: 0.009815, gameLength: 336.230011
+Debug.Log: LIV: Disabled, cleaning up.

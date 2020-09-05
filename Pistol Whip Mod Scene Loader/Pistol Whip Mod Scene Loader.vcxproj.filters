@@ -195,6 +195,12 @@
     <ClCompile Include="SongSelectController.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldVolume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -359,11 +365,17 @@
     <ClInclude Include="SongSelectController.hpp">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Level.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldVolume.hpp">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\TODO.txt" />
     <Text Include="GameManager.md" />
     <Text Include="Messages.md" />
+    <Text Include="CheckMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MusicManager.md" />

@@ -21,7 +21,7 @@ class LevelData
 public:
 	static void initHooks(funchook_t* funchookp);
 	LevelData(Il2CppObject* _gameManager, Il2CppObject* obj);
-	LevelData(Il2CppObject* _gameManager);
+	LevelData();
 	~LevelData();
 	json Dump();
 	Il2CppObject* Load(json j);
@@ -29,7 +29,7 @@ private:
 	void LoadSongSwitch(json j); // TODO
 	void LoadGameMaps(json j);
 	void LoadTrackSections(json j); // TODO
-	void LoadWorldRegions(json j);
+	void LoadWorldVolumes(json j);
 	void LoadColorShiftPoints(json j);
 	void LoadWorldObjects(json j);
 	void LoadSimpleStaticWorldObjects(json j); // TODO
@@ -42,6 +42,7 @@ private:
 	std::vector<WorldObject> worldObjects;
 	float songLength = 0;
 	std::string songName;
+	std::string description;
 	std::string songPath = "Custom Levels/x02/";
 	const char* lastReleasedScene = "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/561074166.wem";
 	const char* lastReleasedSceneRenamed = "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/561074166_backup.wem";

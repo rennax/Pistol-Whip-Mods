@@ -25,6 +25,7 @@ public:
 		LimboTall = 1,
 		LimboShort = 2,
 	};
+
 	ObstacleData();
 	ObstacleData(Il2CppObject* obj);
 	~ObstacleData();

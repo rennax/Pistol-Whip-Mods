@@ -2,17 +2,20 @@
 #include "AssetBundle.hpp"
 #include "GameObject.hpp"
 #include <functional>
+#include <fstream>
 
+
+SongSelectController* SongSelectController::_instance = nullptr;
 
 Il2CppObject* SongSelectController::Add_CHUIButtonTrigger(Il2CppObject* gameObject)
 {
 	auto actionType = il2cpp_functions::class_get_type_const(il2cpp_utils::GetClassFromName("UnityEngine.Events", "UnityAction"));
-
 	void* n = nullptr;
-	Il2CppObject* actionEnter = il2cpp_utils::MakeAction(actionType, this, OnEnter);
-	Il2CppObject* actionStay = il2cpp_utils::MakeAction(actionType, this, OnStay);
-	Il2CppObject* actionExit = il2cpp_utils::MakeAction(actionType, this, OnExit);
-	Il2CppObject* actionClick = il2cpp_utils::MakeAction(actionType, this, OnClick);
+	//UnityActions
+	Il2CppObject* actionEnter = il2cpp_utils::MakeAction(actionType, n, OnEnter);
+	Il2CppObject* actionStay = il2cpp_utils::MakeAction(actionType, n, OnStay);
+	Il2CppObject* actionExit = il2cpp_utils::MakeAction(actionType, n, OnExit);
+	Il2CppObject* actionClick = il2cpp_utils::MakeAction(actionType, n, OnClick);
 
 
 	//UnityEvents
@@ -41,11 +44,11 @@ Il2CppObject* SongSelectController::Add_CHUIButtonTrigger(Il2CppObject* gameObje
 
 	//CHUIButtonTrigger
 	Il2CppObject* enterTrigger = GameObject::AddComponent(gameObject, "", "CHUIButtonSimple");
-	il2cpp_utils::SetFieldValue(enterTrigger, "clickEvent", hoverEnterEvent);
+	il2cpp_utils::SetFieldValue(enterTrigger, "hoverEnterEvent", hoverEnterEvent);
 	Il2CppObject* stayTrigger = GameObject::AddComponent(gameObject, "", "CHUIButtonSimple");
-	il2cpp_utils::SetFieldValue(stayTrigger, "clickEvent", hoverStayEvent);
+	il2cpp_utils::SetFieldValue(stayTrigger, "hoverStayEvent", hoverStayEvent);
 	Il2CppObject* exitTrigger = GameObject::AddComponent(gameObject, "", "CHUIButtonSimple");
-	il2cpp_utils::SetFieldValue(exitTrigger, "clickEvent", hoverExitEvent);
+	il2cpp_utils::SetFieldValue(exitTrigger, "hoverExitEvent", hoverExitEvent);
 	Il2CppObject* clickTrigger = GameObject::AddComponent(gameObject, "", "CHUIButtonSimple");
 	il2cpp_utils::SetFieldValue(clickTrigger, "clickEvent", clickEvent);
 
@@ -69,6 +72,33 @@ Il2CppObject* SongSelectController::Add_CHUIButtonTrigger(Il2CppObject* gameObje
 	return lastButtonTrigger;
 }
 
+void SongSelectController::CreateLevelData()
+{
+	std::ifstream i("Custom Levels/x02/level.json");
+	json j;
+	i >> j;
+	//std::string s = j.dump();
+	//LOG("%s\n", s.c_str());
+
+
+	int32_t diff = 0;
+	il2cpp_utils::SetFieldValue(gameManager, "difficulty", &diff);
+
+	std::string version = j["version"];
+	LOG("%s\n", version.c_str());
+	levelData = data.Load(j["levelData"]);
+}
+
+Il2CppObject* SongSelectController::GetGameMap(Difficulty difficulty)
+{
+	Il2CppObject* levels = il2cpp_utils::GetFieldValue(gameManager, "levels");
+	Il2CppObject* lastReleasedScene = il2cpp_utils::GetFieldValue(levels, "lastReleasedScene");
+	il2cpp_utils::SetFieldValue(levelData, "songSwitch", il2cpp_utils::GetFieldValue(lastReleasedScene, "songSwitch"));
+	Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(levelData, "maps"));
+	Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, static_cast<int32_t>(difficulty)); //GameMap
+	return map;
+}
+
 SongSelectController::SongSelectController()
 {
 	Il2CppObject* assetDB = AssetBundle::LoadFromFile("Mods/Pistol Whip Mod Scene Loader Assets");
@@ -84,7 +114,12 @@ SongSelectController::SongSelectController()
 	il2cpp_utils::RunMethod(&tmpGO, songPanelButton, "Find", il2cpp_utils::createcsstr("TextMeshPro Text"));
 	tmpProText = GameObject::GetComponent(tmpGO, "TMPro", "TMP_Text");
 	Add_CHUIButtonTrigger(self);
+
+
+	if (!il2cpp_utils::GetFieldValue(&gameManager, il2cpp_utils::GetClassFromName("", "GameManager"), "s_instance"))
+		LOG("WARNING: Failed to get instance of GameManager\n");
 	
+	CreateLevelData();
 
 }
 
@@ -92,18 +127,19 @@ SongSelectController::~SongSelectController()
 {
 }
 
-//void SongSelectController::CallMe()
-//{
-//	LOG("\nYou pressed a button\n\n!");
-//}
-//
-void SongSelectController::OnClick(void* self)
+
+void SongSelectController::OnClick()
 {
-	SongSelectController* ssc = static_cast<SongSelectController*>(self);
+	SongSelectController* ssc = SongSelectController::get_Instance();
 	if (ssc != nullptr)
 	{
 		ssc->SetText("Clicked!");
-
+		static auto gmClass = il2cpp_utils::GetClassFromName("", "GameManager");
+		static auto setLevelInternal = il2cpp_utils::GetMethod(gmClass, "SetLevelInternal", 1);
+		static auto getDifficulty = il2cpp_utils::GetMethod(gmClass, "GetDifficulty", 0);
+		Difficulty diff;
+		il2cpp_utils::RunMethod(&diff, gmClass, getDifficulty);
+		il2cpp_utils::RunMethod(gmClass, setLevelInternal, ssc->GetGameMap(diff));
 	}
 	LOG("SongSelectController::OnClick()!\n");
 }
@@ -118,50 +154,35 @@ void SongSelectController::SetText(std::string text)
 	il2cpp_utils::RunMethod(tmpProText, set_text_method, il2cpp_utils::createcsstr(text));
 }
 
-void SongSelectController::OnEnter(void* self)
+SongSelectController* SongSelectController::get_Instance()
 {
-	SongSelectController* ssc = static_cast<SongSelectController*>(self);
+	if (SongSelectController::_instance == nullptr)
+	{
+		SongSelectController::_instance = new SongSelectController();
+	}
 
+	return SongSelectController::_instance;
+}
+
+void SongSelectController::OnEnter(SongSelectController* self)
+{
 	LOG("SongSelectController::OnEnter()!\n");
 }
 
 static bool stayCalledOnce = false;
 
-void SongSelectController::OnExit(void* self)
-{
-	SongSelectController* ssc = static_cast<SongSelectController*>(self);
+void SongSelectController::OnExit(SongSelectController* self)
+{;
 	LOG("SongSelectController::OnExit()!\n");
 	stayCalledOnce = false;
 }
 
-void SongSelectController::OnStay(void* self)
+void SongSelectController::OnStay(SongSelectController* self)
 {
-	if (!stayCalledOnce)
+	if (stayCalledOnce == false)
 	{
-		SongSelectController* ssc = static_cast<SongSelectController*>(self);
 		LOG("SongSelectController::OnStay()!\n");
 		stayCalledOnce = true;
 	}
 }
 
-
-
-//void OnClick()
-//{
-//	LOG("SongSelectController::OnClick()!\n");
-//}
-//
-//void OnEnter()
-//{
-//	LOG("SongSelectController::OnEnter()!\n");
-//}
-//
-//void OnExit()
-//{
-//	LOG("SongSelectController::OnExit()!\n");
-//}
-//
-//void OnStay()
-//{
-//	LOG("SongSelectController::OnStay()!\n");
-//}

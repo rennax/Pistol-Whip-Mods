@@ -45,7 +45,7 @@ SAMPLEMOD_API int load(HANDLE logHandle, HMODULE gameAssembly) {
 
 	GameManager::initHooks(funchook);
 	LevelDatabase::initHooks(funchook);
-	//SongSelectionUIController::initHooks(funchook);
+	SongSelectionUIController::initHooks(funchook);
 	SceneManager::initHooks(funchook);
 	LevelSelectTrigger::initHooks(funchook);
 	LevelManager::initHooks(funchook);

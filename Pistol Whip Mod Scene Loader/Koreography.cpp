@@ -26,11 +26,12 @@ Il2CppObject* Koreography::Load(json j)
 {
 
 
-	uint32_t mSampleRate = j["mSampleRate"];
-	uint32_t lastUpdateEnd = j["lastUpdateEnd"];
-	uint32_t lastUpdateStart = j["lastUpdateStart"];
-	bool mIgnoreLatencyOffset = j["mIgnoreLatencyOffset"];
-	std::string clipName = j["clipName"];
+	mSampleRate = j["mSampleRate"];
+	lastUpdateEnd = j["lastUpdateEnd"];
+	lastUpdateStart = j["lastUpdateStart"];
+	mIgnoreLatencyOffset = j["mIgnoreLatencyOffset"];
+	clipName = j["clipName"];
+	mAudioFilePath = j["mAudioFilePath"];
 
 	List<Il2CppObject*> mTempoSections(il2cpp_utils::GetFieldValue(self, "mTempoSections"));
 	for (auto section : j["mTempoSections"])
@@ -50,16 +51,16 @@ Il2CppObject* Koreography::Load(json j)
 	il2cpp_utils::SetFieldValue(self, "lastUpdateEnd", &lastUpdateEnd);
 	il2cpp_utils::SetFieldValue(self, "lastUpdateStart", &lastUpdateStart);
 	il2cpp_utils::SetFieldValue(self, "mIgnoreLatencyOffset", &mIgnoreLatencyOffset);
-	il2cpp_utils::SetFieldValue(self, "mAudioFilePath", il2cpp_utils::createcsstr(j["mAudioFilePath"]));
+	il2cpp_utils::SetFieldValue(self, "mAudioFilePath", il2cpp_utils::createcsstr(mAudioFilePath.c_str()));
 	il2cpp_utils::SetFieldValue(self, "clipName", il2cpp_utils::createcsstr(clipName.c_str()));
 
-	Il2CppObject* assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
-	auto audioClipClass = il2cpp_utils::GetClassFromName("UnityEngine", "AudioClip");
-	auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(audioClipClass));
-	Il2CppObject* audio = AssetBundle::LoadAsset(assetDB, "mus_core_religion.ogg", type);
+	//Il2CppObject* assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/song");
+	//auto audioClipClass = il2cpp_utils::GetClassFromName("UnityEngine", "AudioClip");
+	//auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(audioClipClass));
+	//Il2CppObject* audio = AssetBundle::LoadAsset(assetDB, "Burn You Tonight.ogg", type);
 
-	if (!il2cpp_utils::RunMethod(self, "set_SourceClip", audio))
-		LOG("WARNING: Failed to call Koreography::set_SourceClip(audioClip) in TrackData");
+	//if (!il2cpp_utils::RunMethod(self, "set_SourceClip", audio))
+	//	LOG("WARNING: Failed to call Koreography::set_SourceClip(audioClip) in TrackData");
 
 	return self;
 }

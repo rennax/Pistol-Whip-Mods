@@ -43,6 +43,7 @@ private:
 	Difficulty difficulty = Difficulty::Easy;
 	Il2CppObject* koreography = nullptr;
 	float playerSpeed = 3;
+	float sampleRate;
 	std::vector<float> beatTimesVec;
 	std::vector<BeatData*> beats;
 };

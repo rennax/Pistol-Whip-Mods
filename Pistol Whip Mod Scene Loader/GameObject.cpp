@@ -47,6 +47,52 @@ namespace GameObject {
 		return component;
 	}
 
+	Array<Il2CppObject*>* GetComponentsInChildren(Il2CppObject* gameObject, bool includeInactive, std::string_view namespaze, std::string_view klassName)
+	{
+		Array<Il2CppObject*>* components = nullptr;
+		auto type = GetComponentType(namespaze, klassName);
+		if (type == nullptr)
+		{
+			return nullptr;
+		}
+
+		const MethodInfo* info = il2cpp_utils::GetMethod("UnityEngine", "Component", "GetComponentsInChildren", 1);
+		// Get my generic methodInfo
+		info = il2cpp_utils::MakeGeneric(info, { il2cpp_utils::GetClassFromName(namespaze.data(), klassName.data()) });
+		// Call the method
+		if (!il2cpp_utils::RunMethod(&components, gameObject, info, &includeInactive))
+			LOG("WARNING: Failed to run Send(Messages.LevelSelectEvent e)\n");
+
+
+		return components;
+	}
+
+	Il2CppObject* GetComponentInChildren(Il2CppObject* gameObject, bool includeInactive, std::string_view namespaze, std::string_view klassName)
+	{
+		Array<Il2CppObject*>* components = nullptr;
+		auto type = GetComponentType(namespaze, klassName);
+		if (type == nullptr)
+		{
+			return nullptr;
+		}
+		if (!il2cpp_utils::RunMethod(&components, gameObject, "GetComponentInChildren", type, &includeInactive))
+			LOG("Warning: GetComponentInChildren failed\n");
+
+		return components;
+	}
+
+	Array<Il2CppObject*>* GetComponents(Il2CppObject* gameObject, std::string_view namespaze, std::string_view klassName)
+	{
+		Array<Il2CppObject*>* components = nullptr;
+		auto type = GetComponentType(namespaze, klassName);
+		if (type == nullptr)
+		{
+			return nullptr;
+		}
+		il2cpp_utils::RunMethod(&components, gameObject, "GetComponents", type);
+		return components;
+	}
+
 	Il2CppObject* InstantiateEmpty(Vector3 position, Quaternion rotation)
 	{
 		if (emptyPrefab == nullptr)
@@ -57,6 +103,22 @@ namespace GameObject {
 		Il2CppObject* obj = nullptr;
 		if (!il2cpp_utils::RunMethod(&obj, il2cpp_utils::GetClassFromName("UnityEngine", "Object"), "Instantiate", emptyPrefab, &position, &rotation))
 			LOG("Failed to Instantiate empty gameobject\n");
+		return obj;
+	}
+
+	Il2CppObject* Instantiate(Il2CppObject* object, Vector3 position, Quaternion rotation)
+	{
+		Il2CppObject* obj = nullptr;
+		if (!il2cpp_utils::RunMethod(&obj, il2cpp_utils::GetClassFromName("UnityEngine", "Object"), "Instantiate", object, &position, &rotation))
+			LOG("Failed to Instantiate gameobject\n");
+		return obj;
+	}
+
+	Il2CppObject* Instantiate(Il2CppObject* object)
+	{
+		Il2CppObject* obj = nullptr;
+		if (!il2cpp_utils::RunMethod(&obj, il2cpp_utils::GetClassFromName("UnityEngine", "Object"), "Instantiate", object))
+			LOG("Failed to Instantiate gameobject\n");
 		return obj;
 	}
 

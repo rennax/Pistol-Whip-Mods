@@ -18,7 +18,6 @@ namespace GeoSet {
 	Il2CppObject* GeoSet::Load(json j)
 	{
 		//TODO change this so path is sent as an argument, or stored in level.json
-		assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
 		assetBundlePath = "Custom Levels/" + j["mapID"].get<std::string>() + "/";
 
 		LoadDecoratorCubes(j["decorCubes"]);
@@ -40,6 +39,9 @@ namespace GeoSet {
 		auto klass = il2cpp_utils::GetClassFromName("UnityEngine", "GameObject");
 		auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
 
+		std::string staticPropsDBPath = assetBundlePath + "static props";
+		Il2CppObject* staticPropsDB = AssetBundle::LoadFromFile(staticPropsDBPath);
+		List<Il2CppObject*> staticPropList(il2cpp_utils::GetFieldValue(self, "staticProps"));
 		for (auto& prop : j)
 		{
 			json p = prop["point"]["position"];
@@ -57,7 +59,7 @@ namespace GeoSet {
 			};
 
 
-			Il2CppObject* prefab = AssetBundle::LoadAsset(assetDB, prop["prefabName"], type);
+			Il2CppObject* prefab = AssetBundle::LoadAsset(staticPropsDB, prop["prefabName"], type);
 			if (prefab == nullptr)
 			{
 				std::string pfName = prop["prefabName"];
@@ -87,12 +89,7 @@ namespace GeoSet {
 			WorldObject staticProp(point, prefab, scale);
 
 			staticProps.push_back(staticProp);
-		}
-
-		List<Il2CppObject*> staticPropList(il2cpp_utils::GetFieldValue(self, "staticProps"));
-		for (auto& prop : staticProps)
-		{
-			staticPropList.Add(prop.GetObj());
+			staticPropList.Add(staticProp.GetObj());
 		}
 	}
 
@@ -126,6 +123,12 @@ namespace GeoSet {
 
 	void GeoSet::LoadChunks(json j)
 	{
+		static auto getMeshProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "MeshFilter"), "mesh");
+		static auto meshVerticesProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "vertices");
+		static auto meshTrianglesProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "triangles");
+		static auto meshColorsGetProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "colors");
+
+		
 		std::string chunkDBPath = assetBundlePath + "chunks";
 		Il2CppObject* chunkDB = AssetBundle::LoadFromFile(chunkDBPath);
 		if (chunkDB == nullptr)
@@ -141,28 +144,45 @@ namespace GeoSet {
 		for (auto c : j)
 		{
 			Il2CppObject* chunk = AssetBundle::LoadAsset(chunkDB, c["chunkID"]);
+			
 			Il2CppObject* mesh = nullptr;
-			auto type = il2cpp_functions::type_get_object(
-				il2cpp_functions::class_get_type_const(
-					il2cpp_utils::GetClassFromName("UnityEngine", "Mesh")
-				));
-			il2cpp_utils::RunMethod(&mesh, chunk, "GetComponent", type);
+			Il2CppObject* meshGO = nullptr;
+
+			//Array<Il2CppObject*>* filters = GameObject::GetComponentsInChildren(chunk, false, "UnityEngine", "MeshFilter");
+			//if (filters != nullptr && filters->Length() > 0)
+			//{
+			//	meshFilter = filters->values[0];
+			//}
+			//else continue;
+
+			Il2CppObject* meshFilter = GameObject::GetComponentInChildren(chunk, false, "UnityEngine", "MeshFilter");
+
+			il2cpp_utils::RunMethod(&mesh, meshFilter, getMeshProperty);
+
 			ChunkMeshSlice slice;
 			slice.z = c["id"]["z"];
 			slice.meshSizes = nullptr;
-			auto sliceBoxed = il2cpp_functions::value_box(il2cpp_utils::GetClassFromName("", "ChunkMeshSlice"), &slice);
-			il2cpp_utils::SetFieldValue(sliceBoxed, "m_liveMesh", mesh);
-			il2cpp_utils::SetFieldValue(sliceBoxed, "verts", il2cpp_utils::GetFieldValue(mesh, "vertices"));
-			il2cpp_utils::SetFieldValue(sliceBoxed, "tris", il2cpp_utils::GetFieldValue(mesh, "triangles"));
+			slice.m_liveMesh = mesh;
+			il2cpp_utils::RunMethod(&slice.tris, mesh, meshTrianglesProperty);
+			il2cpp_utils::RunMethod(&slice.verts, mesh, meshVerticesProperty);
+			il2cpp_utils::RunMethod(&slice.colors, mesh, meshColorsGetProperty);
+			//auto sliceBoxed = il2cpp_functions::value_box(il2cpp_utils::GetClassFromName("", "ChunkMeshSlice"), &slice);
+			//il2cpp_utils::SetFieldValue(sliceBoxed, "m_liveMesh", mesh);
+			//il2cpp_utils::SetFieldValue(sliceBoxed, "verts", il2cpp_utils::GetFieldValue(mesh, "vertices"));
+			//il2cpp_utils::SetFieldValue(sliceBoxed, "tris", il2cpp_utils::GetFieldValue(mesh, "triangles"));
 			chunkSlices.Add(slice);
 
 			ChunkMeshData data;
 			data.id = c["id"];
 			data.meshSizes = nullptr;
-			auto dataBoxed = il2cpp_functions::value_box(il2cpp_utils::GetClassFromName("", "ChunkMeshData"), &data);
-			il2cpp_utils::SetFieldValue(dataBoxed, "m_liveMesh", mesh);
-			il2cpp_utils::SetFieldValue(dataBoxed, "verts", il2cpp_utils::GetFieldValue(mesh, "vertices"));
-			il2cpp_utils::SetFieldValue(dataBoxed, "tris", il2cpp_utils::GetFieldValue(mesh, "triangles"));
+			data.m_liveMesh = mesh;
+			il2cpp_utils::RunMethod(&data.tris, mesh, meshTrianglesProperty);
+			il2cpp_utils::RunMethod(&data.verts, mesh, meshVerticesProperty);
+			il2cpp_utils::RunMethod(&data.colors, mesh, meshColorsGetProperty);
+			//auto dataBoxed = il2cpp_functions::value_box(il2cpp_utils::GetClassFromName("", "ChunkMeshData"), &data);
+			//il2cpp_utils::SetFieldValue(dataBoxed, "m_liveMesh", mesh);
+			//il2cpp_utils::SetFieldValue(dataBoxed, "verts", il2cpp_utils::GetFieldValue(mesh, "vertices"));
+			//il2cpp_utils::SetFieldValue(dataBoxed, "tris", il2cpp_utils::GetFieldValue(mesh, "triangles"));
 			chunkData.Add(data);
 		}
 	}

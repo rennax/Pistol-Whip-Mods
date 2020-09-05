@@ -27,8 +27,8 @@ EnemySequence::~EnemySequence()
 
 Il2CppObject* EnemySequence::Load(json j)
 {
-	enemyType.toughness = j["enemyType"]["toughness"];
-	il2cpp_utils::SetFieldValue(self, "enemyType", &enemyType);
+	//enemyType.toughness = j["enemyType"]["toughness"];
+	//il2cpp_utils::SetFieldValue(self, "enemyType", &enemyType);
 
 	forceCheevoID = static_cast<CheevoID>(j["forceCheevoID"]);
 	il2cpp_utils::SetFieldValue(self, "forceCheevoID", &forceCheevoID);

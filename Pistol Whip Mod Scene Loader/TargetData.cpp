@@ -1,6 +1,7 @@
 #include "TargetData.hpp"
 #include "EnemySequence.hpp"
 #include "AssetBundle.hpp"
+#include "GameObject.hpp"
 
 TargetData::TargetData()
 {
@@ -23,6 +24,7 @@ Il2CppObject* TargetData::Load(json j)
 	distance = static_cast<Distance>(j["distance"]);
 	cheevoID = static_cast<CheevoID>(j["cheevoID"]);
 	ignoreForLevelRank = j["ignoreForLevelRank"];
+	enemyType = j["enemyType"];
 	noGround = j["noGround"];
 	enemyOffset.position = j["enemyOffset"]["position"];
 	enemyOffset.rotation = j["enemyOffset"]["rotation"];
@@ -34,15 +36,9 @@ Il2CppObject* TargetData::Load(json j)
 	}
 
 	//TODO create empty GO and do AddComponent instead to reduce external dependencies
-	Il2CppObject* assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/static_objects");
-	auto goClass = il2cpp_utils::GetClassFromName("UnityEngine", "GameObject");
-	auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(goClass));
-	Il2CppObject* go = AssetBundle::LoadAsset(assetDB, "EnemySequence", type);
+	Il2CppObject* go = GameObject::InstantiateEmpty({ 0,0,0 }, { 0,0,0,0 });
+	Il2CppObject* esPtr = GameObject::AddComponent(go, "", "EnemySequence");
 
-	auto esClass = il2cpp_utils::GetClassFromName("", "EnemySequence");
-	type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(esClass));
-	Il2CppObject* esPtr;
-	il2cpp_utils::RunMethod(&esPtr, go, "GetComponent", type);
 
 	//TODO EnemySequence class
 	EnemySequence es(esPtr);
@@ -53,7 +49,7 @@ Il2CppObject* TargetData::Load(json j)
 	}
 	
 	il2cpp_utils::SetFieldValue(self, "enemySequence", enemySequence);
-
+	il2cpp_utils::SetFieldValue(self, "enemyType", &enemyType);
 	il2cpp_utils::SetFieldValue(self, "fireTimes", fireTimes);
 	il2cpp_utils::SetFieldValue(self, "enemyOffset", &enemyOffset);
 	il2cpp_utils::SetFieldValue(self, "noGround", &noGround);

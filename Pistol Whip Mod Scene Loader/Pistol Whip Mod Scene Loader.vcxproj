@@ -164,6 +164,7 @@
     <ClCompile Include="Koreography.cpp" />
     <ClCompile Include="KoreographyEvent.cpp" />
     <ClCompile Include="KoreographyTrackBase.cpp" />
+    <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelData.cpp" />
     <ClCompile Include="LevelDatabase.cpp" />
     <ClCompile Include="LevelManager.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="WorldObject.cpp" />
     <ClCompile Include="WorldRegion.cpp" />
+    <ClCompile Include="WorldVolume.cpp" />
     <ClCompile Include="WwiseKoreographySet.cpp" />
     <ClCompile Include="WwiseKoreoMediaIDEntry.cpp" />
   </ItemGroup>
@@ -217,6 +219,7 @@
     <ClInclude Include="Koreography.hpp" />
     <ClInclude Include="KoreographyEvent.hpp" />
     <ClInclude Include="KoreographyTrackBase.hpp" />
+    <ClInclude Include="Level.hpp" />
     <ClInclude Include="LevelData.hpp" />
     <ClInclude Include="LevelDatabase.hpp" />
     <ClInclude Include="LevelManager.hpp" />
@@ -249,11 +252,12 @@
     <ClInclude Include="utils.h" />
     <ClInclude Include="WorldObject.hpp" />
     <ClInclude Include="WorldRegion.hpp" />
+    <ClInclude Include="WorldVolume.hpp" />
     <ClInclude Include="WwiseKoreographySet.hpp" />
     <ClInclude Include="WwiseKoreoMediaIDEntry.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\TODO.txt" />
+    <Text Include="CheckMe.txt" />
     <Text Include="GameManager.md" />
     <Text Include="Messages.md" />
   </ItemGroup>

@@ -17,11 +17,11 @@ public:
 private:
 	Il2CppObject* self;
 	std::string mAudioFilePath;
-	int64_t mSampleRate;
+	int32_t mSampleRate;
 	bool mIgnoreLatencyOffset;
 	std::string clipName;
-	int64_t lastUpdateStart;
-	int64_t lastUpdateEnd;
+	int32_t lastUpdateStart;
+	int32_t lastUpdateEnd;
 
 };
 

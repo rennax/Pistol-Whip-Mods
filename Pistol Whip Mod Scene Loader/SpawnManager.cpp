@@ -17,6 +17,8 @@ MAKE_HOOK(OnSongTimeSet, void, Il2CppObject* self, Il2CppObject* songTimeEvent) 
 MAKE_HOOK(OnSongStart, void, Il2CppObject* self) {
 	LOG("SpawnManager::OnSongStart()\n");
 	OnSongStart_orig(self);
+	if (il2cpp_utils::GetFieldValue(self, "data") == nullptr)
+		LOG("\tTrackData is null\n");
 }
 
 MAKE_HOOK(QueueSpawns, void, Il2CppObject* self) {
