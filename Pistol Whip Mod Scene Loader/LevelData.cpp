@@ -137,7 +137,6 @@ json LevelData::Dump()
 
 Il2CppObject* LevelData::Load(json level)
 {
-	LoadSongSwitch(level["song"]);
 	LoadGameMaps(level["gameMaps"]);
 	LoadAndSetWwiseKoreographySets(level["koreoSets"]);
 	LoadTrackSections(level["sections"]);
@@ -163,32 +162,32 @@ Il2CppObject* LevelData::Load(json level)
 void LevelData::LoadSongSwitch(json j)
 {
 
-	LOG("TODO Switch song in LevelData::LoadSongSwitch\n");
-	//TODO, at startup, check if the file is not renamed to its old name
-	/*
-	* Rename current lastReleasedScene to have postfix _saved
-	* Get location of current selected custom song
-	* Copy over the .wem file and rename it to have the id of lastReleasedScene
-	* Done
-	*/
-	try
-	{
-		fs::path toCopy("Custom Levels/x02/song.wem");
-		fs::path destination(lastReleasedScene);
-		if (!fs::exists(fs::path(lastReleasedSceneRenamed)))
-		{
-			if (!std::rename(lastReleasedScene, lastReleasedSceneRenamed))
-			{
-				LOG("Failed to rename Religion' wem file\n");
-			}
-		}
-		
-		fs::copy(toCopy, destination, fs::copy_options::overwrite_existing); // We have already made sure copy exists
-	}
-	catch (const std::exception& e)
-	{
-		LOG("%s\n", e.what());
-	}
+	LOG("LevelData::LongSongSwitch() is depricated. If this function is called, then something is wrong\n");
+	////TODO, at startup, check if the file is not renamed to its old name
+	///*
+	//* Rename current lastReleasedScene to have postfix _saved
+	//* Get location of current selected custom song
+	//* Copy over the .wem file and rename it to have the id of lastReleasedScene
+	//* Done
+	//*/
+	//try
+	//{
+	//	fs::path toCopy("Custom Levels/x02/song.wem");
+	//	fs::path destination(lastReleasedScene);
+	//	if (!fs::exists(fs::path(lastReleasedSceneRenamed)))
+	//	{
+	//		if (!std::rename(lastReleasedScene, lastReleasedSceneRenamed))
+	//		{
+	//			LOG("Failed to rename Religion' wem file\n");
+	//		}
+	//	}
+	//	
+	//	fs::copy(toCopy, destination, fs::copy_options::overwrite_existing); // We have already made sure copy exists
+	//}
+	//catch (const std::exception& e)
+	//{
+	//	LOG("%s\n", e.what());
+	//}
 
 }
 
@@ -228,19 +227,6 @@ void LevelData::LoadGameMaps(json j)
 
 void LevelData::LoadTrackSections(json j)
 {
-	//////FOR TEST
-	//List<Il2CppObject*> trackSections(il2cpp_utils::GetFieldValue(self, "sections"));
-	////trackSections.Clear();
-	//auto klass = il2cpp_utils::GetClassFromName("", "TrackSection");
-	//Il2CppObject* section = nullptr;
-	//int type = 0;
-	//il2cpp_utils::RunMethod(&section, klass, "Create", &type);
-	//trackSections.Add(section);
-	//TrackSection sec(section);
-	//j = sec.Dump();
-	//std::ofstream o = std::ofstream("TrackSection_ctor.json");
-	//o << std::setw(4) << j << std::endl;
-	//o.close();
 	List<Il2CppObject*> sections(il2cpp_utils::GetFieldValue(self, "sections"));
 	for (auto& sec : j)
 	{

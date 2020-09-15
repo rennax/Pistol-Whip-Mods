@@ -4,34 +4,39 @@
 #include <string>
 #include <filesystem>
 #include "json.hpp"
+#include "LevelData.hpp"
+#include "AlbumArtDatabase.hpp"
 
 using json = nlohmann::json;
 
 namespace fs = std::filesystem;
 
-struct AlbumArtMetadata {
-	Il2CppObject* levelData; //LevelData
-	std::string songArtists;
-	int32_t tempo;
-	Il2CppObject* art; //Sprite
-	bool artIsWIP;
-};
+
 
 class Level
 {
 public:
 	Level(fs::path levelPath);
 	~Level();
-	Il2CppObject* LoadLevel();
-	bool LoadSong();
+	//Il2CppObject* LoadLevel();
+	bool InsertSong();
+	Il2CppObject* GetLevelData();
+	AlbumArtMetadata& GetAlbumArt();
+	Il2CppString* GetSongName();
+	void Load();
 private:
-	void LoadAlbumArt();
+	void LoadAlbumArt(json j);
+	void PartialLoad();
 private:
 	fs::path path;
 	AlbumArtMetadata albumArt;
-	json level;
 
-	Il2CppObject* albumArtDB;
+	LevelData level;
+	Il2CppObject* levelData;
+
+	const char* songPath = "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/561074166.wem";
+	const char* songPathBackup = "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/561074166_backup.wem";
+
 };
 
 

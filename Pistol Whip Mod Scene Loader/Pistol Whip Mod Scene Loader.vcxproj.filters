@@ -55,6 +55,12 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{0a00b5ea-b40b-48ec-9e5e-8b282c5db1db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\mod specific">
+      <UniqueIdentifier>{0c8db9e3-a442-4bda-bb9d-db96d98f5ddc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mod specific">
+      <UniqueIdentifier>{8edf62f8-d79a-49c0-a5e2-f5c6d9cf84d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -65,9 +71,6 @@
     </ClCompile>
     <ClCompile Include="Mod.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelDatabase.cpp">
-      <Filter>Source Files\hooks</Filter>
     </ClCompile>
     <ClCompile Include="GameManager.cpp">
       <Filter>Source Files\hooks</Filter>
@@ -162,9 +165,6 @@
     <ClCompile Include="KoreographyEvent.cpp">
       <Filter>Source Files\game\koreographer</Filter>
     </ClCompile>
-    <ClCompile Include="Messenger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TrackSection.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
@@ -195,11 +195,26 @@
     <ClCompile Include="SongSelectController.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Level.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelDatabase.cpp">
+      <Filter>Source Files\hooks</Filter>
     </ClCompile>
     <ClCompile Include="WorldVolume.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="Messenger.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>Source Files\mod specific</Filter>
+    </ClCompile>
+    <ClCompile Include="AlbumArtDatabase.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomLevelDatabase.cpp">
+      <Filter>Source Files\mod specific</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -365,11 +380,20 @@
     <ClInclude Include="SongSelectController.hpp">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Level.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WorldVolume.hpp">
       <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="AlbumArtDatabase.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.hpp">
+      <Filter>Header Files\mod specific</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomLevelDatabase.hpp">
+      <Filter>Header Files\mod specific</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

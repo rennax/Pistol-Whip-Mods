@@ -7,6 +7,8 @@
 #include "List.hpp"
 #include "GameObject.hpp"
 #include "LevelData.hpp"
+#include "Sprite.hpp"
+#include "CustomLevelDatabase.hpp"
 
 using namespace CSharp;
 
@@ -136,7 +138,7 @@ namespace SongSelectionUIController {
 
 		Il2CppObject* panelToCopyTransform = GameObject::GetComponent(panelToCopy, "UnityEngine", "Transform");
 		Il2CppObject* panelTransform = GameObject::GetComponent(panelGO, "UnityEngine", "Transform");
-
+		
 		Il2CppObject* parentToSet;
 		il2cpp_utils::RunMethod(&parentToSet, panelToCopyTransform, parentTransformGet);
 		il2cpp_utils::RunMethod(panelTransform, parentTransformSet, parentToSet);
@@ -158,20 +160,99 @@ namespace SongSelectionUIController {
 		il2cpp_utils::GetFieldValue(&nameToPage, self, "nameToPage");
 		int32_t page = 6;
 		il2cpp_utils::RunMethod(nameToPage, "Add", il2cpp_utils::createcsstr("test"), &page);
+
+
+		Sprite sprite("Custom Levels/x02/albumArt.png", 256, 256);
+		Il2CppObject* songImage = il2cpp_utils::GetFieldValue(panel, "songImage"); // Image
+		static auto spriteSetProperty = il2cpp_utils::GetPropertySetMethod(
+			il2cpp_utils::GetClassFromName("UnityEngine.UI", "Image"), 
+			"sprite"
+		);
+		il2cpp_utils::RunMethod(songImage, spriteSetProperty, sprite.GetObj());
+		//il2cpp_utils::SetFieldValue(songImage, "m_Sprite", sprite.GetObj()); // sprite
+
+
+
+
 	}
 
-
+	CustomLevelDatabase* database;
 	MAKE_HOOK(Start, Il2CppObject*, Il2CppObject* self)
 	{
 
 
 		Il2CppObject* ret = Start_orig(self);
-		AddPageIndicator(self);
-		AddTestSong(self);
+		database = new CustomLevelDatabase(self);
+		//AddPageIndicator(self);
+		//AddTestSong(self);
 		return ret;
 	}
 
 
+	void UpdateSongInfoPanel(Il2CppObject* self, Level& level)
+	{
+		AlbumArtMetadata albumArt = level.GetAlbumArt();
+		Il2CppObject* songInfo = il2cpp_utils::GetFieldValue(self, "songInfoUI");
+
+		Il2CppObject* songTitle = il2cpp_utils::GetFieldValue(songInfo, "songTitle");
+		il2cpp_utils::RunMethod(songTitle, "set_text", level.GetSongName());
+
+		Il2CppObject* artist = il2cpp_utils::GetFieldValue(songInfo, "artist");
+		il2cpp_utils::RunMethod(artist, "set_text", albumArt.songArtists);
+
+		Il2CppObject* tempo = il2cpp_utils::GetFieldValue(songInfo, "tempo");
+		il2cpp_utils::RunMethod(tempo, "set_text", il2cpp_utils::createcsstr(std::to_string(albumArt.tempo)));
+
+		Il2CppObject* songLength = il2cpp_utils::GetFieldValue(songInfo, "songLength");
+		float length;
+		il2cpp_utils::GetFieldValue(&length, level.GetLevelData(), "songLength");
+		il2cpp_utils::RunMethod(songLength, "set_text", il2cpp_utils::createcsstr(std::to_string(length)));
+
+		Il2CppObject* enemyCount = il2cpp_utils::GetFieldValue(songInfo, "enemyCount");
+		il2cpp_utils::RunMethod(enemyCount, "set_text", il2cpp_utils::createcsstr(std::to_string(-1)));
+
+		Il2CppObject* personalBest = il2cpp_utils::GetFieldValue(songInfo, "personalBest");
+		il2cpp_utils::RunMethod(personalBest, "set_text", il2cpp_utils::createcsstr(std::to_string(-1)));
+	}
+
+	//for class SongSelectionUIController
+	void Mock_UpdateSelectedSong(Il2CppObject* self, Il2CppObject* songPanel)
+	{
+
+		bool active = true, inactive = false;
+
+		auto lastSongPanelSelected = il2cpp_utils::GetFieldValue(self, "lastSongPanelSelected");
+		if (lastSongPanelSelected != nullptr)
+		{
+			il2cpp_utils::RunMethod(lastSongPanelSelected, "SetSelectionOutlineState", &inactive);
+		}
+
+		auto lrgAlbumArt = il2cpp_utils::GetFieldValue(self, "lrgAlbumArt");
+		auto sprite = il2cpp_utils::GetFieldValue(il2cpp_utils::GetFieldValue(songPanel, "songImage"), "m_Sprite");
+		il2cpp_utils::RunMethod(lrgAlbumArt, "set_sprite", sprite);
+
+		auto startBtn = il2cpp_utils::GetFieldValue(self, "startSongUIButton");
+		il2cpp_utils::RunMethod(startBtn, "SetActive", &active);
+
+
+	/*	auto rightTrainingPosterPanel = il2cpp_utils::GetFieldValue(self, "rightTrainingPosterPanel");
+		il2cpp_utils::RunMethod(rightTrainingPosterPanel, "set_enabled", &active);*/
+
+		auto songInfoCanvas = il2cpp_utils::GetFieldValue(self, "songInfoCanvas");
+		il2cpp_utils::RunMethod(songInfoCanvas, "set_enabled", &active);
+
+
+		//il2cpp_utils::RunMethod(self, "SelectedEasyDifficulty");
+
+		auto selectionOutline = il2cpp_utils::GetFieldValue(songPanel, "selectionOutline");
+		if (selectionOutline != nullptr)
+		{
+			Il2CppObject* go;
+			il2cpp_utils::RunMethod(&go, selectionOutline, "get_gameObject");
+			il2cpp_utils::RunMethod(go, "SetActive", &active);
+		}
+
+	}
 
 	
 	
@@ -182,72 +263,17 @@ namespace SongSelectionUIController {
 		if (levelDataIndex > 18) //Get value from levelDatabase
 		{
 			//Custom map!
-			//Create LevelData object corresponding to the 
-			//Replace song in folder (is done when creating the level data object for now)
-			//Call static SetLevel on GameManager to update with static level information.
 			LOG("You clicked on a custom song!\n");
-			std::ifstream i("Custom Levels/x02/level.json");
-			json j;
-			i >> j;
 
-			LevelData data;
-			Il2CppObject* levelData = data.Load(j["levelData"]);
+			Level level = database->GetLevelAtLevelIndex(levelDataIndex);
+			Il2CppObject* levelData = level.GetLevelData();
 
-			//Our song should be loaded by now
-			
-			//UpdateSelectedSong(il2cpp_utils::GetFieldValue(self, "parent"), self);
-			
-			//Move to start and store as variable
-			//auto UpdateSelectedSong = il2cpp_utils::FindMethod(
-			//	il2cpp_utils::GetClassFromName("", "SongSelectionUIController"),
-			//	"UpdateSelectedSong",
-			//	{ il2cpp_utils::GetClassFromName("", "SongPanelUIController") }
-			//);
-			//
-			////TODO FIX ME, throws exception
-			//il2cpp_utils::RunMethod(il2cpp_utils::GetFieldValue(self, "parent"), UpdateSelectedSong, self);
-			auto songController = il2cpp_utils::GetFieldValue(self, "parent");
-			bool active = true, inactive = false;
-
-			auto lastSongPanelSelected = il2cpp_utils::GetFieldValue(songController, "lastSongPanelSelected");
-			if (lastSongPanelSelected != nullptr)
-			{
-				il2cpp_utils::RunMethod(lastSongPanelSelected, "SetSelectionOutlineState", &inactive);
-			}
-
-			auto lrgAlbumArt = il2cpp_utils::GetFieldValue(songController, "lrgAlbumArt");
-			auto sprite = il2cpp_utils::GetFieldValue(il2cpp_utils::GetFieldValue(self, "songImage"), "m_Sprite");
-			il2cpp_utils::RunMethod(lrgAlbumArt, "set_sprite", sprite);
-
-			auto startBtn = il2cpp_utils::GetFieldValue(songController, "startSongUIButton");
-			il2cpp_utils::RunMethod(startBtn, "SetActive", &active);
-
-			//TODO Add leveldata to AlbumArtDatabase
-			//il2cpp_utils::RunMethod(songController, "UpdateSongInfoPanel", self);
-
-			auto songInfoCanvas = il2cpp_utils::GetFieldValue(songController, "songInfoCanvas");
-			il2cpp_utils::RunMethod(songInfoCanvas, "set_enabled", &active);
-			
-			auto rightTrainingPosterPanel = il2cpp_utils::GetFieldValue(songController, "rightTrainingPosterPanel");
-			il2cpp_utils::RunMethod(rightTrainingPosterPanel, "set_enabled", &active);
-
-			//TODO elements to disable
-
-			il2cpp_utils::RunMethod(songController, "SelectedEasyDifficulty");
-
-			auto selectionOutline = il2cpp_utils::GetFieldValue(self, "selectionOutline");
-			if (selectionOutline != nullptr)
-			{
-				Il2CppObject* go;
-				il2cpp_utils::RunMethod(&go, selectionOutline, "get_gameObject");
-				il2cpp_utils::RunMethod(go, "SetActive", &active);
-			}
-
-
-
+			Il2CppObject* songSelectionUIController = il2cpp_utils::GetFieldValue(self, "parent");
+			Mock_UpdateSelectedSong(songSelectionUIController, self);
+			UpdateSongInfoPanel(songSelectionUIController, level);
 
 			//il2cpp_utils::RunMethod(self, "SetSong");
-
+			//TODO: Mock if needed
 
 			Il2CppObject* gameManager;
 			if (!il2cpp_utils::GetFieldValue(&gameManager, il2cpp_utils::GetClassFromName("", "GameManager"), "s_instance"))
@@ -266,10 +292,10 @@ namespace SongSelectionUIController {
 			
 			il2cpp_utils::RunMethod(gameManager, "SetLevelInternal", map);
 
+			level.InsertSong();
+
 			Il2CppObject* gameEvent = il2cpp_utils::GetFieldValue(self, "songSelectedEvent");
 			il2cpp_utils::RunMethod(gameEvent, "Raise");
-			
-
 		}
 		else
 			OnClickSong_orig(self); // We are not clicking on an custom level, just call stuff in ordinary fashion

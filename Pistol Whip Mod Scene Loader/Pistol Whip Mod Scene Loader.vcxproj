@@ -149,8 +149,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AlbumArtDatabase.cpp" />
     <ClCompile Include="BeatData.cpp" />
     <ClCompile Include="ColorShiftPoint.cpp" />
+    <ClCompile Include="CustomLevelDatabase.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="EnemyAction.cpp" />
@@ -185,6 +187,7 @@
     <ClCompile Include="SongSelectController.cpp" />
     <ClCompile Include="SongSelectionUIController.cpp" />
     <ClCompile Include="SpawnManager.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="TargetData.cpp" />
     <ClCompile Include="TempoSectionDef.cpp" />
     <ClCompile Include="TrackData.cpp" />
@@ -199,10 +202,12 @@
     <ClCompile Include="WwiseKoreoMediaIDEntry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlbumArtDatabase.hpp" />
     <ClInclude Include="AssetBundle.hpp" />
     <ClInclude Include="AudioClip.hpp" />
     <ClInclude Include="BeatData.hpp" />
     <ClInclude Include="ColorShiftPoint.hpp" />
+    <ClInclude Include="CustomLevelDatabase.hpp" />
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="EnemyAction.hpp" />
     <ClInclude Include="EnemySequence.hpp" />
@@ -243,6 +248,7 @@
     <ClInclude Include="SongSelectController.hpp" />
     <ClInclude Include="SongSelectionUIController.hpp" />
     <ClInclude Include="SpawnManager.hpp" />
+    <ClInclude Include="Sprite.hpp" />
     <ClInclude Include="TargetData.hpp" />
     <ClInclude Include="TempoSectionDef.hpp" />
     <ClInclude Include="TrackData.hpp" />
