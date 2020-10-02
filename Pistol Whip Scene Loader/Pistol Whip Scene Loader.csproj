@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8D7D7931-41C7-481B-BDCE-D982CEDD4F7C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pistol_Whip_Scene_Loader</RootNamespace>
+    <AssemblyName>Pistol Whip Scene Loader</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>G:\SteamLibrary\steamapps\common\Pistol Whip\Mods\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>G:\SteamLibrary\steamapps\common\Pistol Whip\MelonLoader\Dependencies\AssemblyGenerator\Il2CppDumper\DummyDll\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="MelonLoader.ModHandler">
+      <HintPath>G:\SteamLibrary\steamapps\common\Pistol Whip\MelonLoader\MelonLoader.ModHandler.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>G:\SteamLibrary\steamapps\common\Pistol Whip\MelonLoader\Dependencies\AssemblyGenerator\Il2CppDumper\DummyDll\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\BeatData.cs" />
+    <Compile Include="Models\CheevoID.cs" />
+    <Compile Include="Models\ColorShiftPoint.cs" />
+    <Compile Include="Models\CullingRange.cs" />
+    <Compile Include="Models\Enemy Actions\EnemyAction.cs" />
+    <Compile Include="Models\Enemy Actions\EnemyActionAimAndFire.cs" />
+    <Compile Include="Models\Enemy Actions\EnemyActionAimStart.cs" />
+    <Compile Include="Models\Enemy Actions\EnemyActionAimStop.cs" />
+    <Compile Include="Models\Enemy Actions\EnemyActionFire.cs" />
+    <Compile Include="Models\Enemy Actions\EnemyActionMove.cs" />
+    <Compile Include="Models\Enemy Actions\EnemyActionStopFiring.cs" />
+    <Compile Include="Models\Enemy Actions\EnemyActionWait.cs" />
+    <Compile Include="Models\EnemySequence.cs" />
+    <Compile Include="Models\GameMap.cs" />
+    <Compile Include="Models\Geoset\ChunkMeshData.cs" />
+    <Compile Include="Models\Geoset\GeoSet.cs" />
+    <Compile Include="Models\Geoset\OscillatingObjectData.cs" />
+    <Compile Include="Models\Geoset\WorldObject.cs" />
+    <Compile Include="Models\Koreography.cs" />
+    <Compile Include="Models\LevelData.cs" />
+    <Compile Include="Models\ObstacleData.cs" />
+    <Compile Include="Models\TargetData.cs" />
+    <Compile Include="Models\TrackData.cs" />
+    <Compile Include="Models\TrackSection\AlleySection.cs" />
+    <Compile Include="Models\TrackSection\EmptySection.cs" />
+    <Compile Include="Models\TrackSection\FilledSection.cs" />
+    <Compile Include="Models\TrackSection\GroundSection.cs" />
+    <Compile Include="Models\TrackSection\HallwaySection.cs" />
+    <Compile Include="Models\TrackSection\OfficeSection.cs" />
+    <Compile Include="Models\TrackSection\RooftopSection.cs" />
+    <Compile Include="Models\TrackSection\RoomSection.cs" />
+    <Compile Include="Models\TrackSection\SplitRooftopSection.cs" />
+    <Compile Include="Models\TrackSection\TrackSection.cs" />
+    <Compile Include="Models\WorldPoint.cs" />
+    <Compile Include="Models\WorldVolume.cs" />
+    <Compile Include="ModEntry.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
