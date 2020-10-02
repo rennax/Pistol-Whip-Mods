@@ -3,7 +3,7 @@
 
 GameMap::GameMap()
 {
-	LOG("WARNING: Initizalized GameMap without any LevelData field.\n");
+	LOG("WARNING: Initizalized GameMap without any Level field.\n");
 }
 
 GameMap::GameMap(Il2CppObject* levelData_, Il2CppObject* gameMap)
@@ -12,9 +12,10 @@ GameMap::GameMap(Il2CppObject* levelData_, Il2CppObject* gameMap)
 	self = gameMap;
 }
 
-GameMap::GameMap(Il2CppObject* levelData_)
+GameMap::GameMap(Il2CppObject* _levelData)
 {
-	levelData = levelData_;
+
+	levelData = _levelData;
 	Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "GameMap");
 	self = il2cpp_functions::object_new(klass);
 }
@@ -23,10 +24,12 @@ GameMap::~GameMap()
 {
 }
 
-Il2CppObject* GameMap::Load(json j)
+Il2CppObject* GameMap::Load(json j, fs::path path)
 {
+	pathToLevelDir = path;
+
 	geoSet = new GeoSet::GeoSet();
-	Il2CppObject* geo = geoSet->Load(j["geoset"]);
+	Il2CppObject* geo = geoSet->Load(j["geoSet"], pathToLevelDir);
 
 	il2cpp_utils::RunMethod(self, ".ctor", geo);
 

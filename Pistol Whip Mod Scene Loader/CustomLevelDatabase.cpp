@@ -99,10 +99,20 @@ void CustomLevelDatabase::PopulateSongSelectionUI()
 	}
 }
 
-Level CustomLevelDatabase::GetLevelAtLevelIndex(uint32_t levelIndex)
+Level& CustomLevelDatabase::GetLevelAtLevelIndex(uint32_t levelIndex)
 {
 	//to account for highestLevelIndex + i + 1
 	return levels[levelIndex - highestLevelIndex - 1];
+}
+
+void CustomLevelDatabase::CurrentIndex(uint32_t index)
+{
+	currentIndex = index;
+}
+
+uint32_t CustomLevelDatabase::CurrentIndex()
+{
+	return currentIndex;
 }
 
 uint32_t CustomLevelDatabase::HighestLevelIndex()
@@ -214,6 +224,16 @@ void CustomLevelDatabase::CreatePageIndicators(uint32_t count)
 
 		pageMarkers.Add(rectTransform);
 	}
+}
+
+void CustomLevelDatabase::SelectedCustomLevel(bool isCustom)
+{
+	selectedCustomLevel = isCustom;
+}
+
+bool CustomLevelDatabase::SelectedCustomLevel()
+{
+	return selectedCustomLevel;
 }
 
 

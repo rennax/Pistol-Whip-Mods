@@ -24,9 +24,7 @@ TrackData::TrackData(Il2CppObject* levelData_) : levelData(levelData_)
 	else
 		LOG("Created TrackData object\n");
 
-	auto nameProp = il2cpp_utils::GetPropertySetMethod(klass, "name");
-	Il2CppString* str = il2cpp_utils::createcsstr("Religion_Easy");
-	il2cpp_utils::RunMethod(self, nameProp, str);
+
 
 }
 
@@ -55,8 +53,25 @@ Il2CppObject* TrackData::Load(json j)
 
 	//Create and assign koreography
 	auto audioClipClass = il2cpp_utils::GetClassFromName("UnityEngine", "AudioClip");
+	int length = 1, channels = 2, frequency = 1;
+	bool stream = false;
 	auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(audioClipClass));
-	Il2CppObject* audio = AssetBundle::LoadAsset(assetDB, j["songName"].get<std::string>() + ".ogg", type);
+	Il2CppObject* audio = nullptr;
+	il2cpp_utils::RunMethod(
+		&audio,
+		audioClipClass,
+		"Create",
+		il2cpp_utils::createcsstr(j["songName"].get<std::string>()),
+		&length,
+		&channels,
+		&frequency,
+		&stream
+	);
+
+
+	//auto audioClipClass = il2cpp_utils::GetClassFromName("UnityEngine", "AudioClip");
+	//auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(audioClipClass));
+	//Il2CppObject* audio = AssetBundle::LoadAsset(assetDB, j["songName"].get<std::string>() + ".ogg", type);
 
 
 	//auto koreographyClass = il2cpp_utils::GetClassFromName("SonicBloom.Koreo", "Koreography");
@@ -81,6 +96,20 @@ Il2CppObject* TrackData::Load(json j)
 	difficulty = static_cast<Difficulty>(diff);
 	if (!il2cpp_utils::SetFieldValue(self, "difficulty", &difficulty))
 		LOG("WARNING: Failed to assign difficulty in TrackData\n");
+
+
+	auto nameProp = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("", "TrackData"), "name");
+	std::string name = j["songName"].get<std::string>();
+	if (diff == 0)
+		name += "_Easy";
+	else if (diff == 1)
+		name += "_Normal";
+	else if (diff == 2)
+		name += "_Hard";
+	else if (diff == 3)
+		name += "_Expert";
+	
+	il2cpp_utils::RunMethod(self, nameProp, il2cpp_utils::createcsstr(name));
 
 	playerSpeed = j["playerSpeed"];
 	if (!il2cpp_utils::SetFieldValue(self, "playerSpeed", &playerSpeed))

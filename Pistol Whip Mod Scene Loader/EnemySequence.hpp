@@ -31,6 +31,7 @@ public:
 	json Dump();
 private:
 	Il2CppObject* self;
+	Il2CppObject* gameObject;
 	EnemyType enemyType; //EnemyType
 	Il2CppObject* actionHolder; //GameObject
 	CheevoID forceCheevoID;

@@ -47,7 +47,7 @@ public:
 	EnemyAction(Il2CppObject* enemySequence);
 	EnemyAction(Il2CppObject* enemySequence, Il2CppObject* obj);
 	~EnemyAction();
-	Il2CppObject* Load(json j);
+	Il2CppObject* Load(json j, Il2CppObject* actionHolder);
 	json Dump();
 private:
 	void LoadWait(json j);

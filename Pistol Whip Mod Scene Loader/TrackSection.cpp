@@ -19,11 +19,97 @@ TrackSection::~TrackSection()
 
 Il2CppObject* TrackSection::Load(json j)
 {
-	std::string type = j["derivedType"];
-	if (type == "FilledSection") {
+	//Load data specific to the type deriving from TrackSection
+	Section sectionType = static_cast<Section>(j["section"].get<int32_t>());
+	auto klass = il2cpp_utils::GetClassFromName("", "TrackSection");
+	il2cpp_utils::RunMethod(&self, klass, "Create", &sectionType);
+
+	switch (sectionType)
+	{
+	case Section::Filled:
 		LoadFilledSection(j);
+		break;
+	default:
+		break;
 	}
 	
+	Color color = j["color"];
+	il2cpp_utils::RunMethod(self, "set_mainColor", &color);
+
+	Color fogColor = j["fog"];
+	il2cpp_utils::RunMethod(self, "set_fogColor", &fogColor);
+
+
+	Color glowColor = j["glow"];
+	il2cpp_utils::RunMethod(self, "set_glowColor", &glowColor);
+
+
+	Color enemyColor = j["enemy"];
+	il2cpp_utils::RunMethod(self, "set_enemyColor", &enemyColor);
+
+	_customColors = j["_customColors"];
+	il2cpp_utils::SetFieldValue(self, "_customColors", &_customColors);
+	_customEnemyColor = j["_customEnemyColor"];
+	il2cpp_utils::SetFieldValue(self, "_customEnemyColor", &_customEnemyColor);
+	startingWall = j["startingWall"];
+	il2cpp_utils::SetFieldValue(self, "startingWall", &startingWall);
+	endingWall = j["endingWall"];
+	il2cpp_utils::SetFieldValue(self, "endingWall", &endingWall);
+	height = j["height"];
+	il2cpp_utils::SetFieldValue(self, "height", &height);
+	groundHeight = j["groundHeight"];
+	il2cpp_utils::SetFieldValue(self, "groundHeight", &groundHeight);
+	//seed = j["seed"];
+	//il2cpp_utils::SetFieldValue(self, "seed", &seed);
+	start = j["start"];
+	il2cpp_utils::SetFieldValue(self, "start", &start);
+	end = j["end"];
+	il2cpp_utils::SetFieldValue(self, "end", &end);
+	min = j["min"];
+	il2cpp_utils::SetFieldValue(self, "min", &min);
+	max = j["max"];
+	il2cpp_utils::SetFieldValue(self, "max", &max);
+	extent = j["extent"];
+	il2cpp_utils::SetFieldValue(self, "extent", &extent);
+	generateDebris = j["generateDebris"];
+	il2cpp_utils::SetFieldValue(self, "generateDebris", &generateDebris);
+	if (!j["debris"].is_null())
+	{
+		debris = j["debris"];
+		il2cpp_utils::SetFieldValue(self, "debris", &debris);
+	}
+	//propSeed = j["propSeed"];
+	//il2cpp_utils::SetFieldValue(self, "propSeed", &propSeed);
+	yStep = j["yStep"];
+	il2cpp_utils::SetFieldValue(self, "yStep", &yStep);
+	zStep = j["zStep"];
+	il2cpp_utils::SetFieldValue(self, "zStep", &zStep);
+
+	int i = 0;
+
+	yOffsets = reinterpret_cast<Array<int32_t>*>(il2cpp_functions::array_new(il2cpp_utils::GetClassFromName("System", "Int32"), j["yOffsets"].size()));
+	for (auto it = j["yOffsets"].begin(); it != j["yOffsets"].end(); ++it)
+	{
+		yOffsets->values[i] = it.value();
+		i++;
+	}
+	il2cpp_utils::SetFieldValue(self, "yOffsets", yOffsets);
+
+	i = 0;
+	zOffsets = reinterpret_cast<Array<int32_t>*>(il2cpp_functions::array_new(il2cpp_utils::GetClassFromName("System", "Int32"), j["zOffsets"].size()));
+	for (auto it = j["zOffsets"].begin(); it != j["zOffsets"].end(); ++it)
+	{
+		zOffsets->values[i] = it.value();
+		i++;
+	}
+	il2cpp_utils::SetFieldValue(self, "zOffsets", zOffsets);
+
+	size = j["size"];
+	il2cpp_utils::SetFieldValue(self, "size", &size);
+	lastDebrisPoint = j["lastDebrisPoint"];
+	il2cpp_utils::SetFieldValue(self, "lastDebrisPoint", &lastDebrisPoint);
+
+
 	return self;
 }
 
@@ -149,94 +235,6 @@ json TrackSection::Dump()
 
 void TrackSection::LoadFilledSection(json j)
 {
-	self = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "FilledSection"));
-	il2cpp_utils::RunMethod(self, ".ctor");
-
-	colorHue = j["colorHue"];
-	il2cpp_utils::SetFieldValue(self, "colorHue", &colorHue);
-	colorSaturation = j["colorSaturation"];
-	il2cpp_utils::SetFieldValue(self, "colorSaturation", &colorSaturation);
-	colorValue = j["colorValue"];
-	il2cpp_utils::SetFieldValue(self, "colorValue", &colorValue);
-	fogHue = j["fogHue"];
-	il2cpp_utils::SetFieldValue(self, "fogHue", &fogHue);
-	fogSaturation = j["fogSaturation"];
-	il2cpp_utils::SetFieldValue(self, "fogSaturation", &fogSaturation);
-	fogValue = j["fogValue"];
-	il2cpp_utils::SetFieldValue(self, "fogValue", &fogValue);
-	glowHue = j["glowHue"];
-	il2cpp_utils::SetFieldValue(self, "glowHue", &glowHue);
-	glowSaturation = j["glowSaturation"];
-	il2cpp_utils::SetFieldValue(self, "glowSaturation", &glowSaturation);
-	glowValue = j["glowValue"];
-	il2cpp_utils::SetFieldValue(self, "glowValue", &glowValue);
-	enemyHue = j["enemyHue"];
-	il2cpp_utils::SetFieldValue(self, "enemyHue", &enemyHue);
-	enemySaturation = j["enemySaturation"];
-	il2cpp_utils::SetFieldValue(self, "enemySaturation", &enemySaturation);
-	enemyValue = j["enemyValue"];
-	il2cpp_utils::SetFieldValue(self, "enemyValue", &enemyValue);
-	_customColors = j["_customColors"];
-	il2cpp_utils::SetFieldValue(self, "_customColors", &_customColors);
-	_customEnemyColor = j["_customEnemyColor"];
-	il2cpp_utils::SetFieldValue(self, "_customEnemyColor", &_customEnemyColor);
-	startingWall = j["startingWall"];
-	il2cpp_utils::SetFieldValue(self, "startingWall", &startingWall);
-	endingWall = j["endingWall"];
-	il2cpp_utils::SetFieldValue(self, "endingWall", &endingWall);
-	height = j["height"];
-	il2cpp_utils::SetFieldValue(self, "height", &height);
-	groundHeight = j["groundHeight"];
-	il2cpp_utils::SetFieldValue(self, "groundHeight", &groundHeight);
-	seed = j["seed"];
-	il2cpp_utils::SetFieldValue(self, "seed", &seed);
-	start = j["start"];
-	il2cpp_utils::SetFieldValue(self, "start", &start);
-	end = j["end"];
-	il2cpp_utils::SetFieldValue(self, "end", &end);
-	min = j["min"];
-	il2cpp_utils::SetFieldValue(self, "min", &min);
-	max = j["max"];
-	il2cpp_utils::SetFieldValue(self, "max", &max);
-	extent = j["extent"];
-	il2cpp_utils::SetFieldValue(self, "extent", &extent);
-	generateDebris = j["generateDebris"];
-	il2cpp_utils::SetFieldValue(self, "generateDebris", &generateDebris);
-	if (!j["debris"].is_null())
-	{
-		debris = j["debris"];
-		il2cpp_utils::SetFieldValue(self, "debris", &debris);
-	}
-	propSeed = j["propSeed"];
-	il2cpp_utils::SetFieldValue(self, "propSeed", &propSeed);
-	yStep = j["yStep"];
-	il2cpp_utils::SetFieldValue(self, "yStep", &yStep);
-	zStep = j["zStep"];
-	il2cpp_utils::SetFieldValue(self, "zStep", &zStep);
-
-	int i = 0;
-
-	yOffsets = reinterpret_cast<Array<int32_t>*>(il2cpp_functions::array_new(il2cpp_utils::GetClassFromName("System", "Int32"), j["yOffsets"].size()));
-	for (auto it = j["yOffsets"].begin(); it != j["yOffsets"].end(); ++it)
-	{
-		yOffsets->values[i] = it.value();
-		i++;
-	}
-	il2cpp_utils::SetFieldValue(self, "yOffsets", yOffsets);
-
-	i = 0;
-	zOffsets = reinterpret_cast<Array<int32_t>*>(il2cpp_functions::array_new(il2cpp_utils::GetClassFromName("System", "Int32"), j["zOffsets"].size()));
-	for (auto it = j["zOffsets"].begin(); it != j["zOffsets"].end(); ++it)
-	{
-		zOffsets->values[i] = it.value();
-		i++;
-	}
-	il2cpp_utils::SetFieldValue(self, "zOffsets", zOffsets);
-
-	size = j["size"];
-	il2cpp_utils::SetFieldValue(self, "size", &size);
-	lastDebrisPoint = j["lastDebrisPoint"];
-	il2cpp_utils::SetFieldValue(self, "lastDebrisPoint", &lastDebrisPoint);
 }
 
 void to_json(json& j, const Debris& d)
@@ -259,7 +257,7 @@ void to_json(json& j, const Debris& d)
 
 void from_json(const json& j, Debris& d) 
 {
-	j.at("seed").get_to(d.seed);
+	//j.at("seed").get_to(d.seed);
 	j.at("distribution").get_to(d.distribution);
 	j.at("projection").get_to(d.projection);
 	j.at("spread").get_to(d.spread);

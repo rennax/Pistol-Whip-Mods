@@ -10,8 +10,12 @@ class CustomLevelDatabase
 public:
 	CustomLevelDatabase(Il2CppObject* controller);
 	~CustomLevelDatabase();
-	Level GetLevelAtLevelIndex(uint32_t levelIndex);
+	Level& GetLevelAtLevelIndex(uint32_t levelIndex);
+	void CurrentIndex(uint32_t index);
+	uint32_t CurrentIndex();
 	uint32_t HighestLevelIndex();
+	void SelectedCustomLevel(bool isCustom);
+	bool SelectedCustomLevel();
 private:
 	void BuildDatabase();
 	void PopulateSongSelectionUI();
@@ -26,6 +30,9 @@ private:
 
 	uint32_t highestLevelIndex;
 	const int32_t songsPerPage = 4;
+
+	uint32_t currentIndex = 1;
+	bool selectedCustomLevel = false;
 };
 
 

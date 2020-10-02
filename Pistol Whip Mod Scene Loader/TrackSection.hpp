@@ -6,6 +6,19 @@
 using json = nlohmann::json;
 
 
+enum class Section : int32_t
+{
+	Filled = 0,
+	Empty = 1,
+	Alley = 2,
+	Rooms = 3,
+	Hallways = 4,
+	Offices = 5,
+	Ground = 6,
+	Rooftops = 7,
+	SplitRooftops = 8,
+};
+
 enum class Block : int32_t
 {
 	Unknown = 0,

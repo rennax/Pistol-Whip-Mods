@@ -95,14 +95,16 @@ namespace GameObject {
 
 	Il2CppObject* InstantiateEmpty(Vector3 position, Quaternion rotation)
 	{
-		if (emptyPrefab == nullptr)
-		{
-			emptyPrefab = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("UnityEngine", "GameObject"));
-			il2cpp_utils::RunMethod(emptyPrefab, ".ctor");
-		}
-		Il2CppObject* obj = nullptr;
-		if (!il2cpp_utils::RunMethod(&obj, il2cpp_utils::GetClassFromName("UnityEngine", "Object"), "Instantiate", emptyPrefab, &position, &rotation))
-			LOG("Failed to Instantiate empty gameobject\n");
+		//if (emptyPrefab == nullptr)
+		//{
+		//	emptyPrefab = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("UnityEngine", "GameObject"));
+		//	il2cpp_utils::RunMethod(emptyPrefab, ".ctor");
+		//}
+		//Il2CppObject* obj = nullptr;
+		//if (!il2cpp_utils::RunMethod(&obj, il2cpp_utils::GetClassFromName("UnityEngine", "Object"), "Instantiate", emptyPrefab, &position, &rotation))
+		//	LOG("Failed to Instantiate empty gameobject\n");
+		auto obj = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("UnityEngine", "GameObject"));
+		il2cpp_utils::RunMethod(obj, ".ctor");
 		return obj;
 	}
 
@@ -165,6 +167,24 @@ namespace GameObject {
 		Il2CppString* CSName = il2cpp_utils::createcsstr(name);
 		if (!il2cpp_utils::RunMethod(object, "set_name", CSName))
 			LOG("Failed to set new name: %s\n", name.data());
+	}
+
+	bool SetParent(Il2CppObject* parent, Il2CppObject* objectToSet)
+	{
+		static auto get_parentTransform = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"), "parent");
+		static auto set_parentTransform = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"), "parent");
+
+		static auto get_gameObject = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"), "gameObject");
+		static auto get_transform = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "GameObject"), "transform");
+
+		Il2CppObject* parentToSet = nullptr;
+		il2cpp_utils::RunMethod(&parentToSet, parent, get_transform);
+		Il2CppObject* transform = nullptr;
+		il2cpp_utils::RunMethod(&transform, objectToSet, get_transform);
+
+		il2cpp_utils::RunMethod(transform, set_parentTransform, parentToSet);
+		 
+		return false;
 	}
 
 

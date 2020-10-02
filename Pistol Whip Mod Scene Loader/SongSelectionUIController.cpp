@@ -15,168 +15,17 @@ using namespace CSharp;
 
 namespace SongSelectionUIController {
 
-	void AddPageIndicator(Il2CppObject* self)
-	{
-		static auto parentPropertyGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "parent");
-		static auto parentPropertySet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "parent");
 
-		static auto parentTransformGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"), "parent");
-		static auto parentTransformSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"), "parent");
-
-
-		static auto gameObjectGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "gameObject");
-		static auto transformGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "transform");
-
-
-		static auto positionGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "position");
-		static auto positionSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "position");
-
-		static auto anchoredPositionGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "anchoredPosition");
-		static auto anchoredPositionSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "anchoredPosition");
-
-		static auto anchoredPosition3DGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "anchoredPosition3D");
-		static auto anchoredPosition3DSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "anchoredPosition3D");
-
-		static auto offsetMinGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "offsetMin");
-		static auto offsetMinSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "offsetMin");
-
-		static auto offsetMaxGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "offsetMax");
-		static auto offsetMaxSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "offsetMax");
-
-		static auto anchorMinSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "anchorMin");
-		static auto anchorMaxSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "anchorMax");
-		static auto pivotSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "pivot");
-		static auto sizeDeltaSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "sizeDelta");
-
-
-		// Create new page indicator
-
-		List<Il2CppObject*> pageCentersList(il2cpp_utils::GetFieldValue(self, "pageCentersList"));
-		Il2CppObject* centerListParent;
-		il2cpp_utils::RunMethod(&centerListParent, pageCentersList[0], parentPropertyGet);
-
-		Il2CppObject* centerObject = GameObject::InstantiateEmpty({ 0,0,0 }, { 0,0,0,0 });
-		Il2CppObject* center = GameObject::AddComponent(centerObject, "UnityEngine", "RectTransform");
-		il2cpp_utils::RunMethod(center, parentPropertySet, centerListParent);
-
-		Vector3 pos1, pos2;
-		il2cpp_utils::RunMethod(&pos1, pageCentersList[1], anchoredPosition3DGet);
-		il2cpp_utils::RunMethod(&pos2, pageCentersList[2], anchoredPosition3DGet);
-		float updates = pos2.x - pos1.x;
-		LOG("Page update space %f\n", updates);
-
-		Vector2 anchoredPosition4, offsetMin4, offsetMax4;
-		Vector3 anchoredPosition3D4;
-		il2cpp_utils::RunMethod(&anchoredPosition4, pageCentersList[4], anchoredPositionGet);
-		il2cpp_utils::RunMethod(&anchoredPosition3D4, pageCentersList[4], anchoredPosition3DGet);
-		il2cpp_utils::RunMethod(&offsetMin4, pageCentersList[4], offsetMinGet);
-		il2cpp_utils::RunMethod(&offsetMax4, pageCentersList[4], offsetMaxGet);
-
-		LOG("anchoredPosition4 (%f, %f)\n", anchoredPosition4.x, anchoredPosition4.y);
-		LOG("offsetMin4 (%f, %f)\n", offsetMin4.x, offsetMin4.y);
-		LOG("offsetMax4 (%f, %f)\n", offsetMax4.x, offsetMax4.y);
-		LOG("anchoredPosition3D4 (%f, %f, %f)\n", anchoredPosition3D4.x, anchoredPosition3D4.y, anchoredPosition3D4.z);
-
-
-		Vector2 anchoredPosition{ anchoredPosition4.x + updates, 0 };//anchoredPosition4.x + updates
-		Vector3 anchoredPosition3D{ anchoredPosition4.x + updates, 0, 0 };
-		Vector2 anchorMin{ 0,0 },
-			anchorMax{ 0,0 },
-			offsetMin{ offsetMin4.x + updates , 0 },
-			offsetMax{ offsetMax4.x + updates, 0 },
-			pivot{ 0.5, 0.5 },
-			sizeDelta{ -0.16, 0 };
-
-
-		il2cpp_utils::RunMethod(center, anchoredPositionSet, &anchoredPosition);
-		il2cpp_utils::RunMethod(center, anchoredPosition3DSet, &anchoredPosition3D);
-		il2cpp_utils::RunMethod(center, anchorMinSet, &anchorMin);
-		il2cpp_utils::RunMethod(center, anchorMaxSet, &anchorMax);
-		il2cpp_utils::RunMethod(center, offsetMinSet, &offsetMin);
-		il2cpp_utils::RunMethod(center, offsetMaxSet, &offsetMax);
-		il2cpp_utils::RunMethod(center, pivotSet, &pivot);
-		il2cpp_utils::RunMethod(center, sizeDeltaSet, &sizeDelta);
-
-		pageCentersList.Add(center);
-
-
-		Il2CppObject* songSelPaginatedIndicator = il2cpp_utils::GetFieldValue(self, "songSelPaginatedIndicator");
-		List<Il2CppObject*> pageMarkers(il2cpp_utils::GetFieldValue(songSelPaginatedIndicator, "pageMarkers"));
-		Il2CppObject* toInstantiate;
-		il2cpp_utils::RunMethod(&toInstantiate, pageMarkers[0], gameObjectGet);
-		Il2CppObject* centerTarget = GameObject::Instantiate(toInstantiate);
-		Il2CppObject* rectTransform = GameObject::GetComponent(centerTarget, "UnityEngine", "RectTransform");
-		
-		Il2CppObject* parentToSet;
-		Il2CppObject* parentRectTransform = GameObject::GetComponent(toInstantiate, "UnityEngine", "RectTransform");;
-		il2cpp_utils::RunMethod(&parentToSet, parentRectTransform, parentPropertyGet);
-		il2cpp_utils::RunMethod(rectTransform, parentPropertySet, parentToSet);
-
-		Vector3 newPosition{ 0, 1.234978f, 4.965f }; //TODO calculate page indicator position dynamically
-		il2cpp_utils::RunMethod(rectTransform, positionSet, &newPosition);
-
-		pageMarkers.Add(rectTransform);
-	}
-
-
-	void AddTestSong(Il2CppObject* self)
-	{
-		static auto gameObjectGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "RectTransform"), "gameObject");
-		
-		static auto parentTransformGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"), "parent");
-		static auto parentTransformSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"), "parent");
-
-		static auto positionGet = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"), "position");
-		static auto positionSet = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Transform"), "position");
-
-
-		Il2CppObject* panelToCopy;
-		List<Il2CppObject*> songPanelUIControllerList(il2cpp_utils::GetFieldValue(self, "songPanelUIControllerList"));
-		il2cpp_utils::RunMethod(&panelToCopy, songPanelUIControllerList[16], gameObjectGet);
-		Il2CppObject* panelGO = GameObject::Instantiate(panelToCopy);
-		Il2CppObject* panel = GameObject::GetComponent(panelGO, "", "SongPanelUIController");
-
-		Il2CppObject* panelToCopyTransform = GameObject::GetComponent(panelToCopy, "UnityEngine", "Transform");
-		Il2CppObject* panelTransform = GameObject::GetComponent(panelGO, "UnityEngine", "Transform");
-		
-		Il2CppObject* parentToSet;
-		il2cpp_utils::RunMethod(&parentToSet, panelToCopyTransform, parentTransformGet);
-		il2cpp_utils::RunMethod(panelTransform, parentTransformSet, parentToSet);
-
-		int i = 2;
-		Vector3 position{ 8.88903f + (1.24001f * (i + 5)), 1.117992f, 5.039f };
-		il2cpp_utils::RunMethod(panelTransform, positionSet, &position);
-
-		int32_t panelChildCount;
-		il2cpp_utils::GetFieldValue(&panelChildCount, self, "panelChildCount");
-		panelChildCount++;
-		il2cpp_utils::SetFieldValue(self, "panelChildCount", &panelChildCount);
-
-		int32_t levelIndex = 22;
-		il2cpp_utils::SetFieldValue(panel, "levelDataIndex", &levelIndex);
-
-		//TODO: Create container class for Dictionary
-		Il2CppObject* nameToPage;
-		il2cpp_utils::GetFieldValue(&nameToPage, self, "nameToPage");
-		int32_t page = 6;
-		il2cpp_utils::RunMethod(nameToPage, "Add", il2cpp_utils::createcsstr("test"), &page);
-
-
-		Sprite sprite("Custom Levels/x02/albumArt.png", 256, 256);
-		Il2CppObject* songImage = il2cpp_utils::GetFieldValue(panel, "songImage"); // Image
-		static auto spriteSetProperty = il2cpp_utils::GetPropertySetMethod(
-			il2cpp_utils::GetClassFromName("UnityEngine.UI", "Image"), 
-			"sprite"
-		);
-		il2cpp_utils::RunMethod(songImage, spriteSetProperty, sprite.GetObj());
-		//il2cpp_utils::SetFieldValue(songImage, "m_Sprite", sprite.GetObj()); // sprite
-
-
-
-
-	}
 
 	CustomLevelDatabase* database;
+
+
+	void UpdateSongInfoPanel(Il2CppObject* self, Level& level);
+	void Mock_UpdateSelectedSong(Il2CppObject* self, Il2CppObject* songPanel);
+	void EnableDifficultyIcons(Level& level, Il2CppObject* songSelectionUIController);
+	void SetDifficulty(Difficulty difficulty);
+
+
 	MAKE_HOOK(Start, Il2CppObject*, Il2CppObject* self)
 	{
 
@@ -201,7 +50,7 @@ namespace SongSelectionUIController {
 		il2cpp_utils::RunMethod(artist, "set_text", albumArt.songArtists);
 
 		Il2CppObject* tempo = il2cpp_utils::GetFieldValue(songInfo, "tempo");
-		il2cpp_utils::RunMethod(tempo, "set_text", il2cpp_utils::createcsstr(std::to_string(albumArt.tempo)));
+		il2cpp_utils::RunMethod(tempo, "set_text", albumArt.tempo);
 
 		Il2CppObject* songLength = il2cpp_utils::GetFieldValue(songInfo, "songLength");
 		float length;
@@ -254,12 +103,45 @@ namespace SongSelectionUIController {
 
 	}
 
+	void EnableDifficultyIcons(Level& level, Il2CppObject* songSelectionUIController)
+	{
+		Array<Il2CppObject*>* difficultyUIPanels = reinterpret_cast<Array<Il2CppObject*>*>(
+			il2cpp_utils::GetFieldValue(songSelectionUIController, "difficultyUIPanels")
+			);
+
+		for (size_t i = 0; i < difficultyUIPanels->Length(); i++)
+		{
+			bool isSelectable = false;
+			il2cpp_utils::RunMethod(difficultyUIPanels->values[i], "SetSelectableState", &isSelectable);
+		}
+
+		for (size_t i = 0; i < level.GetDifficulties().size(); i++)
+		{
+			bool isSelectable = true;
+			Difficulty diff = level.GetDifficulties()[i];
+			il2cpp_utils::RunMethod(difficultyUIPanels->values[static_cast<int32_t>(diff)], "SetSelectableState", &isSelectable);
+		}
+	}
+
+	void SetDifficulty(Difficulty difficulty)
+	{
+		Il2CppObject* gameManager;
+		if (!il2cpp_utils::GetFieldValue(&gameManager, il2cpp_utils::GetClassFromName("", "GameManager"), "s_instance"))
+			LOG("WARNING: Failed to get instance of GameManager\n");
+
+		il2cpp_utils::SetFieldValue(gameManager, "difficulty", &difficulty);
+		Level level = database->GetLevelAtLevelIndex(database->CurrentIndex());
+		Il2CppObject* map = level.GetGameMap(difficulty);
+		il2cpp_utils::RunMethod(gameManager, "SetLevelInternal", map);
+	}
 	
 	
 	MAKE_HOOK(OnClickSong, void, Il2CppObject* self)
 	{
+		static auto canvasGetGameObjectProp = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Canvas"), "gameObject");
 		int32_t levelDataIndex;
 		il2cpp_utils::GetFieldValue(&levelDataIndex, self, "levelDataIndex");
+		database->CurrentIndex(levelDataIndex);
 		if (levelDataIndex > 18) //Get value from levelDatabase
 		{
 			//Custom map!
@@ -268,9 +150,27 @@ namespace SongSelectionUIController {
 			Level level = database->GetLevelAtLevelIndex(levelDataIndex);
 			Il2CppObject* levelData = level.GetLevelData();
 
+
 			Il2CppObject* songSelectionUIController = il2cpp_utils::GetFieldValue(self, "parent");
-			Mock_UpdateSelectedSong(songSelectionUIController, self);
+
+			Il2CppObject* songInfoCanvas = il2cpp_utils::GetFieldValue(songSelectionUIController, "songInfoCanvas");
+			Il2CppObject* songInfoCanvasGO = nullptr;
+			il2cpp_utils::RunMethod(&songInfoCanvasGO, songInfoCanvas, canvasGetGameObjectProp);
+			
+			Il2CppObject* rightTrainingPosterPanel = il2cpp_utils::GetFieldValue(songSelectionUIController, "rightTrainingPosterPanel");
+			Il2CppObject* rightTrainingPosterPanelGO = nullptr;
+			il2cpp_utils::RunMethod(&rightTrainingPosterPanelGO, rightTrainingPosterPanel, canvasGetGameObjectProp);
+
+			bool setInfoActive = true, rightTrainingPoster = true;
+			
+
+			il2cpp_utils::RunMethod(songInfoCanvasGO, "SetActive", &setInfoActive);
+			il2cpp_utils::RunMethod(rightTrainingPosterPanelGO, "SetActive", &rightTrainingPoster);
+
+			//Mock_UpdateSelectedSong(songSelectionUIController, self);
 			UpdateSongInfoPanel(songSelectionUIController, level);
+			EnableDifficultyIcons(level, songSelectionUIController);
+
 
 			//il2cpp_utils::RunMethod(self, "SetSong");
 			//TODO: Mock if needed
@@ -279,14 +179,16 @@ namespace SongSelectionUIController {
 			if (!il2cpp_utils::GetFieldValue(&gameManager, il2cpp_utils::GetClassFromName("", "GameManager"), "s_instance"))
 				LOG("WARNING: Failed to get instance of GameManager\n");
 
-			int32_t difficulty = 0;
+			Difficulty difficulty = Difficulty::Easy;
+			il2cpp_utils::GetFieldValue(&difficulty, gameManager, "difficulty");
 
+			//TODO Move seeting songSwitch into Level
 			Il2CppObject* levels = il2cpp_utils::GetFieldValue(gameManager, "levels");
 			List<Il2CppObject*> levelDataDB(il2cpp_utils::GetFieldValue(levels, "levelData"));
 			Il2CppObject* songSwitch = il2cpp_utils::GetFieldValue(levelDataDB[15], "songSwitch");
 			il2cpp_utils::SetFieldValue(levelData, "songSwitch", songSwitch);
-			Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(levelData, "maps"));
-			Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, static_cast<int32_t>(0)); //GameMap
+
+			Il2CppObject* map = level.GetGameMap(difficulty);
 
 			il2cpp_utils::RunMethod(songSwitch, "SetValue");
 			
@@ -296,10 +198,77 @@ namespace SongSelectionUIController {
 
 			Il2CppObject* gameEvent = il2cpp_utils::GetFieldValue(self, "songSelectedEvent");
 			il2cpp_utils::RunMethod(gameEvent, "Raise");
+
+			database->SelectedCustomLevel(true);
 		}
 		else
+		{
+			database->SelectedCustomLevel(false);
 			OnClickSong_orig(self); // We are not clicking on an custom level, just call stuff in ordinary fashion
+		}
 	}
+
+
+	MAKE_HOOK(SelectedEasyDifficulty, void, Il2CppObject* self)
+	{
+		if (database->SelectedCustomLevel())
+		{
+			SetDifficulty(Difficulty::Easy);
+		}
+		else
+		{
+			SelectedEasyDifficulty_orig(self);
+		}
+	}
+
+	MAKE_HOOK(SelectedNormalDifficulty, void, Il2CppObject* self)
+	{
+		if (database->SelectedCustomLevel())
+		{
+			SetDifficulty(Difficulty::Normal);
+		}
+		else
+		{
+			SelectedNormalDifficulty_orig(self);
+		}
+	}
+
+	MAKE_HOOK(SelectedHardDifficulty, void, Il2CppObject* self)
+	{
+		if (database->SelectedCustomLevel())
+		{
+			SetDifficulty(Difficulty::Hard);
+		}
+		else
+		{
+			SelectedHardDifficulty_orig(self);
+		}
+	}
+
+	MAKE_HOOK(SelectedExpertDifficulty, void, Il2CppObject* self)
+	{
+		if (database->SelectedCustomLevel())
+		{
+			SetDifficulty(Difficulty::Expert);
+		}
+		else
+		{
+			SelectedExpertDifficulty_orig(self);
+		}
+	}
+
+	MAKE_HOOK(OnUpdatedPreviousHighScore, void, Il2CppObject* self)
+	{
+		if (database->SelectedCustomLevel())
+		{
+			LOG("SongInfoUI$$OnUpdatedPreviousHighScore: Figure out how we can update highscore\n");
+		}
+		else 
+		{
+			OnUpdatedPreviousHighScore_orig(self);
+		}
+	}
+
 
 	MAKE_HOOK(Get_SourceClipName, Il2CppString*, Il2CppObject* self)
 	{
@@ -338,6 +307,24 @@ namespace SongSelectionUIController {
 
 		OnClickSong_orig = (OnClickSong_t)il2cpp_utils::GetMethod("", "SongPanelUIController", "OnClick", 0)->methodPointer;
 		INSTALL_HOOK(OnClickSong);
+
+		OnUpdatedPreviousHighScore_orig = (OnUpdatedPreviousHighScore_t)il2cpp_utils::GetMethod("", "SongInfoUI", "OnUpdatedPreviousHighScore", 0)->methodPointer;
+		INSTALL_HOOK(OnUpdatedPreviousHighScore);
+
+		//Difficulty hooks
+		SelectedEasyDifficulty_orig = (SelectedEasyDifficulty_t)il2cpp_utils::GetMethod("", "SongSelectionUIController", "SelectedEasyDifficulty", 0)->methodPointer;
+		INSTALL_HOOK(SelectedEasyDifficulty);
+
+		SelectedNormalDifficulty_orig = (SelectedNormalDifficulty_t)il2cpp_utils::GetMethod("", "SongSelectionUIController", "SelectedNormalDifficulty", 0)->methodPointer;
+		INSTALL_HOOK(SelectedNormalDifficulty);
+
+		SelectedHardDifficulty_orig = (SelectedHardDifficulty_t)il2cpp_utils::GetMethod("", "SongSelectionUIController", "SelectedHardDifficulty", 0)->methodPointer;
+		INSTALL_HOOK(SelectedHardDifficulty);
+
+		SelectedExpertDifficulty_orig = (SelectedExpertDifficulty_t)il2cpp_utils::GetMethod("", "SongSelectionUIController", "SelectedExpertDifficulty", 0)->methodPointer;
+		INSTALL_HOOK(SelectedExpertDifficulty);
+
+
 
 		//Get_SourceClipName_orig = (Get_SourceClipName_t)il2cpp_utils::GetMethod("SonicBloom.Koreo", "Koreography", "get_SourceClipName", 0)->methodPointer;
 		//INSTALL_HOOK(Get_SourceClipName);

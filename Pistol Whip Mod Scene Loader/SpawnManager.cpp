@@ -22,6 +22,9 @@ MAKE_HOOK(OnSongStart, void, Il2CppObject* self) {
 }
 
 MAKE_HOOK(QueueSpawns, void, Il2CppObject* self) {
+
+	//il2cpp_utils::RunMethod(self, "OnSongStart");
+
 	LOG("SpawnManager::QueueSpawns()\n");
 	Il2CppObject* trackData = il2cpp_utils::GetFieldValue(self, "data");
 	if (trackData == nullptr)
@@ -38,6 +41,7 @@ MAKE_HOOK(PrespawnEnemies, void, Il2CppObject* self) {
 }
 
 
+
 MAKE_HOOK(OnSongSeek, void, Il2CppObject* self) {
 	LOG("SpawnManager::OnSongSeek()\n");
 	OnSongSeek_orig(self);
@@ -51,6 +55,29 @@ MAKE_HOOK(PlaySong, void, Il2CppObject* koreoSet, Il2CppObject* song, float seek
 MAKE_HOOK(get_difficulty, int32_t, Il2CppObject* self) {
 	LOG("GameMap.get_difficulty()\n");
 	return get_difficulty_orig(self);
+}
+
+//Thanks MINER/Jonathan Nagy for figuring out that components does not enable on their own
+MAKE_HOOK(Enter, void, Il2CppObject* self, float startTime)
+{
+	Il2CppClass* klass = il2cpp_functions::object_get_class(self);
+
+	static auto set_enabled = il2cpp_utils::GetPropertySetMethod(klass, "enabled");
+	bool enabled = true;
+	il2cpp_utils::RunMethod(self, set_enabled, &enabled);
+
+	Enter_orig(self, startTime);
+}
+//Thanks MINER/Jonathan Nagy for figuring out that components does not enable on their own
+MAKE_HOOK(Play, void, Il2CppObject* self, float startTime)
+{
+	static Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "EnemySequence");
+
+	static auto set_enabled = il2cpp_utils::GetPropertySetMethod(klass, "enabled");
+	bool enabled = true;
+	il2cpp_utils::RunMethod(self, set_enabled, &enabled);
+
+	Play_orig(self, startTime);
 }
 
 void SpawnManager::initHooks(funchook_t* funchookp)
@@ -69,6 +96,12 @@ void SpawnManager::initHooks(funchook_t* funchookp)
 
 	PrespawnEnemies_orig = (PrespawnEnemies_t)il2cpp_utils::GetMethod("", "SpawnManager", "PrespawnEnemies", 0)->methodPointer;
 	INSTALL_HOOK(PrespawnEnemies);
+
+	//NOTE: They seem to break melee?
+	Enter_orig = (Enter_t)il2cpp_utils::GetMethod("", "EnemyAction", "Enter", 1)->methodPointer;
+	INSTALL_HOOK(Enter);
+	Play_orig = (Play_t)il2cpp_utils::GetMethod("", "EnemySequence", "Play", 1)->methodPointer;
+	INSTALL_HOOK(Play);
 
 
 	//PlaySong_orig = (PlaySong_t)il2cpp_utils::GetMethod("", "MusicManager", "PlaySong", 3)->methodPointer;

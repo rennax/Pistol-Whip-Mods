@@ -22,21 +22,21 @@ public:
 
 typedef struct ChunkMeshData {
 	Vector3i id = {0,0,0};
-	Il2CppArray* verts = nullptr;
-	Il2CppArray* meshSizes = nullptr;
-	Il2CppArray* tris = nullptr;
-	Il2CppArray* colors = nullptr;
+	Array<Vector3>* verts = nullptr;
+	Array<int32_t>* meshSizes = nullptr;
+	Array<int32_t>* tris = nullptr;
+	Array<Color>* colors = nullptr;
 	Il2CppObject* m_liveMesh = nullptr;
 } ChunkMeshData;
 
 
 typedef struct ChunkMeshSlice {
 	int32_t z = 0;
-	Il2CppArray* verts = nullptr;
-	Il2CppArray* meshSizes = nullptr;
-	Il2CppArray* tris = nullptr;
+	Array<Vector3>* verts = nullptr;
+	Array<int32_t>* meshSizes = nullptr;
+	Array<int32_t>* tris = nullptr;
 	Il2CppObject* m_liveMesh = nullptr;
-	Il2CppArray* colors = nullptr;
+	Array<Color>* colors = nullptr;
 } ChunkMeshSlice;
 
 #endif // !MESH_HPP

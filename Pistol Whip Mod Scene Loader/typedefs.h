@@ -23,7 +23,7 @@ template<class T>
 struct is_value_type : std::integral_constant<
     bool,
     (std::is_arithmetic<T>::value || std::is_enum<T>::value ||
-        std::is_pointer<T>::value) &&
+        std::is_pointer<T>::value) || std::is_pod<T>::value &&
     !std::is_base_of<Il2CppObject, T>::value
 > {};
 

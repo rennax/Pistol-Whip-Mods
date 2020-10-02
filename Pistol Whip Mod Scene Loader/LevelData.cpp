@@ -30,16 +30,14 @@ LevelData::LevelData(Il2CppObject* _gameManager, Il2CppObject* obj) : self(obj),
 
 LevelData::LevelData()
 {
+
+
 	Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "LevelData");
 	self = il2cpp_functions::object_new(klass);
 	if (!il2cpp_utils::RunMethod(self, ".ctor"))
 		LOG("WARNING: Failed to create LevelData object\n");
 	else
 		LOG("Created LevelData object\n");
-
-	auto nameProp = il2cpp_utils::GetPropertySetMethod(klass, "name");
-	Il2CppString* str = il2cpp_utils::createcsstr("Religion_Data");
-	il2cpp_utils::RunMethod(self, nameProp, str);
 
 
 	if (!il2cpp_utils::GetFieldValue(&gameManager, il2cpp_utils::GetClassFromName("", "GameManager"), "s_instance"))
@@ -135,8 +133,10 @@ json LevelData::Dump()
 	return j;
 }
 
-Il2CppObject* LevelData::Load(json level)
+Il2CppObject* LevelData::Load(json level, fs::path path)
 {
+	pathToLevelDir = path;
+
 	LoadGameMaps(level["gameMaps"]);
 	LoadAndSetWwiseKoreographySets(level["koreoSets"]);
 	LoadTrackSections(level["sections"]);
@@ -151,12 +151,22 @@ Il2CppObject* LevelData::Load(json level)
 	songName = level["songName"];
 	if (!il2cpp_utils::SetFieldValue(self, "songName", il2cpp_utils::createcsstr(songName.c_str())))
 		LOG("WARNING: Failed to assign songName in LevelData\n");
+
+	static auto nameProp = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("", "LevelData"), "name");
+	std::string name = "LevelData_" + songName;
+	il2cpp_utils::RunMethod(self, nameProp, il2cpp_utils::createcsstr(name));
+
 	
 	description = level["description"];
 	if (!il2cpp_utils::SetFieldValue(self, "songName", il2cpp_utils::createcsstr(description.c_str())))
 		LOG("WARNING: Failed to assign songName in LevelData\n");
 
 	return self;
+}
+
+std::vector<Difficulty> LevelData::GetDifficulties()
+{
+	return difficulties;
 }
 
 void LevelData::LoadSongSwitch(json j)
@@ -193,10 +203,12 @@ void LevelData::LoadSongSwitch(json j)
 
 void LevelData::LoadGameMaps(json j)
 {
+	difficulties.clear();
+
 	for (auto& gm : j) {
 		GameMap* map = new GameMap(self);
-		map->Load(gm);
-
+		map->Load(gm, pathToLevelDir);
+		difficulties.push_back(gm["trackData"]["difficulty"].get<Difficulty>());
 		maps.push_back(map);
 	}
 
@@ -210,13 +222,14 @@ void LevelData::LoadGameMaps(json j)
 		//il2cpp_functions::free(array_maps);
 		Il2CppClass* klass = il2cpp_utils::GetClassFromName("", "GameMap");
 		//NOTE As of 8/31/2020 there must be 3 GameMaps no matter what
+		//TODO Test if this is actually the case
 		array_maps = il2cpp_functions::array_new(klass, 3);
 
 	}
 
 	//NOTE As of 8/31/2020 there must be 3 GameMaps no matter what
 	//TODO fix in cases where there are multiple gamemaps in actual file
-	for (size_t i = 0; i < 3; i++)
+	for (size_t i = 0; i < j.size(); i++)
 	{
 		il2cpp_array_set(array_maps, Il2CppObject*, i, maps[0]->GetIl2CppObject());
 	}
@@ -342,15 +355,4 @@ void LevelData::LoadAndSetWwiseKoreographySets(json j)
 		il2cpp_utils::GetFieldValue(&str, koreography, "clipName");
 		LOG("Set new koreography: %s\n\n", to_utf8(csstrtostr(str)).c_str());
 	}
-
-
-	//for (size_t i = 0; i < maps.size(); i++)
-	//{
-	//	Il2CppObject* trackData = il2cpp_utils::GetFieldValue(maps[i]->GetIl2CppObject(), "trackData");
-	//	Il2CppObject* koreo = il2cpp_utils::GetFieldValue(trackData, "koreography");
-	//	List<Il2CppObject*>koreographies(il2cpp_utils::GetFieldValue(koreoSets->values[i], "koreographies"));
-	//	uint32_t id = j.at(i)["koreographies"].at(0)["mediaID"];
-	//	il2cpp_utils::SetFieldValue(koreographies[i], "mediaID", &id);
-	//	il2cpp_utils::SetFieldValue(koreographies[i], "koreo", koreo);
-	//}
 }

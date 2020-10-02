@@ -42,6 +42,13 @@ Il2CppObject* Level::GetLevelData()
 	return levelData;
 }
 
+Il2CppObject* Level::GetGameMap(Difficulty difficulty)
+{
+	Il2CppArray* maps = reinterpret_cast<Il2CppArray*>(il2cpp_utils::GetFieldValue(levelData, "maps"));
+	Il2CppObject* map = il2cpp_array_get(maps, Il2CppObject*, static_cast<int32_t>(difficulty)); //GameMap
+	return map;
+}
+
 AlbumArtMetadata& Level::GetAlbumArt()
 {
 	return albumArt;
@@ -62,20 +69,25 @@ void Level::Load()
 	i >> levelJson;
 	i.close();
 
-	levelData = level.Load(levelJson["levelData"]);
+	levelData = level.Load(levelJson["levelData"], path);
 	albumArt.levelData = levelData;
 	LoadAlbumArt(levelJson["albumArtMetadata"]);
+}
+
+std::vector<Difficulty> Level::GetDifficulties()
+{
+	return level.GetDifficulties();
 }
 
 void Level::LoadAlbumArt(json j)
 {
 	albumArt.artIsWIP = j["artIsWIP"];
 	albumArt.songArtists = il2cpp_utils::createcsstr(j["songArtists"].get<std::string>());
-	albumArt.tempo = j["tempo"];
+	albumArt.tempo = il2cpp_utils::createcsstr(j["tempo"].get<std::string>());
 
 	fs::path tempArtPath = path;
 	tempArtPath /= j["art"].get<std::string>();
-	Sprite sprite(tempArtPath, j["imgWidth"], j["imgHeight"]); // LoadImage should resize by itself
+	Sprite sprite(tempArtPath, j["imgSize"]["x"], j["imgSize"]["y"]);
 	albumArt.art = sprite.GetObj();
 }
 

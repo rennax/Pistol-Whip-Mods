@@ -35,13 +35,13 @@ Il2CppObject* TargetData::Load(json j)
 		fireTimes->values[i] = j["fireTimes"].at(i);
 	}
 
-	//TODO create empty GO and do AddComponent instead to reduce external dependencies
-	Il2CppObject* go = GameObject::InstantiateEmpty({ 0,0,0 }, { 0,0,0,0 });
-	Il2CppObject* esPtr = GameObject::AddComponent(go, "", "EnemySequence");
+	////TODO create empty GO and do AddComponent instead to reduce external dependencies
+	//Il2CppObject* go = GameObject::InstantiateEmpty({ 0,0,0 }, { 0,0,0,0 });
+	//Il2CppObject* esPtr = GameObject::AddComponent(go, "", "EnemySequence");
 
 
 	//TODO EnemySequence class
-	EnemySequence es(esPtr);
+	EnemySequence es;
 	enemySequence = es.Load(j["enemySequence"]);
 	if (enemySequence == nullptr)
 	{

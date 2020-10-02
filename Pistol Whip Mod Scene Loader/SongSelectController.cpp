@@ -86,7 +86,7 @@ void SongSelectController::CreateLevelData()
 
 	std::string version = j["version"];
 	LOG("%s\n", version.c_str());
-	levelData = data.Load(j["levelData"]);
+	levelData = data.Load(j["levelData"], "Custom Levels/x02/level.json");
 }
 
 Il2CppObject* SongSelectController::GetGameMap(Difficulty difficulty)

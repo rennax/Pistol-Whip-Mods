@@ -6,7 +6,7 @@
 struct AlbumArtMetadata {
 	Il2CppObject* levelData; //LevelData
 	Il2CppString* songArtists;
-	int32_t tempo;
+	Il2CppString* tempo;
 	Il2CppObject* art; //Sprite
 	bool artIsWIP;
 };

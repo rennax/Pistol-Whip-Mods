@@ -6,11 +6,10 @@
 #include "GameMap.hpp"
 #include <vector>
 
+
 extern "C" { // name mangle 
 #include <funchook.h>
 }
-
-
 
 
 using json = nlohmann::json;
@@ -24,7 +23,8 @@ public:
 	LevelData();
 	~LevelData();
 	json Dump();
-	Il2CppObject* Load(json j);
+	Il2CppObject* Load(json j, fs::path path);
+	std::vector<Difficulty> GetDifficulties();
 private:
 	void LoadSongSwitch(json j); // TODO
 	void LoadGameMaps(json j);
@@ -40,9 +40,11 @@ private:
 private:
 	Il2CppObject* gameManager; //Dont wanna deal with generic objects to get_instance
 	std::vector<WorldObject> worldObjects;
+	std::vector<Difficulty> difficulties;
 	float songLength = 0;
 	std::string songName;
 	std::string description;
+	fs::path pathToLevelDir;
 	std::string songPath = "Custom Levels/x02/";
 	const char* lastReleasedScene = "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/561074166.wem";
 	const char* lastReleasedSceneRenamed = "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/561074166_backup.wem";

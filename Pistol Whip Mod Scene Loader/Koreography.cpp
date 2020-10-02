@@ -27,11 +27,11 @@ Il2CppObject* Koreography::Load(json j)
 
 
 	mSampleRate = j["mSampleRate"];
-	lastUpdateEnd = j["lastUpdateEnd"];
-	lastUpdateStart = j["lastUpdateStart"];
+	//lastUpdateEnd = j["lastUpdateEnd"];
+	//lastUpdateStart = j["lastUpdateStart"];
 	mIgnoreLatencyOffset = j["mIgnoreLatencyOffset"];
 	clipName = j["clipName"];
-	mAudioFilePath = j["mAudioFilePath"];
+	//mAudioFilePath = j["mAudioFilePath"];
 
 	List<Il2CppObject*> mTempoSections(il2cpp_utils::GetFieldValue(self, "mTempoSections"));
 	for (auto section : j["mTempoSections"])
@@ -48,10 +48,10 @@ Il2CppObject* Koreography::Load(json j)
 	}
 
 	il2cpp_utils::SetFieldValue(self, "mSampleRate", &mSampleRate);
-	il2cpp_utils::SetFieldValue(self, "lastUpdateEnd", &lastUpdateEnd);
-	il2cpp_utils::SetFieldValue(self, "lastUpdateStart", &lastUpdateStart);
+	//il2cpp_utils::SetFieldValue(self, "lastUpdateEnd", &lastUpdateEnd);
+	//il2cpp_utils::SetFieldValue(self, "lastUpdateStart", &lastUpdateStart);
 	il2cpp_utils::SetFieldValue(self, "mIgnoreLatencyOffset", &mIgnoreLatencyOffset);
-	il2cpp_utils::SetFieldValue(self, "mAudioFilePath", il2cpp_utils::createcsstr(mAudioFilePath.c_str()));
+	//il2cpp_utils::SetFieldValue(self, "mAudioFilePath", il2cpp_utils::createcsstr(mAudioFilePath.c_str()));
 	il2cpp_utils::SetFieldValue(self, "clipName", il2cpp_utils::createcsstr(clipName.c_str()));
 
 	//Il2CppObject* assetDB = AssetBundle::LoadFromFile("Custom Levels/x02/song");

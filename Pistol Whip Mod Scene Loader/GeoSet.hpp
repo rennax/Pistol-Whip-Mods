@@ -20,8 +20,11 @@ extern "C" {
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <filesystem>
 
+namespace fs = std::filesystem;
 
+//TODO create namespace PW and add all related classes to that instead
 namespace GeoSet {
 	using namespace CSharp;
 	namespace fs = std::filesystem;
@@ -44,7 +47,7 @@ public:
 	GeoSet();
 
 	//Il2CppObject* Load(std::string_view path);
-	Il2CppObject* Load(json j);
+	Il2CppObject* Load(json j, fs::path path);
 private: //Functions
 	void createChunkMeshData(
 		Vector3i id,
@@ -68,9 +71,11 @@ private:
 	std::vector<WorldObject> staticProps;
 	std::vector<WorldObject> dynamicProps;
 
+	fs::path pathToLevelDir;
 	std::string levelPath = "Custom Levels/x02";
 	std::string decorCubeFileName = "decors.json";
 	std::string assetBundlePath;
+	std::string chunksDBPath;
 	Il2CppObject* assetDB;
 	std::vector<Il2CppObject*> prefabs;
 	// Geoset Fields

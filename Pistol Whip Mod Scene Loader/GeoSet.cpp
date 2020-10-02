@@ -15,18 +15,22 @@ namespace GeoSet {
 			LOG("Created geoset object\n");
 	}
 
-	Il2CppObject* GeoSet::Load(json j)
+	Il2CppObject* GeoSet::Load(json j, fs::path path)
 	{
+		pathToLevelDir = path;
+
 		//TODO change this so path is sent as an argument, or stored in level.json
-		assetBundlePath = "Custom Levels/" + j["mapID"].get<std::string>() + "/";
+		assetBundlePath = pathToLevelDir.generic_string();
 
 		LoadDecoratorCubes(j["decorCubes"]);
-		LoadChunks(j["chunks"]);
+		LoadChunks(j);
 		LoadStaticProps(j["staticProps"]);
 
+		chunkSize = j["chunkSize"];
 		if (!il2cpp_utils::SetFieldValue(self, "chunkSize", &chunkSize))
 			LOG("WARNING: Failed to set chunkSize in GeoSet::Load()\n");
 
+		scale = j["scale"];
 		if (!il2cpp_utils::SetFieldValue(self, "scale", &scale))
 			LOG("WARNING: Failed to set scale in GeoSet::Load()\n");
 
@@ -39,8 +43,8 @@ namespace GeoSet {
 		auto klass = il2cpp_utils::GetClassFromName("UnityEngine", "GameObject");
 		auto type = il2cpp_functions::type_get_object(il2cpp_functions::class_get_type_const(klass));
 
-		std::string staticPropsDBPath = assetBundlePath + "static props";
-		Il2CppObject* staticPropsDB = AssetBundle::LoadFromFile(staticPropsDBPath);
+		//std::string staticPropsDBPath =.generic_string();
+		Il2CppObject* staticPropsDB = AssetBundle::LoadFromFile(pathToLevelDir.append("static props").generic_string());
 		List<Il2CppObject*> staticPropList(il2cpp_utils::GetFieldValue(self, "staticProps"));
 		for (auto& prop : j)
 		{
@@ -124,112 +128,127 @@ namespace GeoSet {
 	void GeoSet::LoadChunks(json j)
 	{
 		static auto getMeshProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "MeshFilter"), "mesh");
-		static auto meshVerticesProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "vertices");
-		static auto meshTrianglesProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "triangles");
-		static auto meshColorsGetProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "colors");
-
 		
-		std::string chunkDBPath = assetBundlePath + "chunks";
-		Il2CppObject* chunkDB = AssetBundle::LoadFromFile(chunkDBPath);
+		static auto meshVerticesGetProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "vertices");
+		static auto meshTrianglesGetProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "triangles");
+		static auto meshColorsGetProperty = il2cpp_utils::GetPropertyGetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "colors");
+		
+		static auto meshVerticesSetProperty = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "vertices");
+		static auto meshTrianglesSetProperty = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "triangles");
+		static auto meshColorsSetProperty = il2cpp_utils::GetPropertySetMethod(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"), "colors");
+		
+
+		List<ChunkMeshSlice> chunkSlices(il2cpp_utils::GetFieldValue(self, "chunkSlices"));
+		List<ChunkMeshData> chunkData(il2cpp_utils::GetFieldValue(self, "chunkData"));
+
+		fs::path chunkDBPath = pathToLevelDir.append(j["chunkDBName"].get<std::string>());
+		Il2CppObject* chunkDB = AssetBundle::LoadFromFile(chunkDBPath.generic_string());
 		if (chunkDB == nullptr)
 		{
 			LOG("Failed to open %s, are you sure it exists?\n", chunkDBPath.c_str());
 		}
 
-
-		List<ChunkMeshSlice> chunkSlices(il2cpp_utils::GetFieldValue(self, "chunkSlices"));
-		List<ChunkMeshData> chunkData(il2cpp_utils::GetFieldValue(self, "chunkData"));
-
 		//We use the mesh to create both the chunksMeshSlice and the chunkMeshData for given chunk
-		for (auto c : j)
+		for (auto c : j["chunkData"])
 		{
-			Il2CppObject* chunk = AssetBundle::LoadAsset(chunkDB, c["chunkID"]);
-			
-			Il2CppObject* mesh = nullptr;
+			std::string meshName = std::string("mesh_") + std::to_string(c["id"]["z"].get<int>());
+			std::string chunkName = std::string("chunk_") + std::to_string(c["id"]["z"].get<int>());
+			Il2CppObject* chunk = AssetBundle::LoadAsset(chunkDB, chunkName);
+
+			Il2CppObject* mesh = AssetBundle::LoadAsset(chunkDB, meshName);
 			Il2CppObject* meshGO = nullptr;
 
-			//Array<Il2CppObject*>* filters = GameObject::GetComponentsInChildren(chunk, false, "UnityEngine", "MeshFilter");
-			//if (filters != nullptr && filters->Length() > 0)
-			//{
-			//	meshFilter = filters->values[0];
-			//}
-			//else continue;
-
-			Il2CppObject* meshFilter = GameObject::GetComponentInChildren(chunk, false, "UnityEngine", "MeshFilter");
-
+			Il2CppObject* meshFilter = GameObject::GetComponent(chunk, "UnityEngine", "MeshFilter");
 			il2cpp_utils::RunMethod(&mesh, meshFilter, getMeshProperty);
+
 
 			ChunkMeshSlice slice;
 			slice.z = c["id"]["z"];
 			slice.meshSizes = nullptr;
 			slice.m_liveMesh = mesh;
-			il2cpp_utils::RunMethod(&slice.tris, mesh, meshTrianglesProperty);
-			il2cpp_utils::RunMethod(&slice.verts, mesh, meshVerticesProperty);
+			il2cpp_utils::RunMethod(&slice.tris, mesh, meshTrianglesGetProperty);
+			il2cpp_utils::RunMethod(&slice.verts, mesh, meshVerticesGetProperty);
 			il2cpp_utils::RunMethod(&slice.colors, mesh, meshColorsGetProperty);
-			//auto sliceBoxed = il2cpp_functions::value_box(il2cpp_utils::GetClassFromName("", "ChunkMeshSlice"), &slice);
-			//il2cpp_utils::SetFieldValue(sliceBoxed, "m_liveMesh", mesh);
-			//il2cpp_utils::SetFieldValue(sliceBoxed, "verts", il2cpp_utils::GetFieldValue(mesh, "vertices"));
-			//il2cpp_utils::SetFieldValue(sliceBoxed, "tris", il2cpp_utils::GetFieldValue(mesh, "triangles"));
 			chunkSlices.Add(slice);
 
 			ChunkMeshData data;
 			data.id = c["id"];
 			data.meshSizes = nullptr;
 			data.m_liveMesh = mesh;
-			il2cpp_utils::RunMethod(&data.tris, mesh, meshTrianglesProperty);
-			il2cpp_utils::RunMethod(&data.verts, mesh, meshVerticesProperty);
+			il2cpp_utils::RunMethod(&data.tris, mesh, meshTrianglesGetProperty);
+			il2cpp_utils::RunMethod(&data.verts, mesh, meshVerticesGetProperty);
 			il2cpp_utils::RunMethod(&data.colors, mesh, meshColorsGetProperty);
-			//auto dataBoxed = il2cpp_functions::value_box(il2cpp_utils::GetClassFromName("", "ChunkMeshData"), &data);
-			//il2cpp_utils::SetFieldValue(dataBoxed, "m_liveMesh", mesh);
-			//il2cpp_utils::SetFieldValue(dataBoxed, "verts", il2cpp_utils::GetFieldValue(mesh, "vertices"));
-			//il2cpp_utils::SetFieldValue(dataBoxed, "tris", il2cpp_utils::GetFieldValue(mesh, "triangles"));
+
 			chunkData.Add(data);
 		}
+
+
+
+		//for (auto c : j)
+		//{
+		//	size_t trisSize = c["tris"].size();
+		//	size_t vertsSize = c["verts"].size();
+		//	size_t colorsSize = c["colors"].size();
+		//	size_t meshSizesSize = c["meshSizes"].size();
+		//	LOG("tris size %u, verts size %u, colors size %u, meshSizes size %u\n", trisSize, vertsSize, colorsSize, meshSizesSize);
+		//	
+		//	//Allocate arrays and assign them
+		//	Array<Vector3>* verts = reinterpret_cast<Array<Vector3>*>(il2cpp_functions::array_new(
+		//		il2cpp_utils::GetClassFromName("UnityEngine", "Vector3"), vertsSize));
+		//	for (size_t i = 0; i < vertsSize; i++)
+		//	{
+		//		verts->values[i] = c["verts"].at(i);
+		//	}
+
+		//	Array<int32_t>* tris = reinterpret_cast<Array<int32_t>*>(il2cpp_functions::array_new(
+		//		il2cpp_utils::GetClassFromName("System", "Int32"), trisSize));
+		//	for (size_t i = 0; i < trisSize; i++)
+		//	{
+		//		tris->values[i] = c["tris"].at(i);
+		//	}
+
+		//	Array<int32_t>* meshSizes = reinterpret_cast<Array<int32_t>*>(il2cpp_functions::array_new(
+		//		il2cpp_utils::GetClassFromName("System", "Int32"), meshSizesSize));
+		//	for (size_t i = 0; i < meshSizesSize; i++)
+		//	{
+		//		meshSizes->values[i] = c["meshSizes"].at(i);
+		//	}
+
+		//	Array<Color>* colors = reinterpret_cast<Array<Color>*>(il2cpp_functions::array_new(
+		//		il2cpp_utils::GetClassFromName("UnityEngine", "Color"), colorsSize));
+		//	for (size_t i = 0; i < colorsSize; i++)
+		//	{
+		//		colors->values[i] = c["colors"].at(i);
+		//	}
+
+
+		//	//Il2CppObject* mesh = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("UnityEngine", "Mesh"));
+		//	//il2cpp_utils::RunMethod(mesh, ".ctor");
+		//	//il2cpp_utils::RunMethod(mesh, meshVerticesSetProperty, verts);
+		//	//il2cpp_utils::RunMethod(mesh, meshColorsSetProperty, colors);
+		//	//il2cpp_utils::RunMethod(mesh, meshTrianglesSetProperty, tris);
+
+
+		//	ChunkMeshSlice slice;
+		//	slice.z = c["id"]["z"];
+		//	slice.meshSizes = nullptr;
+		//	slice.tris = tris;
+		//	slice.colors = colors;
+		//	slice.verts = verts;
+
+		//	chunkSlices.Add(slice);
+
+
+		//	ChunkMeshData data;
+		//	data.id = c["id"].get<Vector3i>();
+		//	data.meshSizes = nullptr;
+		//	data.tris = tris;
+		//	data.colors = colors;
+		//	data.verts = verts;
+		//	chunkData.Add(data);
+		//}	
 	}
 
-	void GeoSet::createChunkMeshData(
-		Vector3i id,
-		const std::vector<Vector3>& vertices,
-		const std::vector<int>& triangles)
-	{
-		Mesh mesh;
-		if (!mesh.Clear() ||
-			!mesh.SetVertices(vertices) ||
-			!mesh.SetTriangles(triangles))
-		{
-			LOG("GeoSet::createChunkMeshData failed to create mesh");
-			return;
-		}
-
-		ChunkMeshData chunkData;
-		chunkData.id = id;
-		chunkData.verts = mesh.verts;
-		chunkData.tris = mesh.tris;
-		chunkData.m_liveMesh = mesh.GetMesh();
-
-		List<ChunkMeshData> chunkDataList(il2cpp_utils::GetFieldValue(self, "chunkData"));
-		chunkDataList.Add(chunkData);
-
-		createChunkMeshSlice(-1, id, mesh);
-	}
-
-	void GeoSet::createChunkMeshSlice(
-		int z,
-		Vector3i id,
-		Mesh& mesh)
-	{
-		ChunkMeshSlice chunkSlice = {
-			z,
-			mesh.verts,
-			nullptr,
-			mesh.tris,
-			mesh.GetMesh()
-		};
-
-		//Add chunkMeshData object to chunkData list object inside geoset
-		List<ChunkMeshSlice> chunkSlicesList(il2cpp_utils::GetFieldValue(self, "chunkSlices"));
-		chunkSlicesList.Add(chunkSlice);
-	}
 
 	void GeoSet::LoadChunkMeshSlices(json j)
 	{

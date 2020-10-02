@@ -1,5 +1,6 @@
 #include "EnemyAction.hpp"
 #include "WorldObject.hpp"
+#include "GameObject.hpp"
 
 EnemyAction::EnemyAction(Il2CppObject* _enemySequence) : sequence(_enemySequence)
 {
@@ -13,16 +14,21 @@ EnemyAction::~EnemyAction()
 {
 }
 
-Il2CppObject* EnemyAction::Load(json j)
+Il2CppObject* EnemyAction::Load(json j, Il2CppObject* actionHolder)
 {
 	//NOTE: Create and load data specific for the derived class
-	type = static_cast<EnemyActionType>(j["type"]);
+	type = static_cast<EnemyActionType>(j["actionType"]);
+	Il2CppClass* klass = nullptr;
 	switch (type)
 	{
 	case EnemyActionType::Wait:
+		klass = il2cpp_utils::GetClassFromName("", "EnemyActionWait");
+		self = GameObject::AddComponent(actionHolder, klass);
 		LoadWait(j);
 		break;
 	case EnemyActionType::Move:
+		klass = il2cpp_utils::GetClassFromName("", "EnemyActionMove");
+		self = GameObject::AddComponent(actionHolder, klass);
 		LoadMove(j);
 		break;
 	case EnemyActionType::AimStart:
@@ -35,6 +41,8 @@ Il2CppObject* EnemyAction::Load(json j)
 		LoadFire(j);
 		break;
 	case EnemyActionType::AimAndFire:
+		klass = il2cpp_utils::GetClassFromName("", "EnemyActionAimAndFire");
+		self = GameObject::AddComponent(actionHolder, klass);
 		LoadAimAndFire(j);
 		break;
 	case EnemyActionType::Instant:
@@ -60,22 +68,30 @@ Il2CppObject* EnemyAction::Load(json j)
 	WorldPoint localEndingPoint{ j["localEndingPoint"]["position"], j["localEndingPoint"]["rotation"] };
 	il2cpp_utils::SetFieldValue(self, "localEndingPoint", &localEndingPoint);
 
-	WorldPoint worldStartingPoint{ j["worldStartingPoint"]["position"], j["worldStartingPoint"]["rotation"] };
+	/*WorldPoint worldStartingPoint{ j["worldStartingPoint"]["position"], j["worldStartingPoint"]["rotation"] };
 	il2cpp_utils::SetFieldValue(self, "worldStartingPoint", &worldStartingPoint);
 
 	WorldPoint worldEndingPoint{ j["worldEndingPoint"]["position"], j["worldEndingPoint"]["rotation"] };
-	il2cpp_utils::SetFieldValue(self, "worldEndingPoint", &worldEndingPoint);
+	il2cpp_utils::SetFieldValue(self, "worldEndingPoint", &worldEndingPoint);*/
 
 	float sequenceStartTime = j["sequenceStartTime"];
 	il2cpp_utils::SetFieldValue(self, "sequenceStartTime", &sequenceStartTime);
 
 	il2cpp_utils::SetFieldValue(self, "sequence", sequence);
 
-	float startTime = j["startTime"];
-	il2cpp_utils::RunMethod(self, "set_startTime", &startTime);
+	//float startTime = 20;
+	//float endTime = startTime+duration;
 
-	float endTime = j["endTime"];
-	il2cpp_utils::RunMethod(self, "set_endTime", &endTime);
+	//float startTime = j["startTime"];
+	//il2cpp_utils::RunMethod(self, "set_startTime", &startTime);
+
+	//float endTime = j["endTime"];
+	//il2cpp_utils::RunMethod(self, "set_endTime", &endTime);
+
+
+	static auto set_enabled = il2cpp_utils::GetPropertySetMethod(klass, "enabled");
+	bool enabled = false;
+	il2cpp_utils::RunMethod(self, set_enabled, &enabled);
 
 	return self;
 }
@@ -88,8 +104,8 @@ json EnemyAction::Dump()
 
 void EnemyAction::LoadWait(json j)
 {
-	self = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "EnemyActionWait"));
-	il2cpp_utils::RunMethod(self, ".ctor");
+	//self = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "EnemyActionWait"));
+	//il2cpp_utils::RunMethod(self, ".ctor");
 
 	float waitTime = j["waitTime"];
 	il2cpp_utils::SetFieldValue(self, "waitTime", &waitTime);
@@ -97,8 +113,8 @@ void EnemyAction::LoadWait(json j)
 
 void EnemyAction::LoadMove(json j)
 {
-	self = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "EnemyActionMove"));
-	il2cpp_utils::RunMethod(self, ".ctor");
+	//self = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "EnemyActionMove"));
+	//il2cpp_utils::RunMethod(self, ".ctor");
 
 	WorldPoint destination{ j["destination"]["position"] ,j["destination"]["rotation"] };
 	il2cpp_utils::SetFieldValue(self, "destination", &destination);
@@ -136,8 +152,8 @@ void EnemyAction::LoadFire(json j)
 
 void EnemyAction::LoadAimAndFire(json j)
 {
-	self = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "EnemyActionAimAndFire"));
-	il2cpp_utils::RunMethod(self, ".ctor");
+	//self = il2cpp_functions::object_new(il2cpp_utils::GetClassFromName("", "EnemyActionAimAndFire"));
+	//il2cpp_utils::RunMethod(self, ".ctor");
 
 	float actionDuration = j["actionDuration"];
 	il2cpp_utils::SetFieldValue(self, "actionDuration", &actionDuration);
@@ -151,8 +167,8 @@ void EnemyAction::LoadAimAndFire(json j)
 	float fireTime = j["fireTime"];
 	il2cpp_utils::SetFieldValue(self, "fireTime", &fireTime);
 
-	bool fired = j["fired"];
-	il2cpp_utils::SetFieldValue(self, "fired", &fired);
+	//bool fired = j["fired"];
+	//il2cpp_utils::SetFieldValue(self, "fired", &fired);
 }
 
 void EnemyAction::LoadInstant(json j)

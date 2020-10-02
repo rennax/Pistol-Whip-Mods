@@ -27,6 +27,8 @@ namespace GameObject
 	Il2CppObject* AddComponent(Il2CppObject* object, std::string_view namespaze, std::string_view className);
 	void SetName(Il2CppObject* object, std::string_view name);
 
+	bool SetParent(Il2CppObject* parent, Il2CppObject* objectToSet);
+
 };
 
 
