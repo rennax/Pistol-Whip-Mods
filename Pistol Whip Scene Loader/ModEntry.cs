@@ -24,7 +24,23 @@ using System.Threading;
 using System.Drawing;
 
 
-
+/*
+TODO List
+-   Fix actions and enemy sequence so that they are not enabled by default.
+    -   Hook and enable them while playing
+        -   only if the current map is a custom map otherwise dont. Original enemy sequences are loaded from asset/resources.
+-   Figure out how the rest of the enemy actions work
+    -   Some of them refers to animation trigger hashes
+-   Fix end of map and exit while playing as this results in just loading a blank world (failed state transition is my guess)
+-   TrackSection
+    -   Just like enemy actions, write a custom json converter
+    -   Write rest of the conversion for track sections
+-   Do backup of the koreoset before we overwrite for the custom map
+-   Song switch when selection the custom map. Currently this is not done.
+-   Figure out how to do props (atleast static ones) without using asset bundles. Keep as much in either our own format or in the json.
+-   Write conversion for decor cubes in geoset
+-   Figure out what dynamic prop entails. Are they just static props with animations or what?
+ */
 
 
 namespace Pistol_Whip_Scene_Loader
