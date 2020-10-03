@@ -11,7 +11,7 @@ namespace Models
 {
     public class GeoSet
     {
-        public Vector3Int chunkSize;
+        public Vector3i chunkSize;
 
         public float scale;
 
