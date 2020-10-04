@@ -32,26 +32,206 @@ namespace Pistol_Whip_Scene_Loader
             sec.min = s.min;
             sec.max = s.max;
             sec.generateDebris = s.generateDebris;
-            sec.debris = new Debris
-            {
-                distribution = (Debris.Distribution)s.debris.distribution,
-                projection = (Debris.Projection)s.debris.projection,
-                spread = (Debris.Spread)s.debris.spread,
-                density = s.debris.density,
-                interval = s.debris.interval,
-                uniformity = s.debris.uniformity,
-                minSize = s.debris.minSize,
-                maxSize = s.debris.maxSize,
-                shape = (Debris.Shape)s.debris.shape,
-                buildOnAir = s.debris.buildOnAir,
-                timing = (Debris.Timing)s.debris.timing
-            };
+            sec.debris = DebrisNative(s.debris); 
 
 
-
+            //Fuck me there gotta be a better way of doing this.. 
             switch ((Section)s.section)
             {
                 case Section.Filled:
+
+                    break;
+                case Section.Empty:
+                    Models.EmptySection es = (Models.EmptySection)s;
+                    EmptySection emptySection = (EmptySection)sec;
+                    emptySection.laneWidth = es.laneWidth;
+                    emptySection.solidLane = es.solidLane;
+                    break;
+                case Section.Ground:
+                    Models.GroundSection gs = (Models.GroundSection)s;
+                    GroundSection groundSection = (GroundSection)sec;
+                    groundSection.laneWidth = gs.laneWidth;
+                    groundSection.solidLane = gs.solidLane;
+                    groundSection.decorationDistance = gs.decorationDistance;
+                    groundSection._groundDecorator = (EGroundDecorator)gs._groundDecorator;
+                    break;
+                case Section.Alley:
+                    Models.AlleySection als = (Models.AlleySection)s;
+                    AlleySection alleySection = (AlleySection)sec;
+                    alleySection.laneMinWidth = als.laneMinWidth;
+                    alleySection.laneMaxWidth = als.laneMaxWidth;
+                    alleySection.buildingFloorHeight = als.buildingFloorHeight;
+                    alleySection.buildingMinFloors = als.buildingMinFloors;
+                    alleySection.buildingMaxFloors = als.buildingMaxFloors;
+                    alleySection.buildingMinLength = als.buildingMinLength;
+                    alleySection.buildingMaxLength = als.buildingMaxLength;
+                    alleySection.minorCrossMin = als.minorCrossMin;
+                    alleySection.minorCrossMax = als.minorCrossMax;
+                    alleySection.majorCrossInterval = als.majorCrossInterval;
+                    alleySection.majorCrossMin = als.majorCrossMin;
+                    alleySection.majorCrossMax = als.majorCrossMax;
+                    alleySection.symmetrical = als.symmetrical;
+                    alleySection._wallDecorator = (EWallDecorator)als._wallDecorator;
+                    alleySection._groundDecorator = (EGroundDecorator)als._groundDecorator;
+                    alleySection._alleyDecorator = (EGroundDecorator)als._alleyDecorator;
+                    alleySection.alleyDecorationDepth = als.alleyDecorationDepth;
+                    break;
+                case Section.Rooms:
+                    Models.RoomSection rs = (Models.RoomSection)s;
+                    RoomSection roomSection = (RoomSection)sec;
+                    roomSection.roomWidthMin = rs.roomWidthMin;
+                    roomSection.roomWidthMax = rs.roomWidthMax;
+                    roomSection.roomLengthMin = rs.roomLengthMin;
+                    roomSection.roomLengthMax = rs.roomLengthMax;
+                    roomSection.roomHeightMin = rs.roomHeightMin;
+                    roomSection.roomHeightMax = rs.roomHeightMax;
+                    roomSection.roomShuffleMax = rs.roomShuffleMax;
+                    roomSection.spacerMinLength = rs.spacerMinLength;
+                    roomSection.spacerMaxLength = rs.spacerMaxLength;
+                    roomSection.spacerMinWidth = rs.spacerMinWidth;
+                    roomSection.spacerMaxWidth = rs.spacerMaxWidth;
+                    roomSection.spacerMinHeight = rs.spacerMinHeight;
+                    roomSection.spacerMaxHeight = rs.spacerMaxHeight;
+                    roomSection.propBorderWidth = rs.propBorderWidth;
+
+                    roomSection._wallDecorator = (EWallDecorator)rs._wallDecorator;
+                    roomSection._edgeDecorator = (EGroundDecorator)rs._edgeDecorator;
+                    roomSection._groundDecorator = (EGroundDecorator)rs._groundDecorator;
+                    break;
+                case Section.Hallways:
+                    Models.HallwaySection hs = (Models.HallwaySection)s;
+                    HallwaySection hallwaySection = (HallwaySection)sec;
+                    hallwaySection.centerWidthMin = hs.centerWidthMin;
+                    hallwaySection.centerWidthMax = hs.centerWidthMax;
+                    hallwaySection.centerHeightMin = hs.centerHeightMin;
+                    hallwaySection.centerHeightMax = hs.centerHeightMax;
+                    hallwaySection.crossWidthMin = hs.crossWidthMin;
+                    hallwaySection.crossWidthMax = hs.crossWidthMax;
+                    hallwaySection.crossIntervalMin = hs.crossIntervalMin;
+                    hallwaySection.crossIntervalMax = hs.crossIntervalMax;
+                    hallwaySection.crossHeightMin = hs.crossHeightMin;
+                    hallwaySection.crossHeightMax = hs.crossHeightMax;
+                    hallwaySection.crossDepthMin = hs.crossDepthMin;
+                    hallwaySection.crossDepthMax = hs.crossDepthMax;
+                    hallwaySection.symmetrical = hs.symmetrical;
+
+                    break;
+                case Section.Offices:
+                    Models.OfficeSection os = (Models.OfficeSection)s;
+                    OfficeSection officeSection = (OfficeSection)sec;
+                    officeSection.centerWidthMin = os.centerWidthMin;
+                    officeSection.centerWidthMax = os.centerWidthMax;
+                    officeSection.centerHeightMin = os.centerHeightMin;
+                    officeSection.centerHeightMax = os.centerHeightMax;
+                    officeSection.officeWidthMin = os.officeWidthMin;
+                    officeSection.officeWidthMax = os.officeWidthMax;
+                    officeSection.officeIntervalMin = os.officeIntervalMin;
+                    officeSection.officeIntervalMax = os.officeIntervalMax;
+                    officeSection.officeHeightMin = os.officeHeightMin;
+                    officeSection.officeHeightMax = os.officeHeightMax;
+                    officeSection.officeDepthMin = os.officeDepthMin;
+                    officeSection.officeDepthMax = os.officeDepthMax;
+                    officeSection.doorMinWidth = os.doorMinWidth;
+                    officeSection.doorMaxWidth = os.doorMaxWidth;
+                    officeSection.doorMinStart = os.doorMinStart;
+                    officeSection.doorMinEnd = os.doorMinEnd;
+                    officeSection.doorHeight = os.doorHeight;
+                    officeSection.gapsAreHallways = os.gapsAreHallways;
+                    officeSection.minHallwayWidth = os.minHallwayWidth;
+                    officeSection.hallwayLength = os.hallwayLength;
+                    officeSection.symmetrical = os.symmetrical;
+                    break;
+                case Section.Rooftops:
+                    Models.RooftopSection rts = (Models.RooftopSection)s;
+                    RooftopSection rooftopSection = (RooftopSection)sec;
+                    rooftopSection.laneWidth = rts.laneWidth;
+                    rooftopSection.solidLane = rts.solidLane;
+                    rooftopSection.buildingMinDistance = rts.buildingMinDistance;
+                    rooftopSection.buildingMaxDistance = rts.buildingMaxDistance;
+                    rooftopSection.buildingFloorHeight = rts.buildingFloorHeight;
+                    rooftopSection.buildingMinFloors = rts.buildingMinFloors;
+                    rooftopSection.buildingMaxFloors = rts.buildingMaxFloors;
+                    rooftopSection.buildingMinLength = rts.buildingMinLength;
+                    rooftopSection.buildingMaxLength = rts.buildingMaxLength;
+                    rooftopSection.buildingMinDepth = rts.buildingMinDepth;
+                    rooftopSection.buildingMaxDepth = rts.buildingMaxDepth;
+                    rooftopSection.minorCrossMin = rts.minorCrossMin;
+                    rooftopSection.minorCrossMax = rts.minorCrossMax;
+                    rooftopSection.majorCrossInterval = rts.majorCrossInterval;
+                    rooftopSection.majorCrossMin = rts.majorCrossMin;
+                    rooftopSection.majorCrossMax = rts.majorCrossMax;
+                    rooftopSection.symmetrical = rts.symmetrical;
+                    rooftopSection._innerWallDecorator = (EWallDecorator)rts._innerWallDecorator;
+                    rooftopSection._leadingWallDecorator = (EWallDecorator)rts._leadingWallDecorator;
+                    rooftopSection._groundDecorator = (EGroundDecorator)rts._groundDecorator;
+                    rooftopSection._alleyDecorator = (EGroundDecorator)rts._alleyDecorator;
+                    rooftopSection._rooftopDecorator = (EGroundDecorator)rts._rooftopDecorator;
+                    rooftopSection._laneDecorator = (EGroundDecorator)rts._laneDecorator;
+                    rooftopSection.alleyDecorationDepth = rts.alleyDecorationDepth;
+                    rooftopSection.buildingDecorationDepth = rts.buildingDecorationDepth;
+                    rooftopSection.decorateDeepBuildings = rts.decorateDeepBuildings;
+
+                    break;
+                case Section.SplitRooftops:
+                    Models.SplitRooftopSection srts = (Models.SplitRooftopSection)s;
+                    SplitRooftopSection splitRooftopSection = (SplitRooftopSection)sec;
+
+                    splitRooftopSection.laneWidth = srts.laneWidth;
+                    splitRooftopSection.solidLane = srts.solidLane;
+
+                    splitRooftopSection.leftDebris = srts.leftDebris;
+                    splitRooftopSection.leftDebrisSettings = DebrisNative(srts.leftDebrisSettings);
+                    splitRooftopSection.leftGroundHeight = srts.leftGroundHeight;
+                    splitRooftopSection.leftBuildingMinDistance = srts.leftBuildingMinDistance;
+                    splitRooftopSection.leftBuildingMaxDistance = srts.leftBuildingMaxDistance;
+                    splitRooftopSection.leftBuildingFloorHeight = srts.leftBuildingFloorHeight;
+                    splitRooftopSection.leftBuildingMinFloors = srts.leftBuildingMinFloors;
+                    splitRooftopSection.leftBuildingMaxFloors = srts.leftBuildingMaxFloors;
+                    splitRooftopSection.leftBuildingMinLength = srts.leftBuildingMinLength;
+                    splitRooftopSection.leftBuildingMaxLength = srts.leftBuildingMaxLength;
+                    splitRooftopSection.leftBuildingMinDepth = srts.leftBuildingMinDepth;
+                    splitRooftopSection.leftBuildingMaxDepth = srts.leftBuildingMaxDepth;
+                    splitRooftopSection.leftMinorCrossMin = srts.leftMinorCrossMin;
+                    splitRooftopSection.leftMinorCrossMax = srts.leftMinorCrossMax;
+                    splitRooftopSection.leftMajorCrossInterval = srts.leftMajorCrossInterval;
+                    splitRooftopSection.leftMajorCrossMin = srts.leftMajorCrossMin;
+                    splitRooftopSection.leftMajorCrossMax = srts.leftMajorCrossMax;
+                    splitRooftopSection._leftInnerWallDecorator = (EWallDecorator)srts._leftInnerWallDecorator;
+                    splitRooftopSection._leftLeadingWallDecorator = (EWallDecorator)srts._leftLeadingWallDecorator;
+                    splitRooftopSection._leftGroundDecorator = (EGroundDecorator)srts._leftGroundDecorator;
+                    splitRooftopSection._leftAlleyDecorator = (EGroundDecorator)srts._leftAlleyDecorator;
+                    splitRooftopSection._leftRooftopDecorator = (EGroundDecorator)srts._leftRooftopDecorator;
+                    splitRooftopSection._leftLaneDecorator = (EGroundDecorator)srts._leftLaneDecorator;
+                    splitRooftopSection.leftAlleyDecorationDepth = srts.leftAlleyDecorationDepth;
+                    splitRooftopSection.leftBuildingDecorationDepth = srts.leftBuildingDecorationDepth;
+                    splitRooftopSection.leftDecorateDeepBuildings = srts.leftDecorateDeepBuildings;
+
+                    splitRooftopSection.rightDebris = srts.rightDebris;
+                    splitRooftopSection.rightDebrisSettings = DebrisNative(srts.rightDebrisSettings);
+                    splitRooftopSection.rightGroundHeight = srts.rightGroundHeight;
+                    splitRooftopSection.rightBuildingMinDistance = srts.rightBuildingMinDistance;
+                    splitRooftopSection.rightBuildingMaxDistance = srts.rightBuildingMaxDistance;
+                    splitRooftopSection.rightBuildingFloorHeight = srts.rightBuildingFloorHeight;
+                    splitRooftopSection.rightBuildingMinFloors = srts.rightBuildingMinFloors;
+                    splitRooftopSection.rightBuildingMaxFloors = srts.rightBuildingMaxFloors;
+                    splitRooftopSection.rightBuildingMinLength = srts.rightBuildingMinLength;
+                    splitRooftopSection.rightBuildingMaxLength = srts.rightBuildingMaxLength;
+                    splitRooftopSection.rightBuildingMinDepth = srts.rightBuildingMinDepth;
+                    splitRooftopSection.rightBuildingMaxDepth = srts.rightBuildingMaxDepth;
+                    splitRooftopSection.rightMinorCrossMin = srts.rightMinorCrossMin;
+                    splitRooftopSection.rightMinorCrossMax = srts.rightMinorCrossMax;
+                    splitRooftopSection.rightMajorCrossInterval = srts.rightMajorCrossInterval;
+                    splitRooftopSection.rightMajorCrossMin = srts.rightMajorCrossMin;
+                    splitRooftopSection.rightMajorCrossMax = srts.rightMajorCrossMax;
+                    splitRooftopSection._rightInnerWallDecorator = (EWallDecorator)srts._rightInnerWallDecorator;
+                    splitRooftopSection._rightLeadingWallDecorator = (EWallDecorator)srts._rightLeadingWallDecorator;
+                    splitRooftopSection._rightGroundDecorator = (EGroundDecorator)srts._rightGroundDecorator;
+                    splitRooftopSection._rightAlleyDecorator = (EGroundDecorator)srts._rightAlleyDecorator;
+                    splitRooftopSection._rightRooftopDecorator = (EGroundDecorator)srts._rightRooftopDecorator;
+                    splitRooftopSection._rightLaneDecorator = (EGroundDecorator)srts._rightLaneDecorator;
+                    splitRooftopSection.rightAlleyDecorationDepth = srts.rightAlleyDecorationDepth;
+                    splitRooftopSection.rightBuildingDecorationDepth = srts.rightBuildingDecorationDepth;
+                    splitRooftopSection.rightDecorateDeepBuildings = srts.rightDecorateDeepBuildings;
 
                     break;
                 default:
@@ -59,6 +239,24 @@ namespace Pistol_Whip_Scene_Loader
             }
 
             return sec;
+        }
+
+        public static Debris DebrisNative(Models.Debris d)
+        {
+            return new Debris
+            {
+                distribution = (Debris.Distribution)d.distribution,
+                projection = (Debris.Projection)d.projection,
+                spread = (Debris.Spread)d.spread,
+                density = d.density,
+                interval = d.interval,
+                uniformity = d.uniformity,
+                minSize = d.minSize,
+                maxSize = d.maxSize,
+                shape = (Debris.Shape)d.shape,
+                buildOnAir = d.buildOnAir,
+                timing = (Debris.Timing)d.timing
+            };
         }
 
         public static LevelData LevelDataNative(Models.LevelData d)
