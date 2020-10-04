@@ -156,9 +156,19 @@ namespace Pistol_Whip_Scene_Loader
                 geo.chunkData.Add(data);
             }
 
+            foreach (var d in g.decorationCubes)
+            {
+                OscillatingObjectData cube = new OscillatingObjectData
+                {
+                    restPoint = d.restPoint,
+                    moveScale = d.moveScale,
+                    phase = d.phase
+                };
+                geo.decoratorCubes.Add(cube);
+            }
+
             //TODO static props
             //TODO dynamic props
-            //TODO decor cubes
 
             return geo;
         }

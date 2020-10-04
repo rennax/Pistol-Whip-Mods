@@ -21,5 +21,6 @@ namespace Models
 
         public List<ChunkMeshData> chunkData = new List<ChunkMeshData>();
         public List<WorldObject> staticProps = new List<WorldObject>();
+        public List<OscillatingObjectData> decorationCubes = new List<OscillatingObjectData>();
     }
 }
