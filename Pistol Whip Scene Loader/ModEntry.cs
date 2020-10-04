@@ -95,29 +95,63 @@ namespace Pistol_Whip_Scene_Loader
         [HarmonyPatch(typeof(SongPanelUIController), "OnClick", new System.Type[0])]
         public static class SongPanelUIController_OnClick
         {
+            static bool firstClick = true;
             public static bool Prefix(SongPanelUIController __instance)
             {
-                
+                /* TODO
+                - Preview play of song
+                */
                 MelonLogger.Log($"SongPanelUIController.OnClick called, with level index {__instance.levelDataIndex}");
                 if (__instance.levelDataIndex > 19)
                 {
-                    MelonLogger.Log("Clicked on custom level");
+                    //if no other song has bee clicked, find the song info panel + start button and enable it
+                    if (firstClick)
+                    {
+                        __instance.parent.startSongUIButton.SetActive(true);
+                        GameObject gameObject = GameObject.Find("/Managers/UI State Controller/PF_CHUI_AnchorPt_SongSelection/PF_SongSelectionCanvas_UIv2/PF_SongInfoCanvas_UIv2/PW_VerticalLayoutElementPanel");
+                        //MelonLogger.Log(gameObject.name);
+                        for (int i = 0; i < gameObject.transform.childCount; i++)
+                        {
+                            gameObject.transform.GetChild(i).gameObject.SetActive(true);
+                            //MelonLogger.Log(i);
+                        }
+                        firstClick = false;
+                    }
 
-                    Models.LevelData data = CustomLevelDatabase.GetLevelAtLevelIndex(__instance.levelDataIndex).data;
+
+                    MelonLogger.Log("Clicked on custom level");
+                    Level levelContainer = CustomLevelDatabase.GetLevelAtLevelIndex(__instance.levelDataIndex);
+                    Models.LevelData data = levelContainer.data;
                     LevelData level = ConversionExtension.LevelDataNative(data);
                     level.songSwitch = __instance.songSwitch;
 
-                    /* TODO
-                    - Replace song.wem from custom level folder.
-                    - If first song selected
-                        - Enable Play button
-                        - Enable SongInfoPoster GameObject
-                    - Preview play of song
+                    CustomLevelDatabase.ReplaceSong(levelContainer);
 
-                    */
+                    //Only make difficulties that actually exist for given map, available to select
+                    SongDifficultyUIPanel[] difficultyUIPanels = __instance.parent.difficultyUIPanels;
+                    foreach (var difficultyPanel in difficultyUIPanels)
+                    {
+                        difficultyPanel.isSelectable = false;
+                    }
+
+                    foreach (var availableDiff in CustomLevelDatabase.GetDifficultiesForLevel(levelContainer))
+                    {
+                        difficultyUIPanels[(int)availableDiff].isSelectable = true;
+                    }
+
+
                     GameManager gm = GameManager.Instance;
                     Difficulty diff = gm.difficulty;
                     GameManager.SetLevel(level.maps[(int)diff]);
+
+                    SongInfoUI songInfo = __instance.parent.songInfoUI;
+                    Models.AlbumArtMetadata art = levelContainer.art;
+                    songInfo.songTitle.SetText(art.songName);
+                    songInfo.songLength.SetText(level.songLength.ToString("0.0"));
+                    songInfo.artist.SetText(art.songArtists);
+                    songInfo.enemyCount.SetText(level.maps[(int)diff].enemyCount.ToString());
+                    songInfo.tempo.SetText(art.tempo); //BPM
+                    __instance.parent.lrgAlbumArt.sprite = levelContainer.sprite;
 
                     //Replace the koreography in WwiseKoreographySets for the koreography to actually be used
                     foreach (var koreo in gm.levels.koreoSets)
@@ -126,6 +160,7 @@ namespace Pistol_Whip_Scene_Loader
                         {
                             if (media.mediaID == 561074166) // Religion
                             {
+                                //TODO Backup original koreography
                                 media.koreo = level.maps[0].trackData.koreography;
                             }
                         }
@@ -136,19 +171,70 @@ namespace Pistol_Whip_Scene_Loader
 
                     return false;
                 }
-
+                firstClick = false;
                 CustomLevelDatabase.SelectedCustomLevel = false;
                 return true;
             }
         }
 
-        public static LevelData CreateLevelInstance(Models.LevelData data)
+
+
+        [HarmonyPatch(typeof(SongSelectionUIController), "SelectedEasyDifficulty", new System.Type[0])]
+        public static class SongSelectionUIController_SelectedEasyDifficulty
         {
-            LevelData level = ConversionExtension.LevelDataNative(data);
+            public static bool Prefix(SongSelectionUIController __instance)
+            {
+                if (CustomLevelDatabase.SelectedCustomLevel)
+                {
+                    LevelData level = CustomLevelDatabase.CurrentSelectedLevel;
+                    GameManager gm = GameManager.Instance;
+                    gm.difficulty = Difficulty.Easy;
+                    GameManager.SetLevel(level.maps[(int)gm.difficulty]);
+
+                    return false;
+                }
 
 
+                return true;
+            }
+        }
 
-            return level;
+        [HarmonyPatch(typeof(SongSelectionUIController), "SelectedNormalDifficulty", new System.Type[0])]
+        public static class SongSelectionUIController_SelectedNormalDifficulty
+        {
+            public static bool Prefix(SongSelectionUIController __instance)
+            {
+                if (CustomLevelDatabase.SelectedCustomLevel)
+                {
+                    LevelData level = CustomLevelDatabase.CurrentSelectedLevel;
+                    GameManager gm = GameManager.Instance;
+                    gm.difficulty = Difficulty.Normal;
+                    GameManager.SetLevel(level.maps[(int)gm.difficulty]);
+
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        [HarmonyPatch(typeof(SongSelectionUIController), "SelectedHardDifficulty", new System.Type[0])]
+        public static class SongSelectionUIController_SelectedHardDifficulty
+        {
+            public static bool Prefix(SongSelectionUIController __instance)
+            {
+                if (CustomLevelDatabase.SelectedCustomLevel)
+                {
+                    LevelData level = CustomLevelDatabase.CurrentSelectedLevel;
+                    GameManager gm = GameManager.Instance;
+                    gm.difficulty = Difficulty.Hard;
+                    GameManager.SetLevel(level.maps[(int)gm.difficulty]);
+
+                    return false;
+                }
+
+                return true;
+            }
         }
 
 

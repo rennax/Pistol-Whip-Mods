@@ -13,6 +13,9 @@ namespace Pistol_Whip_Scene_Loader
     public class CustomLevelDatabase
     {
         const string levelPathRoot = "Custom Levels";
+        const string replaceSongPath = "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/561074166.wem";
+        const string songBackupPath = "Pistol Whip_Data/StreamingAssets/Audio/GeneratedSoundBanks/Windows/561074166_backup.wem";
+
         public static List<Level> levels = new List<Level>();
         public static int MaxLevelIndex { get; private set; } = 20;
         public static bool SelectedCustomLevel { get; internal set; }
@@ -32,7 +35,8 @@ namespace Pistol_Whip_Scene_Loader
                 {
                     data = pack.levelData,
                     art = pack.albumArtMetadata,
-                    index = MaxLevelIndex 
+                    index = MaxLevelIndex,
+                    path = path
                 };
                 MaxLevelIndex++;
 
@@ -51,6 +55,27 @@ namespace Pistol_Whip_Scene_Loader
         public static Level GetLevelAtLevelIndex(int levelIndex)
         {
             return levels.Find(x => x.index == levelIndex);
+        }
+
+        public static void ReplaceSong(Level level)
+        {
+
+            if (!File.Exists(songBackupPath))
+            {
+                File.Copy(replaceSongPath, songBackupPath);
+            }
+
+            File.Copy(Path.Combine(level.path, "song.wem"), replaceSongPath, true);
+        }
+
+        public static List<Difficulty> GetDifficultiesForLevel(Level level)
+        {
+            List<Difficulty> diffs = new List<Difficulty>();
+            foreach (var map in level.data.gameMaps)
+            {
+                diffs.Add((Difficulty)map.trackData.difficulty);
+            }
+            return diffs;
         }
 
         public static void PopulateSongSelectionUI(SongSelectionUIController ctrl)
@@ -129,5 +154,6 @@ namespace Pistol_Whip_Scene_Loader
         public Models.LevelData data;
         public Sprite sprite;
         public int index;
+        public string path;
     }
 }
