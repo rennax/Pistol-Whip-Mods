@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MelonLoader;
 using UnityEngine;
+using Pistol_Whip_Scene_Loader.Conversion;
 
 namespace Pistol_Whip_Scene_Loader
 {
@@ -30,7 +31,7 @@ namespace Pistol_Whip_Scene_Loader
             {
                 string levelText = File.ReadAllText(Path.Combine(path, "level.json"));
                 //MelonLogger.Log(levelText);
-                Models.LevelPacker pack = JsonConvert.DeserializeObject<Models.LevelPacker>(levelText, new EnemyActionConverter());
+                Models.LevelPacker pack = JsonConvert.DeserializeObject<Models.LevelPacker>(levelText, new EnemyActionConverter(), new TrackSectionConverter());
                 Level level = new Level()
                 {
                     data = pack.levelData,

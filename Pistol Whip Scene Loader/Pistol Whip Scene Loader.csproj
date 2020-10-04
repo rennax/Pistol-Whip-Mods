@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conversion\Conversion.cs" />
+    <Compile Include="Conversion\TrackSectionConverter.cs" />
     <Compile Include="CustomLevelDatabase.cs" />
     <Compile Include="Conversion\EnemyActionConverter.cs" />
     <Compile Include="Models\BeatData.cs" />
