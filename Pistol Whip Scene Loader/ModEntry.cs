@@ -30,16 +30,11 @@ TODO List
     -   Hook and enable them while playing
         -   only if the current map is a custom map otherwise dont. Original enemy sequences are loaded from asset/resources.
 -   Figure out how the rest of the enemy actions work
-    -   Some of them refers to animation trigger hashes
--   Fix end of map and exit while playing as this results in just loading a blank world (failed state transition is my guess)
--   TrackSection
-    -   Just like enemy actions, write a custom json converter
-    -   Write rest of the conversion for track sections
+    -   Some of them refers to animation trigger hashes (Look towards dynamic objects)
 -   Do backup of the koreoset before we overwrite for the custom map
--   Song switch when selection the custom map. Currently this is not done.
--   Figure out how to do props (atleast static ones) without using asset bundles. Keep as much in either our own format or in the json.
--   Write conversion for decor cubes in geoset
--   Figure out what dynamic prop entails. Are they just static props with animations or what?
+-   Play song switch when selection the custom map. Currently this is not done.
+-   LODSwitcher for dynamic and static props
+-   Figure out how we store the personal best for a given custom song
  */
 
 
@@ -107,13 +102,13 @@ namespace Pistol_Whip_Scene_Loader
                     //if no other song has bee clicked, find the song info panel + start button and enable it
                     if (firstClick)
                     {
+                        MelonLogger.Log("First panel clicked in custom song\nEnable song info and start button manually");
                         __instance.parent.startSongUIButton.SetActive(true);
                         GameObject gameObject = GameObject.Find("/Managers/UI State Controller/PF_CHUI_AnchorPt_SongSelection/PF_SongSelectionCanvas_UIv2/PF_SongInfoCanvas_UIv2/PW_VerticalLayoutElementPanel");
                         //MelonLogger.Log(gameObject.name);
                         for (int i = 0; i < gameObject.transform.childCount; i++)
                         {
                             gameObject.transform.GetChild(i).gameObject.SetActive(true);
-                            //MelonLogger.Log(i);
                         }
                         firstClick = false;
                     }
@@ -121,16 +116,19 @@ namespace Pistol_Whip_Scene_Loader
 
                     MelonLogger.Log("Clicked on custom level");
                     Level levelContainer = CustomLevelDatabase.GetLevelAtLevelIndex(__instance.levelDataIndex);
-                    Models.LevelData data = levelContainer.data;
-                    LevelData level = ConversionExtension.LevelDataNative(data);
-                    level.songSwitch = __instance.songSwitch;
 
+                    LevelData level = ConversionExtension.LevelDataNative(levelContainer.data);
+                    MelonLogger.Log($"Loading assets for {level.songName}");
+                    CustomLevelDatabase.LoadAssetsForLevel(levelContainer, level);
+                    level.songSwitch = __instance.songSwitch;
+                    MelonLogger.Log("Hotswapping song");
                     CustomLevelDatabase.ReplaceSong(levelContainer);
 
                     //Only make difficulties that actually exist for given map, available to select
                     SongDifficultyUIPanel[] difficultyUIPanels = __instance.parent.difficultyUIPanels;
                     foreach (var difficultyPanel in difficultyUIPanels)
                     {
+                        //TODO determine (from a UX perspective) if it is better to just disable the difficulty button
                         difficultyPanel.isSelectable = false;
                     }
 
@@ -142,17 +140,41 @@ namespace Pistol_Whip_Scene_Loader
 
                     GameManager gm = GameManager.Instance;
                     Difficulty diff = gm.difficulty;
-                    GameManager.SetLevel(level.maps[(int)diff]);
 
+                    // We cant select by index based on difficulty
+                    GameMap map = null; 
+                    foreach (var m in level.maps)
+                    {
+                        if (m.trackData.difficulty == diff)
+                        {
+                            map = m;
+                            MelonLogger.Log($"Found level for difficulty {System.Enum.GetName(typeof(Difficulty), diff)}");
+                            break;
+                        }
+                    }
+
+                    //The initial difficulty might not be available for given map, then find the first available difficulty and select that
+                    if (map == null)
+                    {
+                        map = level.maps[0];
+                        gm.difficulty = map.trackData.difficulty;
+                    }
+
+                    GameManager.SetLevel(map);
+
+
+                    MelonLogger.Log("Setting song info panel");
                     SongInfoUI songInfo = __instance.parent.songInfoUI;
                     Models.AlbumArtMetadata art = levelContainer.art;
                     songInfo.songTitle.SetText(art.songName);
                     songInfo.songLength.SetText(level.songLength.ToString("0.0"));
                     songInfo.artist.SetText(art.songArtists);
-                    songInfo.enemyCount.SetText(level.maps[(int)diff].enemyCount.ToString());
+                    MelonLogger.Log("Setting enemy count in info");
+                    songInfo.enemyCount.SetText(map.enemyCount.ToString());
                     songInfo.tempo.SetText(art.tempo); //BPM
                     __instance.parent.lrgAlbumArt.sprite = levelContainer.sprite;
 
+                    MelonLogger.Log("Setting koreo set");
                     //Replace the koreography in WwiseKoreographySets for the koreography to actually be used
                     foreach (var koreo in gm.levels.koreoSets)
                     {
@@ -237,6 +259,105 @@ namespace Pistol_Whip_Scene_Loader
             }
         }
 
+
+        //[HarmonyPatch(typeof(GameplayManager), "OnGameEnd", new System.Type[0])]
+        //public static class GameplayManagerMod
+        //{
+        //    public static void Prefix(GameplayManager __instance)
+        //    {
+        //        MelonLogger.Log("Pre GameplayManager.OnGameEnd");
+        //    }
+
+        //}
+
+        [HarmonyPatch(typeof(PlayerActionManager), "OnSongComplete", new System.Type[0])]
+        public static class PlayerActionManagerMod
+        {
+            public static void Postfix(PlayerActionManager __instance)
+            {
+                MelonLogger.Log("OnSongComplete postfix called");
+                //if (CustomLevelDatabase.SelectedCustomLevel)
+                //{
+                //    CustomLevelDatabase.UnloadLoadedAssets();
+                //}
+            }
+        }
+
+        [HarmonyPatch(typeof(GameManager), "OnSongStop", new System.Type[0])]
+        public static class GameManagerMod
+        {
+            public static bool Prefix(GameManager __instance)
+            {
+                MelonLogger.Log("GameManager.OnSongStop");
+                return true;
+            }
+        }
+
+        //[HarmonyPatch(typeof(PlayerActionManager), "OnSongComplete", new System.Type[0])]
+        //public static class PlayerActionManagerMod
+        //{
+        //    public static bool Prefix(PlayerActionManager __instance)
+        //    {
+        //        MelonLogger.Log("PlayerActionManagerMod.OnSongComplete");
+        //        return true;
+        //    }
+
+        //}
+
+        [HarmonyPatch(typeof(PresenceManager), "OnChallengesUpdated", new System.Type[1] { typeof(ChallengeUpdateEvent)})]
+        public static class PresenceManagerMod
+        {
+            public static bool Prefix(PresenceManager __instance)
+            {
+                MelonLogger.Log("PresenceManager.OnChallengesUpdated");
+
+                return true;
+            }
+
+        }
+
+        //Following is a work around
+
+        /* ------!!! Thanks to MINER for figuring out the following 2 hooks !!!------- */
+        //https://gitlab.com/nagytech/pistol-whip-custom-beat-loader/-/blob/master/Modification.cs
+        // NOTE: there's currently an issue where sequences get enabled by the 
+        // SpawnManager, but the individual enemy actions are not enabled
+        // so, in some cases - the actor just stalls in one stage of the sequence.
+        // HACK: For now, we force enable the actions, but will need to keep an eye 
+        // out for a better solution.
+        [HarmonyPatch(typeof(EnemyAction), "Enter", new System.Type[1] { typeof(float) })]
+        public static class EnemyActionMod
+        {
+            public static void Prefix(EnemyAction __instance, float startTime)
+            {
+                try
+                {
+                    if (!__instance.enabled) __instance.enabled = true;
+                    MelonLogger.Log($"{__instance.actionType}: {startTime}");
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        // HACK: Being over careful here with enabling sequences.  Not ideal...
+        [HarmonyPatch(typeof(EnemySequence), "Play", new System.Type[1] { typeof(float) })]
+        public static class EnemySequenceMod
+        {
+            public static void Prefix(EnemySequence __instance, float startTime)
+            {
+                try
+                {
+                    if (!__instance.enabled) __instance.enabled = true;
+                }
+                catch
+                {
+
+                }
+            }
+        }
 
     }
 }

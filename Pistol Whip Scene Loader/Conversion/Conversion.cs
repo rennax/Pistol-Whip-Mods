@@ -8,6 +8,7 @@ using UnityEngine;
 using Il2CppSystem.Collections.Generic;
 using MelonLoader;
 using UnhollowerBaseLib;
+using UnhollowerRuntimeLib;
 
 namespace Pistol_Whip_Scene_Loader
 {
@@ -261,12 +262,13 @@ namespace Pistol_Whip_Scene_Loader
 
         public static LevelData LevelDataNative(Models.LevelData d)
         {
+            //NOTE: Anything requiring loading from an assetbundle is performed when the level is selected in the menu
             LevelData level = new LevelData
             {
                 songName = d.songName,
                 songLength = d.songLength,
                 description = d.description,
-                maps = new GameMap[d.gameMaps.Length], // TODO just insert 4, and then disable the diff button for those who are not available?
+                maps = new GameMap[d.gameMaps.Length], // TODO just insert 4, and then disable the diff button for those who are not available? COMMENT naah, just disable buttons for those who are not available
                 sections = new List<TrackSection>(),
                 volumes = new List<WorldVolume>(),
                 colors = new List<ColorShiftPoint>(),
@@ -295,6 +297,40 @@ namespace Pistol_Whip_Scene_Loader
 
             }
 
+            foreach (var c in d.colors)
+            {
+                ColorShiftPoint color = new ColorShiftPoint
+                {
+                    start = c.start,
+                    end = c.end,
+                    colors = new ColorData
+                    {
+                        customEnemyColor = c.colors.customEnemyColor,
+                        fogColor = c.colors.fogColor,
+                        storedEnemyColor = c.colors.storedEnemyColor,
+                        glowColor = c.colors.glowColor,
+                        mainColor = c.colors.mainColor,
+                    }
+                };
+                level.colors.Add(color);
+            }
+
+            foreach (var dynamicCulling in d.dynamicCullingRanges)
+            {
+                //TODO
+            }
+
+            foreach (var staticCulling in d.staticCullingRanges)
+            {
+                //TODO
+            }
+
+            foreach (var v in d.volumes)
+            {
+                //TODO
+            }
+
+
             return level;
         }
 
@@ -312,7 +348,7 @@ namespace Pistol_Whip_Scene_Loader
             map.hitCount = g.hitCount;
             map.rankedHitCount = g.rankedHitCount;
             map.trueMaxScore = g.trueMaxScore;
-            map.rankQuotas = new UnhollowerBaseLib.Il2CppStructArray<RankQuota>(0);
+            map.rankQuotas = new UnhollowerBaseLib.Il2CppStructArray<RankQuota>(6);
 
             return map;
         }
@@ -364,6 +400,11 @@ namespace Pistol_Whip_Scene_Loader
                 };
                 geo.decoratorCubes.Add(cube);
             }
+
+            /*
+             * We need to grab assets from an asset bundle for static and dynamic props (or do we?)
+             * 
+             */
 
             //TODO static props
             //TODO dynamic props
@@ -457,23 +498,24 @@ namespace Pistol_Whip_Scene_Loader
                 enemySequence.actions.Add(acc);
             }
 
+            enemySequence.enabled = false;
             return enemySequence;
         }
 
         public static EnemyAction EnemyActionNative(Models.EnemyAction a, GameObject gameObject)
         {
             EnemyAction action = null;
-            MelonLogger.Log(a.GetType().Name);
+            //MelonLogger.Log(a.GetType().Name);
             switch (a.actionType)
             {
                 case 0:
-                    MelonLogger.Log("EnemyActionWait");
+                    //MelonLogger.Log("EnemyActionWait");
                     EnemyActionWait actionWait = gameObject.AddComponent<EnemyActionWait>();
                     actionWait.waitTime = ((Models.EnemyActionWait)a).waitTime;
                     action = actionWait;
                     break;
                 case 1:
-                    MelonLogger.Log("EnemyActionMove");
+                    //MelonLogger.Log("EnemyActionMove");
                     EnemyActionMove actionMove = gameObject.AddComponent<EnemyActionMove>();
                     actionMove.destination = WorldPointNative(((Models.EnemyActionMove)a).destination);
                     actionMove.facing = (EnemyActionMove.Facing)((Models.EnemyActionMove)a).facing;
@@ -481,23 +523,23 @@ namespace Pistol_Whip_Scene_Loader
                     //((EnemyActionMove)action).speed;
                     break;
                 case 2:
-                    MelonLogger.Log("EnemyActionAimStart");
+                    //MelonLogger.Log("EnemyActionAimStart");
                     action = gameObject.AddComponent<EnemyActionAimStart>();
                     break;
                 case 3:
-                    MelonLogger.Log("EnemyActionAimStop");
+                    //MelonLogger.Log("EnemyActionAimStop");
                     EnemyActionAimStop actionAimStop = gameObject.AddComponent<EnemyActionAimStop>();
                     actionAimStop.stopFacing = ((Models.EnemyActionAimStop)a).stopFacing;
                     actionAimStop.stopLooking = ((Models.EnemyActionAimStop)a).stopLooking;
                     action = actionAimStop;
                     break;
                 case 4:
-                    MelonLogger.Log("EnemyActionWait");
+                    //MelonLogger.Log("EnemyActionWait");
                     action = gameObject.AddComponent<EnemyActionFire>();
 
                     break;
                 case 5:
-                    MelonLogger.Log("EnemyActionAimAndFire");
+                    //MelonLogger.Log("EnemyActionAimAndFire");
                     EnemyActionAimAndFire actionAimAndFire = gameObject.AddComponent<EnemyActionAimAndFire>();
                     actionAimAndFire.stopFacingOnExit = ((Models.EnemyActionAimAndFire)a).stopFacingOnExit;
                     actionAimAndFire.stopLookingOnExit = ((Models.EnemyActionAimAndFire)a).stopLookingOnExit;
@@ -506,7 +548,7 @@ namespace Pistol_Whip_Scene_Loader
                     action = actionAimAndFire;
                     break;
                 case 15:
-                    MelonLogger.Log("EnemyActionStopFiring");
+                    //MelonLogger.Log("EnemyActionStopFiring");
                     action = gameObject.AddComponent<EnemyActionStopFiring>();
                     break;
             }
@@ -514,6 +556,8 @@ namespace Pistol_Whip_Scene_Loader
             action.localStartingPoint = WorldPointNative(a.localStartingPoint);
             action.localEndingPoint = WorldPointNative(a.localEndingPoint);
             action.sequenceStartTime = a.sequenceStartTime;
+
+            action.enabled = false;
             return action;
         }
 
@@ -525,6 +569,7 @@ namespace Pistol_Whip_Scene_Loader
                 rotation = new Quaternion(w.rotation.x, w.rotation.y, w.rotation.z, w.rotation.w),
             };
         }
+
 
         public static Koreography KoreographyNative(Models.Koreography k)
         {
@@ -549,8 +594,20 @@ namespace Pistol_Whip_Scene_Loader
                     {
                         StartSample = e.mStartSample,
                         EndSample = e.mEndSample,
-                        mPayload = null // We dont actually know if any payload is used.. yet
+                        Payload = null
                     };
+
+                    //For now we only accept text payloads as they are the only one that seems to be used
+                    if (e.payload != null)
+                    {
+                        TextPayload payload = new TextPayload
+                        {
+                            TextVal = e.payload
+                        };
+                        MelonLogger.Log($"Found event with payload {e.payload}");
+                        kEvent.Payload = payload.Cast<IPayload>();
+                    }
+
                     kTrack.AddEvent(kEvent);
                 }
                 koreo.AddTrack(kTrack);

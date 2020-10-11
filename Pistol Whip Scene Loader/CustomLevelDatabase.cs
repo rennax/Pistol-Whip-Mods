@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using MelonLoader;
 using UnityEngine;
 using Pistol_Whip_Scene_Loader.Conversion;
+using UnityEngine.Experimental.AssetBundlePatching;
+using Il2CppSystem.Reflection;
+using Harmony;
 
 namespace Pistol_Whip_Scene_Loader
 {
@@ -21,6 +24,8 @@ namespace Pistol_Whip_Scene_Loader
         public static int MaxLevelIndex { get; private set; } = 20;
         public static bool SelectedCustomLevel { get; internal set; }
         public static LevelData CurrentSelectedLevel { get; internal set; }
+
+        private static Il2CppAssetBundle assetDBCurrentLevel; //TODO unload on level end to preserve resources
 
         public void RebuildDatabase()
         {
@@ -56,6 +61,151 @@ namespace Pistol_Whip_Scene_Loader
         public static Level GetLevelAtLevelIndex(int levelIndex)
         {
             return levels.Find(x => x.index == levelIndex);
+        }
+
+
+        static Dictionary<string, Il2CppAssetBundle> loadedBundles = new Dictionary<string, Il2CppAssetBundle>();
+
+        public static void LoadAssetsForLevel(Level level, LevelData data)
+        {
+            /* TODO:
+             * Assign props to the corresponding object and not just to level data. This should allow
+             * for props made specifically for a given difficulty (more dynamic props for a given difficulty would be cool)
+             */
+
+            //TODO proper assetbundle management...
+            //if (assetDBCurrentLevel != null)
+            //{
+            //    assetDBCurrentLevel.Unload(true);
+            //}
+
+
+            if (!loadedBundles.TryGetValue(Path.Combine(level.path, "props"), out assetDBCurrentLevel))
+            {
+                assetDBCurrentLevel = Il2CppAssetBundleManager.LoadFromFile(Path.Combine(level.path, "props"));
+                loadedBundles.Add(Path.Combine(level.path, "props"), assetDBCurrentLevel);
+            }
+
+            Dictionary<string, GameObject> staticPropPrefabs = new Dictionary<string, GameObject>();
+            Dictionary<string, GameObject> dynamicPropPrefabs = new Dictionary<string, GameObject>();            
+            
+            for (int j = 0; j < level.data.gameMaps.Length; j++)
+            {
+                MelonLogger.Log($" Loading props for gameMap at index {j}");
+                Models.GameMap map = level.data.gameMaps[j];
+                for (int i = 0; i < map.geoSet.staticProps.Count; i++)
+                {
+                    //MelonLogger.Log($" Loading prop at index {i} for gameMap at index {j}");
+                    Models.WorldObject propSrc = map.geoSet.staticProps[i];
+                    GameObject go;
+
+                    //Keep dictionary in case object is used multiple times
+                    if (!staticPropPrefabs.TryGetValue(propSrc.prefab, out go))
+                    {
+                        go = assetDBCurrentLevel.LoadAsset<GameObject>(propSrc.prefab);
+                        var meshFilter = go.GetComponentInChildren<MeshFilter>();
+                        if (meshFilter == null) 
+                        {
+                            MelonLogger.Log("Static prop must contain a MeshFilter");
+                            continue;
+                        }
+                        var renderer = meshFilter.GetComponent<MeshRenderer>();
+                        renderer.material = new Material(Shader.Find("Cloudhead/Universal/HighEnd/LevelGeo_Simple"));
+                        renderer.enabled = true;
+
+                        //TODO make LODSwitcher work for static props
+                        //var lod = meshFilter.transform.gameObject.AddComponent<LODSwitcher>();
+                        ////lod.fixedLODLevel = -1;
+                        ////lod.maxLOD = 3;
+                        ////lod.enabled = true;
+
+                        //lod.lodMeshes = new Mesh[]
+                        //{
+                        //    meshFilter.sharedMesh
+                        //};
+                        //lod.staticRenderers = new GameObject[] { renderer.gameObject };
+                        //lod.meshFilter = meshFilter;
+                        staticPropPrefabs.Add(propSrc.prefab, go);
+                    }
+                    
+
+
+                    WorldObject prop = new WorldObject(
+                        ConversionExtension.WorldPointNative(propSrc.point),
+                        go,
+                        propSrc.scale
+                    );
+                    //data.maps[j].geoSet.staticProps.Add(prop);
+                    data.simpleStaticWorldObjects.Add(prop);
+                }
+                for (int i = 0; i < map.geoSet.dynamicProps.Count; i++)
+                {
+                    Models.DynamicWorldObject propSrc = map.geoSet.dynamicProps[i];
+                    GameObject go;
+
+                    //Keep dictionary in case object is used multiple times
+                    if (!dynamicPropPrefabs.TryGetValue(propSrc.prefab, out go))
+                    {
+                        foreach (string animClip in propSrc.animationClipNames)
+                        {
+                            //QUESTION: Do we need to store the clips or just load them?
+                            var clip = assetDBCurrentLevel.Load<AnimationClip>(animClip);
+                        }
+                        RuntimeAnimatorController animController = assetDBCurrentLevel.Load<RuntimeAnimatorController>(propSrc.animatorName);
+                        Animator animator;
+                        LevelEventReceiver eventReceiver;
+
+                        go = assetDBCurrentLevel.LoadAsset<GameObject>(propSrc.prefab);
+                        
+                        if (go.GetComponent<Animator>() == null)
+                            animator = go.AddComponent<Animator>();
+                        else
+                            animator = go.GetComponent<Animator>();
+
+                        animator.runtimeAnimatorController = animController;
+
+                        if (go.GetComponent<DynamicObject>() == null)
+                        {
+                            go.AddComponent<DynamicObject>();
+                        }
+
+                        if (go.GetComponent<LevelEventReceiver>() == null)
+                            eventReceiver = go.AddComponent<LevelEventReceiver>();
+                        else
+                            eventReceiver = go.GetComponent<LevelEventReceiver>();
+
+                        eventReceiver.eventID = propSrc.eventID;
+                        eventReceiver.actionType = (LevelEventReceiver.ActionType)propSrc.actionType; //NOTE: For now we only allow animatorTrigger
+                        eventReceiver.animator = animator;
+                        eventReceiver.animatorProperty = propSrc.animatorProperty;
+                        eventReceiver.animHash = propSrc.animHash;
+
+
+                        //TODO PlayerKiller component on the object containing collider.
+
+                        //QUESTION: Should we allow mesh to be on the root of the prefab or only as a child?
+                        var meshFilter = go.GetComponentInChildren<MeshFilter>();
+                        var renderer = meshFilter.GetComponent<MeshRenderer>();
+                        renderer.material = new Material(Shader.Find("Cloudhead/Universal/HighEnd/LevelGeo_Simple")); //TODO allow to make/load custom materials
+                        renderer.enabled = true;
+
+                        //TODO make LODSwitcher work for dynamic props
+
+                        dynamicPropPrefabs.Add(propSrc.prefab, go);
+                    }
+
+
+
+                    WorldObject prop = new WorldObject(
+                        ConversionExtension.WorldPointNative(propSrc.point),
+                        go,
+                        propSrc.scale
+                    );
+                    //data.maps[j].geoSet.staticProps.Add(prop);
+                    data.simpleDynamicWorldObjects.Add(prop);
+                }
+            }
+
         }
 
         public static void ReplaceSong(Level level)

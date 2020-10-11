@@ -76,6 +76,14 @@
       <HintPath>G:\SteamLibrary\steamapps\common\Pistol Whip\MelonLoader\Dependencies\AssemblyGenerator\Il2CppDumper\DummyDll\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>G:\SteamLibrary\steamapps\common\Pistol Whip\MelonLoader\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>G:\SteamLibrary\steamapps\common\Pistol Whip\MelonLoader\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.AudioModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>G:\SteamLibrary\steamapps\common\Pistol Whip\MelonLoader\Managed\UnityEngine.AudioModule.dll</HintPath>
@@ -83,6 +91,10 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>G:\SteamLibrary\steamapps\common\Pistol Whip\MelonLoader\Dependencies\AssemblyGenerator\Il2CppDumper\DummyDll\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Il2CppAssetBundleManager">
+      <HintPath>G:\SteamLibrary\steamapps\common\Pistol Whip\MelonLoader\Managed\UnityEngine.Il2CppAssetBundleManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
@@ -114,6 +126,7 @@
     <Compile Include="Models\EnemySequence.cs" />
     <Compile Include="Models\GameMap.cs" />
     <Compile Include="Models\Geoset\ChunkMeshData.cs" />
+    <Compile Include="Models\Geoset\DynamicWorldObject.cs" />
     <Compile Include="Models\Geoset\GeoSet.cs" />
     <Compile Include="Models\Geoset\OscillatingObjectData.cs" />
     <Compile Include="Models\Geoset\WorldObject.cs" />

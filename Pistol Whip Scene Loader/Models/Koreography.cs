@@ -39,7 +39,7 @@ namespace Models
     public class KoreographyEvent
     {
         public int mStartSample;
-        public int payload = 0;
+        public string payload = null;
         public int mEndSample;
     }
 }
