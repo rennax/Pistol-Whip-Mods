@@ -73,18 +73,17 @@ namespace Pistol_Whip_Scene_Loader
              * for props made specifically for a given difficulty (more dynamic props for a given difficulty would be cool)
              */
 
-            //TODO proper assetbundle management...
-            //if (assetDBCurrentLevel != null)
-            //{
-            //    assetDBCurrentLevel.Unload(true);
-            //}
-
-
-            if (!loadedBundles.TryGetValue(Path.Combine(level.path, "props"), out assetDBCurrentLevel))
+            if (assetDBCurrentLevel != null)
             {
-                assetDBCurrentLevel = Il2CppAssetBundleManager.LoadFromFile(Path.Combine(level.path, "props"));
-                loadedBundles.Add(Path.Combine(level.path, "props"), assetDBCurrentLevel);
+                assetDBCurrentLevel.Unload(true);
             }
+            assetDBCurrentLevel = Il2CppAssetBundleManager.LoadFromFile(Path.Combine(level.path, "props"));
+
+            //if (!loadedBundles.TryGetValue(Path.Combine(level.path, "props"), out assetDBCurrentLevel))
+            //{
+            //    
+            //    loadedBundles.Add(Path.Combine(level.path, "props"), assetDBCurrentLevel);
+            //}
 
             Dictionary<string, GameObject> staticPropPrefabs = new Dictionary<string, GameObject>();
             Dictionary<string, GameObject> dynamicPropPrefabs = new Dictionary<string, GameObject>();            
@@ -135,8 +134,8 @@ namespace Pistol_Whip_Scene_Loader
                         go,
                         propSrc.scale
                     );
-                    //data.maps[j].geoSet.staticProps.Add(prop);
-                    data.simpleStaticWorldObjects.Add(prop);
+                    data.maps[j].geoSet.staticProps.Add(prop);
+                    //data.simpleStaticWorldObjects.Add(prop);
                 }
                 for (int i = 0; i < map.geoSet.dynamicProps.Count; i++)
                 {
@@ -190,6 +189,7 @@ namespace Pistol_Whip_Scene_Loader
                         renderer.enabled = true;
 
                         //TODO make LODSwitcher work for dynamic props
+                        
 
                         dynamicPropPrefabs.Add(propSrc.prefab, go);
                     }
@@ -202,7 +202,8 @@ namespace Pistol_Whip_Scene_Loader
                         propSrc.scale
                     );
                     //data.maps[j].geoSet.staticProps.Add(prop);
-                    data.simpleDynamicWorldObjects.Add(prop);
+                    //data.simpleDynamicWorldObjects.Add(prop);
+                    data.maps[j].geoSet.dynamicProps.Add(prop);
                 }
             }
 
